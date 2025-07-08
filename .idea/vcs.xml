@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/PDDL2Gym" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/PDDL2Gym/sam_learning" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ipc2023-dataset" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/nyx" vcs="Git" />
+  </component>
+</project>

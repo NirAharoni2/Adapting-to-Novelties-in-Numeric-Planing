@@ -1,13 +1,8 @@
-from Z_Orgonized.baseAgent.Plan import Plan
 
-from Z_Orgonized.Utilities.config import ErrorFlag
-from Z_Orgonized.Utilities import config as CONFIG
-import subprocess
-import os
-from pathlib import Path
+from Z_Orgonized.Utilities.config import ErrorFlag, Config
+
 
 import sys, os; sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from nyx import simulator
 
 from nyx import nyx
 import sys
@@ -29,23 +24,31 @@ def suppress_stdout():
 
 class Planner:
     def __init__(self, plan):
-        self.NYX_path = CONFIG.NYX_PATH
+        self.NYX_path = Config.NYX_PATH
         self.error_flag = ErrorFlag.NO_ERROR
         self.plan = plan
 
 
 
-    def create_plan(
-        self, domain: str, problem: str, timeout: int = 60, flag: str = ""
-    ) -> list:
+    def create_plan(self) -> bool:
+        domain_path = Config.domain_path
+        problem_path = Config.problem_path
+        plan_path = Config.plan_path
 
         with suppress_stdout():
-            nyx.runner(domain, problem, [])
+            if Config.domain_name == "drone":
+                nyx.runner(domain_path, problem_path, ["-timeout:60", "search:gbfs", "custom_heuristic:3"])
+            if Config.domain_name == "expedition":
+                nyx.runner(domain_path, problem_path, ["-timeout:300", "search:gbfs", "custom_heuristic:1"])
+            if Config.domain_name == "sailing":
+                nyx.runner(domain_path, problem_path, ["-timeout:60", "search:gbfs", "custom_heuristic:2"])
+            if Config.domain_name == "minecraft":
+                nyx.runner(domain_path, problem_path, ["-timeout:60", "search:bfs"])
 
-        number = ''.join(filter(str.isdigit, os.path.basename(problem)))
-        plan_path = os.path.join(os.path.dirname(problem), "plans", f"plan1_pfile{number}.pddl")
-        self.create_simulation(domain, problem, plan_path)
+        if not os.path.isfile(plan_path):
+            return False
         self.parse_action_log(plan_path)
+        return True
 
     def parse_action_log(self, plan_path):
         times = []
@@ -67,67 +70,3 @@ class Planner:
                 actions.append(f"({' '.join(action_str.split())})")
 
         self.plan.setUpPlan(times, actions)
-
-
-    def create_simulation(
-        self, domain: str, problem: str, plan: str, timeout: int = 60, flag: str = ""
-    ) -> list:
-        """
-        Create a plan for the given domain and problem
-        :param domain: the domain file - must be located in the planning folder
-        :param problem: the problem file - must be located in the planning folder
-        :param timeout: the timeout for the planner in seconds
-        """
-
-        simulator.simulator(domain, problem,plan, [])
-'''
-        self.error_flag = ErrorFlag.NO_ERROR
-
-
-        # Check if the domain and problem files exist
-        if not os.path.exists(domain):
-            raise Exception("Domain file not found")
-        if not os.path.exists(problem):
-            raise Exception("Problem file not found")
-        if not os.path.exists(plan):
-            raise Exception("plan file not found")
-        original_dir = os.getcwd()
-        os.chdir(self.NYX_path)
-
-        cmd = f"python simulator.py {domain} {problem} {plan}"
-        if flag:
-            cmd += f" {flag}"
-
-        planner = subprocess.Popen(
-            cmd,
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-
-        try:
-            planner.wait(timeout=timeout)
-        except subprocess.TimeoutExpired:
-            # print(f"Can't find a plan in {timeout} seconds")
-            planner.kill()
-            self.error_flag = ErrorFlag.TIMEOUT
-            return []
-        finally:
-            os.chdir(original_dir)
-
-        exception_flag = None
-        for exception_flag in planner.stderr:
-            print(f"Exception: {exception_flag}")
-            # break
-        if exception_flag:
-            planner.kill()
-            self.error_flag = ErrorFlag.ERROR
-            raise Exception(f"unknowned error for {domain} {problem}")
-
-
-        for line in planner.stdout:
-            decoded_line = line.decode().strip()
-
-
-        planner.kill()
-'''

@@ -1,83 +1,155 @@
 import re
 from typing import List, Dict
 
-from Z_Orgonized.UtilitiesForModel.Action import Action
+from Z_Orgonized.Utilities.config import Config
+from nyx.PDDL import PDDL_Parser
 
 
 class Parse_Model:
-    def __init__(self, domain_text: str):
-        self.domain_text = domain_text.strip()
-        self.header, self.actions = self.parse_domain()
+    def __init__(self):
+        parser = PDDL_Parser(Config.domain_path, Config.problem_path)
+        self.parsed_domain = parser.domain
 
-    def parse_domain(self):
-        lines = self.domain_text.splitlines()
-        header_lines = []
-        actions = {}
-        in_action = False
-        buffer = []
-        comment_buffer = []
-        paren_depth = 0
 
-        for line in lines:
-            stripped = line.strip()
-
-            if not in_action:
-                if stripped.startswith(";;"):
-                    comment_buffer = [stripped]
-                elif stripped.startswith("(:action"):
-                    in_action = True
-                    buffer = comment_buffer + [line]
-                    comment_buffer = []
-                    paren_depth = line.count("(") - line.count(")")
+    def rebuild_pddl_domain(self):
+        domain = self.parsed_domain
+        def format_predicates(preds):
+            lines = []
+            for name, args in preds.items():
+                if args:
+                    arg_str = ' '.join([f"{var} - {typ}" for var, typ in args.items()])
+                    lines.append(f"({name} {arg_str})")
                 else:
-                    header_lines.append(line)
-            else:
-                buffer.append(line)
-                paren_depth += line.count("(") - line.count(")")
-                if paren_depth == 0:
-                    action_text = "\n".join(buffer).strip()
-                    action = Action(action_text)
-                    actions[action.name] = action
-                    buffer = []
-                    in_action = False
+                    lines.append(f"({name})")
+            return '\n        '.join(lines)
 
-        # Clean header: remove trailing blank lines and lone closing parens
-        while header_lines and header_lines[-1].strip() == "":
-            header_lines.pop()
+        def format_functions(funcs):
+            lines = []
+            for name, args in funcs.items():
+                if args:
+                    args_str = ' '.join([f"{k} - {v}" for k, v in args.items()])
+                    lines.append(f"({name} {args_str})")
+                else:
+                    lines.append(f"({name})")
+            return '\n        '.join(lines)
 
-        if header_lines and header_lines[-1].strip() == ")":
-            header_lines.pop()
+        def format_expression(exp):
+            if isinstance(exp, list):
+                return f"({exp[0]} {' '.join(format_expression(e) for e in exp[1:])})"
+            return str(exp)
 
-        header = "\n".join(header_lines).strip()
-        return header, actions
+        def format_conditions(cond_list):
+            if not cond_list:
+                return "(and)"
+            return f"(and\n            " + '\n            '.join(format_expression(c) for c in cond_list) + ")"
 
-    def as_dict(self):
-        return {
-            "header": self.header,
-            "actions": {name: act.as_dict() for name, act in self.actions.items()}
-        }
+        def format_effects(effects):
+            if not effects:
+                return "(and)"
+            return f"(and\n            " + '\n            '.join(format_expression(e) for e in effects) + ")"
 
-    def reconstruct_model(self) -> str:
-        lines = []
+        def format_action(act):
+            param_str = ''
+            if act.parameters:
+                param_str = ' '.join([f"{p[0]} - {p[1]}" for p in act.parameters])
+            precond_str = format_conditions(act.preconditions)
+            effect_str = format_effects(act.effects)
+            return f"""
+    (:action {act.name}
+     :parameters ({param_str})
+     :precondition {precond_str}
+     :effect {effect_str}
+    )""".strip()
 
-        # Add header
-        lines.append(self.header)
+        domain_lines = []
 
-        # Add actions
-        for action in self.actions.values():
-            lines.append(action.to_text())
-            lines.append("")  # blank line between actions
-        lines.append(")")  # blank line between actions
-        return "\n".join(lines).strip()
+        # Header
+        domain_lines.append(f"(define (domain {domain.name})")
+        domain_lines.append("    (:requirements :typing :fluents)")
+
+        # Types
+        typed_lines = ["\n    (:types"]
+        for type_name, objects in domain.types.items():
+            typed_lines.append(f"        {' '.join(objects)} - {type_name}")
+        typed_lines.append("    )")
+        domain_lines.append('\n'.join(typed_lines))
+        # Predicates
+        domain_lines.append("\n    (:predicates")
+        domain_lines.append("        " + format_predicates(domain.predicates))
+        domain_lines.append("    )")
+
+        # Functions
+        domain_lines.append("    (:functions")
+        domain_lines.append("        " + format_functions(domain.functions))
+        domain_lines.append("    )")
+
+        # Actions
+        for act in domain.actions:
+            domain_lines.append("    " + format_action(act))
+
+        # Events and Processes
+        for evt in getattr(domain, 'events', []):
+            domain_lines.append("    " + format_action(evt))
+        for proc in getattr(domain, 'processes', []):
+            domain_lines.append("    " + format_action(proc))
+
+        domain_lines.append(")")
+
+        return '\n'.join(domain_lines)
 
 
     def update_action_effect(self, action_name: str, key: str, new_value):
-        if action_name not in self.actions:
+        theAct= None
+        for act in self.parsed_domain.actions:
+            if act.name == action_name:
+                theAct = act
+                break
+        else:
             raise ValueError(f"Action '{action_name}' not found.")
 
-        action = self.actions[action_name]
+        action = theAct
+        index_of_effect = None
+        for i, effect in enumerate(action.effects):
+            if str(key) == str(effect[1]):
+                index_of_effect = i
+                break
 
-        if key not in action.effects:
-            raise ValueError(f"Key '{key}' not found in the effect of action '{action_name}'.")
+        if index_of_effect is not None:
+            action.effects[index_of_effect] = new_value
+        else:
+            # Add new effect if key not found
+            action.effects.append(new_value)
+        for act in self.parsed_domain.actions:
+            print(f"name:{act.name} effects: {act.effects}")
 
-        self.actions[action_name].effects[key] = new_value
+        #for function in new_functions:
+        #action.parameters.append(function)
+
+
+    #get for example xl and return ?l
+    def get_parameters_name(self, function_key):
+        return list(self.parsed_domain.functions[function_key].keys())
+
+    def get_parameters_type(self, function_key):
+        return list(self.parsed_domain.functions[function_key].values())
+
+    #get ?l and return if in the paramters of the function
+    #this is brokennn
+    def check_if_exist(self, action_name, parameter_name):
+        theAct = None
+        for act in self.parsed_domain.actions:
+            if act.name == action_name:
+                theAct = act
+                break
+        types = [param[1] for param in theAct.parameters]
+        return all(elem in types for elem in parameter_name)
+
+
+    def get_parameters_of_action(self, actionName):
+        theAct = None
+        for act in self.parsed_domain.actions:
+            if act.name == actionName:
+                theAct = act
+                break
+        names = [param[0] for param in theAct.parameters]
+        return names

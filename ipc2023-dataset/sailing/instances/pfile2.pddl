@@ -1,34 +1,25 @@
-;; Enrico Scala (enricos83@gmail.com) and Miquel Ramirez (miquel.ramirez@gmail.com)
-;;Setting seed to 1229
-(define (problem instance_2_2_1229)
+;; Automatically generated sailing problem
+;;Setting seed to 2
+(define (problem instance_2)
 
 	(:domain sailing)
 
 	(:objects
-		b0 b1  - boat
-		p0 p1  - person
+		b0  - boat
+		p0  - person
 	)
 
-  (:init
-		(= (x b0) 7)
-(= (y b0) 0)
-(= (x b1) -7)
-(= (y b1) 0)
+	(:init
+		(= (x b0) -2.0)
+		(= (y b0) -5.0)
 
-
-		(= (d p0) -370)
-(= (d p1) -58)
-
+		(= (d p0) -75.0)
 
 	)
 
 	(:goal
 		(and
 			(saved p0)
-(saved p1)
-
 		)
 	)
 )
-
-

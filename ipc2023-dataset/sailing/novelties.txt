@@ -1,0 +1,5 @@
+1.
+    a. go_south_west is now go_north_east
+    b. go_north_east is now go south_west
+
+2.

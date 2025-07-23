@@ -7,13 +7,14 @@ from Z_Orgonized.baseAgent.Planner import suppress_stdout
 
 class Environment:
     def __init__(self, domain_name, agent):
+        self.domain_name = domain_name
         self.score = 0
         self.environmentModel = Environment_Model(domain_name)
         self.env = None
         self.agent = agent
 
-    def injectNovelty(self):
-        self.environmentModel.injectNovelty()
+    def injectNovelty(self,novelty_id):
+        self.environmentModel.injectNovelty(novelty_id)
 
     def returnToNoNovelty(self):
         self.environmentModel.returnToNoNovelty()
@@ -27,6 +28,7 @@ class Environment:
 
     def simulate_run(self):
         #add replan currently no replan
+
         observation, _ = self.env.reset()
         # first 1 is init
         while True:
@@ -35,13 +37,16 @@ class Environment:
                 action = self.agent.act()
                 with suppress_stdout():
                     new_observation, reward, terminated, truncated, _ = self.env.planning_step(action)
-                self.agent.receive_transition(observation, action, new_observation)
+                if reward != -1:
+                    self.agent.receive_transition(observation, action, new_observation)
+                #if self.agent.DiagnoseAndRepair.planFailed:
+                #    return False
                 if reward == 1:
                     self.score += 1
                     return True
                 observation = new_observation
-                if self.agent.DiagnoseAndRepair.inequality:
-                    return False
+                #if self.agent.DiagnoseAndRepair.inequality:
+                #    return False
 
             return False
 

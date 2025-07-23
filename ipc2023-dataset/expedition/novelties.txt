@@ -1,0 +1,9 @@
+1.
+    a. move_forward cost 2 -easy
+
+
+2.
+    move_forward cost 1 + 0.1 * capacity - medium
+
+3.
+    a. move_forward

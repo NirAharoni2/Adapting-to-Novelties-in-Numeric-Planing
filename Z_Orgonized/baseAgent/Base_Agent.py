@@ -1,27 +1,26 @@
 from Z_Orgonized.DiagnoseAndRepair.DiaganoiseAndRepair import DiagnoseAndRepair
-from Z_Orgonized.baseAgent.Model import Model
+from Z_Orgonized.Utilities.config import Config
 from Z_Orgonized.baseAgent.Plan import Plan
 from Z_Orgonized.baseAgent.Planner import Planner
 
 
 class Agent:
-    def __init__(self, domain_name):
-        self.model = Model(domain_name)
+    def __init__(self,repair_id):
         self.plan = Plan()
         self.planner = Planner(self.plan)
-        self.DiagnoseAndRepair = DiagnoseAndRepair(domain_name)
-        self.domain_name = domain_name
+        self.DiagnoseAndRepair = DiagnoseAndRepair(repair_id=repair_id)
 
 
     def act(self):
         return self.plan.return_next_action()
 
-    def create_new_plan(self, instance_number):
-        self.DiagnoseAndRepair.inequality = False
-        domain_path = self.model.get_model_path()
-        problem_path = self.model.get_instance_path(instance_number)
-        self.planner.create_plan(domain_path, problem_path)
-        self.DiagnoseAndRepair.createTrace(self.domain_name, instance_number)
+    def create_new_plan(self):
+        self.DiagnoseAndRepair.planFailed = False
+        created_plan = self.planner.create_plan()
+        if not created_plan:
+            return False
+        self.DiagnoseAndRepair.initiliazeSimulator()
+        return True
 
     def receive_transition(self, LastObservation, action, newObservation):
         self.DiagnoseAndRepair.receive_transition(LastObservation, action, newObservation)

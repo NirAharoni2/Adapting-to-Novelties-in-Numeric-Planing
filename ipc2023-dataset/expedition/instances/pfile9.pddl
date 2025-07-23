@@ -1,42 +1,33 @@
-;; Ben Pathak (pathak.ban@gmail.com)
-(define (problem instance_2_sled_9)
+(define (problem instance_9)
+  (:domain expedition)
 
-	(:domain expedition)
-
-	(:objects
-		s0 s1 - sled
-		wa0 wa1 wa2 wa3 wa4 wa5 wa6 - waypoint
-	)
+  (:objects
+    s0 s1 - sled
+    w0_0 w0_1 w0_2 w0_3 w0_4 - waypoint
+  )
 
   (:init
-		(at s0 wa0)
-		(= (sled_capacity s0) 4)
-		(= (sled_supplies s0) 0)
-		(= (waypoint_supplies wa0) 1000)
-		(= (waypoint_supplies wa1) 0)
-		(= (waypoint_supplies wa2) 0)
-		(= (waypoint_supplies wa3) 1000)
-		(= (waypoint_supplies wa4) 0)
-		(= (waypoint_supplies wa5) 0)
-		(= (waypoint_supplies wa6) 0)
-		(is_next wa0 wa1)
-		(is_next wa1 wa2)
-		(is_next wa2 wa3)
-		(is_next wa3 wa4)
-		(is_next wa4 wa5)
-		(is_next wa5 wa6)
+    (at s0 w0_0)
+    (= (sled_capacity s0) 9)
+    (= (sled_supplies s0) 2)
+    (at s1 w0_0)
+    (= (sled_capacity s1) 6)
+    (= (sled_supplies s1) 4)
+    (= (waypoint_supplies w0_0) 1000)
+    (= (waypoint_supplies w0_1) 0)
+    (= (waypoint_supplies w0_2) 0)
+    (= (waypoint_supplies w0_3) 0)
+    (= (waypoint_supplies w0_4) 0)
+    (is_next w0_0 w0_1)
+    (is_next w0_1 w0_2)
+    (is_next w0_2 w0_3)
+    (is_next w0_3 w0_4)
+  )
 
-		(at s1 wa0)
-		(= (sled_capacity s1) 3)
-		(= (sled_supplies s1) 0)
-	)
-
-	(:goal
-		(and
-			(at s0 wa6)
-			(at s1 wa6)
-		)
-	)
+  (:goal
+    (and
+      (at s0 w0_4)
+      (at s1 w0_4)
+    )
+  )
 )
-
-

@@ -35,7 +35,11 @@ Felix/
 │
 ├── nyx/                                  # NYX planner for PDDL planning
 ├── PDDL2Gym/                             # Gym-like simulator for PDDL environments
-├── plots/                                # Generated evaluation plots (cactus & moving graphs)
+├── plots/                                # Generated evaluation plots
+│   ├── cactus_plots/                     # Cactus plots per domain/novelty, Includes the Plotter 
+│   ├── csv_in_plot/                      # CSVs used during plotting, Includes the Plotter 
+│   ├── legend/                           # Legend info for plots, Includes the Plotter 
+│   └── moving_graph_plots/              # Moving average performance graphs, Includes the Plotter 
 ├── results_csv/                          # Output CSVs from evaluation runs
 ├── solution/                             # Our main folder. Contains core logic for planning, repair, simulation, and evaluation
 │   ├── baseAgent/                        # Agent logic and planning interface
@@ -93,13 +97,13 @@ $ pip install -r requirements.txt
 
 ```bash
 # Run all novelties for a domain
-$ python solution/main.py minecraft all
+$ python -m solution/main.py minecraft all
 
 # Run a specific novelty
-$ python solution/main.py minecraft 3
+$ python -m solution/main.py minecraft 3
 
 # Run novelties starting from a given index
-$ python solution/main.py minecraft from 5
+$ python -m solution/main.py minecraft from 5
 ```
 
 Output results will be stored in:

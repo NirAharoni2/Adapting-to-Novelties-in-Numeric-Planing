@@ -68,7 +68,7 @@ def plot_from_dict(data_dict, plot_title, filename, novelty_intro_idx=None):
     plt.tight_layout()
 
     # Save the figure
-    save_dir = "../../plots/csv_in_plot"
+    save_dir = "plots/csv_in_plot"
     os.makedirs(save_dir, exist_ok=True)
     save_path = os.path.join(save_dir, filename + ".png")
     plt.savefig(save_path)

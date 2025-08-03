@@ -245,20 +245,19 @@ class Repair:
             for data in list_data:
                 x_keys = sorted({k for _, x in data for k in x.keys()})
                 X = np.array([[x.get(k, 0.0) for k in x_keys] for _, x in data])
-                model = LinearRegression().fit(X, y_vector)
+                model = LinearRegression()
+                model.fit(X, Y[y_key])
                 score = r2_score(y_vector, model.predict(X))
 
                 if score > best_score:
-                    best_result = {
-                        k: round(v, decimals)
-                        for k, v in zip(x_keys, model.coef_)
-                        if v != 0
-                    }
-                    best_result['__intercept__'] = round(model.intercept_, decimals)
-                    best_score = score
+                    coefs = dict(zip(x_keys, model.coef_))
+                    coefs['__intercept__'] = model.intercept_
 
-            rounded = {k: round(v, decimals) for k, v in coefs.items()}
-            filtered_state = {k: v for k, v in rounded.items() if v != 0 and v != 0.0}
+                    rounded = {k: round(v, decimals) for k, v in coefs.items()}
+                    filtered_state = {k: v for k, v in rounded.items() if v != 0 and v != 0.0}
+                    best_score = score
+                    best_result = filtered_state
+
             results[y_key] = best_result
 
         return results

@@ -121,7 +121,7 @@ def main(novelty_id=None, domain_name=None):
         novelty_id (int): The novelty scenario number.
         domain_name (str): The name of the domain to run.
     """
-    print(f"▶ Running: domain={domain_name}, novelty_id={novelty_id}")
+    print(f"Running: domain={domain_name}, novelty_id={novelty_id}")
 
     start = 1
     end = 51
@@ -157,8 +157,8 @@ def main(novelty_id=None, domain_name=None):
         "repair4": (score_with_repair4, learned_model_r4),
     }
 
-    os.makedirs("../results_csv", exist_ok=True)
-    file_path = os.path.join("../results_csv", f"{domain_name}_{novelty_id}_data.csv")
+    os.makedirs("results_csv", exist_ok=True)
+    file_path = os.path.join("results_csv", f"{domain_name}_{novelty_id}_data.csv")
 
     with open(file_path, mode="w", newline="") as csvfile:
         writer = csv.writer(csvfile)

@@ -152,7 +152,7 @@ def plot_from_dict(data_dict, plot_title, filename, novelty_intro_idx=None):
     # plt.legend(fontsize=20)
 
     # Save plot
-    save_dir = r"\Felix\plots\summarized_results"
+    save_dir = r"\Felix\plots\moving_graph_plots"
     os.makedirs(save_dir, exist_ok=True)
     save_path = os.path.join(save_dir, filename + ".png")
     plt.savefig(save_path, bbox_inches='tight')

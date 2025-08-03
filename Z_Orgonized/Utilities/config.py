@@ -30,6 +30,10 @@ class Config:
     domain_name = ""
 
     @classmethod
+    def update_time(cls):
+        cls.time = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    @classmethod
     def update_domain(cls, domain_name):
         cls.domain_name = domain_name
         cls.domain_path = fr"{cls.DOMAINS_PATH}\{domain_name}\domain_{cls.time}.pddl"

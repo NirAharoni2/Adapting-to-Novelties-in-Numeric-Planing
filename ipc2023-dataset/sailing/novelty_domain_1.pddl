@@ -17,7 +17,7 @@
      :parameters (?b - boat ?t - person)
      :precondition (and)
      :effect (and
-            (assign (x ?b) (+ (* 1.0 (x ?b)) 2.0))
+            (assign (x ?b) (+ (* 1.0 (x ?b)) -2.0))
             (assign (y ?b) (+ (* 1.0 (y ?b)) -2.0)))
     )
     (:action go_north_west
@@ -39,19 +39,19 @@
      :effect (and
             (decrease (x ?b) 3))
     )
+    (:action go_south_east
+     :parameters (?b - boat ?t - person)
+     :precondition (and)
+     :effect (and
+            (increase (x ?b) 2)
+            (decrease (y ?b) 2))
+    )
     (:action go_south_west
      :parameters (?b - boat ?t - person)
      :precondition (and)
      :effect (and
             (assign (x ?b) (+ (* 1.0 (x ?b)) 1.5))
             (assign (y ?b) (+ (* 1.0 (y ?b)) 1.5)))
-    )
-    (:action go_south_east
-     :parameters (?b - boat ?t - person)
-     :precondition (and)
-     :effect (and
-            (decrease (x ?b) 2)
-            (decrease (y ?b) 2))
     )
     (:action go_south
      :parameters (?b - boat ?t - person)

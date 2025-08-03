@@ -31,7 +31,7 @@
             (<= (x ) (- (max_x ) 1)))
      :effect (and
             (increase (x ) 1)
-            (assign (battery-level ) (+ (* 1.0 (battery-level )) (+ (* -0.1 (battery-level-full )) -1.0))))
+            (decrease (battery-level ) 1))
     )
     (:action decrease_x
      :parameters ()
@@ -40,7 +40,8 @@
             (>= (x ) (+ (min_x ) 0)))
      :effect (and
             (decrease (x ) 1)
-            (decrease (battery-level ) 1))
+            (decrease (battery-level ) 1)
+            (assign (y ) (+ (* 1.0 (y )) -1.0)))
     )
     (:action increase_y
      :parameters ()
@@ -49,7 +50,7 @@
             (<= (y ) (- (max_y ) 1)))
      :effect (and
             (increase (y ) 1)
-            (assign (battery-level ) (+ (* 1.0 (battery-level )) (+ (* -0.1 (battery-level-full )) -1.0))))
+            (decrease (battery-level ) 1))
     )
     (:action decrease_y
      :parameters ()
@@ -67,7 +68,7 @@
             (<= (z ) (- (max_z ) 1)))
      :effect (and
             (increase (z ) 1)
-            (assign (battery-level ) (+ (* 1.0 (battery-level )) (+ (* -0.1 (battery-level-full )) -1.0))))
+            (decrease (battery-level ) 1))
     )
     (:action decrease_z
      :parameters ()
@@ -76,7 +77,8 @@
             (>= (z ) (+ (min_z ) 0)))
      :effect (and
             (decrease (z ) 1)
-            (decrease (battery-level ) 1))
+            (decrease (battery-level ) 1)
+            (assign (x ) (+ (* 1.0 (x )) -1.0)))
     )
     (:action visit
      :parameters (?l - location)

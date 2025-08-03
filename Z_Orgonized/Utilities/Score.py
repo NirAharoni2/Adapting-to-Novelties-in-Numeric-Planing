@@ -1,45 +1,60 @@
 import matplotlib.pyplot as plt
 import os
+import itertools
 
 
 def plot_from_dict(data_dict, plot_title, filename, novelty_intro_idx=None):
     plt.figure(figsize=(10, 6))
 
-    # Various line styles to show different "striped" effects
-    line_styles = ['--', '-.']
+    # Distinct dash patterns — different lengths and spacing
+    dash_styles = [
+        (0, (3, 5)),
+        (1, (5, 2)),
+        (2, (2, 6)),
+        (0, (1, 3)),
+        (3, (4, 4, 1, 4)),
+        (1, (3, 2, 1, 2)),
+        (2, (5, 1, 2, 1)),
+        (0, (1, 1)),
+        (3, (2, 4)),
+    ]
+
+    markers = ['o', 's', '^', 'D', '*', 'x', 'P', 'v', '<', '>']
+    colors = ['b', 'g', 'r', 'c', 'y', 'm', 'k', '#ff7f0e', '#2ca02c', '#9467bd']
+
+    # Create unique combinations: (dash, marker, color)
 
     for i, (legend, (values, novelty_learned_idx)) in enumerate(data_dict.items()):
-        x_vals = range(0, len(values))
-        style = line_styles[i % len(line_styles)]
-
-        # Plot the line and get the line object to retrieve its color
-        line, = plt.plot(
+        x_vals = list(range(len(values)))
+        linestyle = dash_styles[i % len(dash_styles)]  # cycle dash pattern
+        marker = markers[i % len(markers)]  # cycle marker
+        color = colors[i % len(colors)]
+        plt.plot(
             x_vals,
             values,
             label=legend,
-            linestyle=style,
+            linestyle=linestyle,
             linewidth=2.5,
-            marker='o'
+            marker=marker,
+            color=color
         )
 
-        line_color = line.get_color()  # Get the color of the plotted line
-
-        # Draw novelty learned line in the same color
+        # Vertical novelty learned marker with matching dash style
         if novelty_learned_idx != -1:
             plt.axvline(
                 x=novelty_learned_idx,
-                linestyle=style,
-                color=line_color,
+                linestyle=linestyle,
+                color=color,
                 alpha=0.7,
                 linewidth=2,
                 label=f'novelty learned ({legend})'
             )
 
-    # Global novelty introduced line (keep it red)
+    # Global novelty introduced line (standard red dashed)
     if novelty_intro_idx is not None:
         plt.axvline(
             x=novelty_intro_idx,
-            color='red',
+            color='black',
             linestyle='--',
             linewidth=2,
             label='novelty introduced'
@@ -54,8 +69,8 @@ def plot_from_dict(data_dict, plot_title, filename, novelty_intro_idx=None):
 
     # Save the figure
     save_dir = r"C:\newProject\results"
-    os.makedirs(save_dir, exist_ok=True)  # Ensure directory exists
+    os.makedirs(save_dir, exist_ok=True)
     save_path = os.path.join(save_dir, filename + ".png")
     plt.savefig(save_path)
 
-    plt.show()
+    #plt.show()

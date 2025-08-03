@@ -1,0 +1,27 @@
+1.
+    a. get_log gives 0.5 logs and decrease 0.5  from trees
+
+2.
+    a. get_log gives (1 - 0.1*current_logs_in_inventory)
+
+3.
+    a. get logs gives (0.05 * current_logs_in_inventory + 0.2) logs and decrease the same from trees
+
+4.
+    a. get logs gives (0.05 * current_trees_in_map) logs and decrease the same from trees
+
+5.
+    a. get logs gives (0.2 + 0.05 * current_trees_in_map - 0.1*current_logs_in_inventory ) logs and decrease the same from trees
+
+6.
+    a. Get logs gives (0.2 + 0.08 * trees_in_map - 0.5 * logs_in_inventory) logs.
+
+7.
+    a. Get logs gives (0.05 * mine_factor * mine_factor) logs and decreases the same amount from the trees.
+
+8.
+    a. Get logs gives (0.01 * trees_in_map * mine_factor) logs and decreases the same amount from the trees.
+
+
+9.
+    a. Get logs gives (0.01 * mine_factor * mine_factor + 0.01 * trees_in_map * mine_factor) logs and decreases the same amount from the trees

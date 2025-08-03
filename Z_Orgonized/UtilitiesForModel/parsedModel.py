@@ -119,8 +119,8 @@ class Parse_Model:
         else:
             # Add new effect if key not found
             action.effects.append(new_value)
-        for act in self.parsed_domain.actions:
-            print(f"name:{act.name} effects: {act.effects}")
+        #for act in self.parsed_domain.actions:
+            #print(f"name:{act.name} effects: {act.effects}")
 
         #for function in new_functions:
         #action.parameters.append(function)
@@ -153,3 +153,20 @@ class Parse_Model:
                 break
         names = [param[0] for param in theAct.parameters]
         return names
+
+    def add_function(self, func_tuple, func_params, action_name):
+        func_name = func_tuple
+        if func_name not in self.parsed_domain.functions:
+            theAct= None
+            for act in self.parsed_domain.actions:
+                if act.name == action_name:
+                    theAct = act
+                    break
+            else:
+                raise ValueError(f"Action '{action_name}' not found.")
+
+            action = theAct
+            parametersList = action.parameters
+
+            self.parsed_domain.functions[func_name] = {k: v for k, v in func_params if k in parametersList}
+

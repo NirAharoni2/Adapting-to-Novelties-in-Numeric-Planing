@@ -6,7 +6,7 @@
 
     (:init
         ; Map
-        (= (trees_in_map) 20)
+        (= (trees_in_map) 18)
 
         ; Items
         (= (count_log_in_inventory) 0)

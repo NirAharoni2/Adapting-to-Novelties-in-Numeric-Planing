@@ -13,16 +13,24 @@ class DiagnoseAndRepair:
 
 
     def receive_transition(self, LastObservation, action, newObservation):
+        action = action.strip("()").split()
         self.monitor.initialize(action)
         data = self.monitor.check_inequality(LastObservation, newObservation)
         if data["inequality"]:
-            print(action)
+            #print(action)
+
             if self.repair_id == 1:
                 self.repair.repair_action1(LastObservation, action, newObservation, data["different_keys"])
             if self.repair_id == 3:
                 self.repair.repair_action3(LastObservation, action, newObservation, data["different_keys"])
             if self.repair_id == 4:
                 self.repair.repair_action4(LastObservation, action, newObservation, data["different_keys"])
+            if self.repair_id == 5:
+                self.repair.repair_action5(LastObservation, action, newObservation, data["different_keys"])
+            if self.repair_id == 6:
+                self.repair.repair_action6(LastObservation, action, newObservation, data["different_keys"])
+            if self.repair_id == 7:
+                self.repair.repair_action7(LastObservation, action, newObservation, data["different_keys"])
         if data["planFailed"]:
             self.planFailed = True
 

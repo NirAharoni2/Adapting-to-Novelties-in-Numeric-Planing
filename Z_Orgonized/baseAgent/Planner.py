@@ -39,7 +39,7 @@ class Planner:
             if Config.domain_name == "drone":
                 nyx.runner(domain_path, problem_path, ["-timeout:60", "search:gbfs", "custom_heuristic:3"])
             if Config.domain_name == "expedition":
-                nyx.runner(domain_path, problem_path, ["-timeout:300", "search:gbfs", "custom_heuristic:1"])
+                nyx.runner(domain_path, problem_path, ["-timeout:60", "search:gbfs", "custom_heuristic:1"])
             if Config.domain_name == "sailing":
                 nyx.runner(domain_path, problem_path, ["-timeout:60", "search:gbfs", "custom_heuristic:2"])
             if Config.domain_name == "minecraft":

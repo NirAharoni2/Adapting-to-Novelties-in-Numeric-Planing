@@ -2,17 +2,14 @@
   (:domain expedition)
 
   (:objects
-    s0 s1 - sled
+    s0 - sled
     w0_0 w0_1 w0_2 w0_3 w0_4 - waypoint
   )
 
   (:init
     (at s0 w0_0)
     (= (sled_capacity s0) 7)
-    (= (sled_supplies s0) 2)
-    (at s1 w0_0)
-    (= (sled_capacity s1) 7)
-    (= (sled_supplies s1) 3)
+    (= (sled_supplies s0) 7)
     (= (waypoint_supplies w0_0) 1000)
     (= (waypoint_supplies w0_1) 0)
     (= (waypoint_supplies w0_2) 0)
@@ -27,7 +24,6 @@
   (:goal
     (and
       (at s0 w0_4)
-      (at s1 w0_4)
     )
   )
 )

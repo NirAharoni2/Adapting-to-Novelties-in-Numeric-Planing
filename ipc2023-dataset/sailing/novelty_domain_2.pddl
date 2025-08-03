@@ -43,7 +43,7 @@
             (decrease (x ?b) 3)
             (assign (d ?t) (+ (* 1.0 (d ?t)) -0.5)))
     )
-    (:action go_south_west
+    (:action go_south_east
      :parameters (?b - boat ?t - person)
      :precondition (and)
      :effect (and
@@ -51,7 +51,7 @@
             (decrease (y ?b) 2)
             (assign (d ?t) (+ (* 1.0 (d ?t)) -0.5)))
     )
-    (:action go_south_east
+    (:action go_south_west
      :parameters (?b - boat ?t - person)
      :precondition (and)
      :effect (and

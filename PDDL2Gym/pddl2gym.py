@@ -124,7 +124,8 @@ class PDDL2GYM(gym.Env):
 
         # Add fluents
         for fluent in self.fluent_names:
-            fluents_dict[fluent] = state.state_fluents[fluent].value
+            clean_fluent = tuple(fluent.strip("()").split())
+            fluents_dict[clean_fluent] = state.state_fluents[fluent].value
 
         # Add active predicates
         for grounded_predicates in state.state_predicates.values():

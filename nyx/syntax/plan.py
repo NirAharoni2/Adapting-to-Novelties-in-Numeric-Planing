@@ -98,7 +98,7 @@ class Plan(list):
 
 
         time = float("0.000")
-        action = action_lookup[action_name[1:-1].strip()]
+        action = action_lookup[' '.join(action_name)]
         plan.append_action(action, time, expand_time_passing=expand_time_passing)
 
         return plan

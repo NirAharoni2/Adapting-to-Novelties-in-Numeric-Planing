@@ -1,52 +1,47 @@
-;;Instance with 2x0x1 points
+;;Instance with 0x0x4 points
 (define (problem grid_instance_12)
     (:domain domain_name)
     (:objects
         x0y0z0 - location
         x0y0z1 - location
-        x1y0z0 - location
-        x1y0z1 - location
-        x2y0z0 - location
-        x2y0z1 - location
+        x0y0z2 - location
+        x0y0z3 - location
+        x0y0z4 - location
     )
     (:init
         (= (x) 0)
         (= (y) 0)
         (= (z) 0)
         (= (min_x) 0)
-        (= (max_x) 2)
+        (= (max_x) 0)
         (= (min_y) 0)
         (= (max_y) 0)
         (= (min_z) 0)
-        (= (max_z) 1)
+        (= (max_z) 4)
         (= (xl x0y0z0) 0)
         (= (yl x0y0z0) 0)
         (= (zl x0y0z0) 0)
         (= (xl x0y0z1) 0)
         (= (yl x0y0z1) 0)
         (= (zl x0y0z1) 1)
-        (= (xl x1y0z0) 1)
-        (= (yl x1y0z0) 0)
-        (= (zl x1y0z0) 0)
-        (= (xl x1y0z1) 1)
-        (= (yl x1y0z1) 0)
-        (= (zl x1y0z1) 1)
-        (= (xl x2y0z0) 2)
-        (= (yl x2y0z0) 0)
-        (= (zl x2y0z0) 0)
-        (= (xl x2y0z1) 2)
-        (= (yl x2y0z1) 0)
-        (= (zl x2y0z1) 1)
-        (= (battery-level) 10)
-        (= (battery-level-full) 12)
+        (= (xl x0y0z2) 0)
+        (= (yl x0y0z2) 0)
+        (= (zl x0y0z2) 2)
+        (= (xl x0y0z3) 0)
+        (= (yl x0y0z3) 0)
+        (= (zl x0y0z3) 3)
+        (= (xl x0y0z4) 0)
+        (= (yl x0y0z4) 0)
+        (= (zl x0y0z4) 4)
+        (= (battery-level) 9)
+        (= (battery-level-full) 13)
     )
     (:goal (and
         (visited x0y0z0)
         (visited x0y0z1)
-        (visited x1y0z0)
-        (visited x1y0z1)
-        (visited x2y0z0)
-        (visited x2y0z1)
+        (visited x0y0z2)
+        (visited x0y0z3)
+        (visited x0y0z4)
         (= (x) 0)
         (= (y) 0)
         (= (z) 0)

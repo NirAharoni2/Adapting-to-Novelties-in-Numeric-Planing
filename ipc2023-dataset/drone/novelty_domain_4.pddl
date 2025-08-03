@@ -31,7 +31,7 @@
             (<= (x ) (- (max_x ) 1)))
      :effect (and
             (increase (x ) 1)
-            (decrease (battery-level ) 1))
+            (assign (battery-level ) (+ (* 1.0 (battery-level )) (+ (* 0.1 (battery-level-full )) -3.0))))
     )
     (:action decrease_x
      :parameters ()
@@ -39,9 +39,8 @@
             (>= (battery-level ) 1)
             (>= (x ) (+ (min_x ) 0)))
      :effect (and
-            (assign (x ) (* 1.0 (x )))
-            (decrease (battery-level ) 1)
-            (assign (y ) (+ (* 1.0 (y )) -1.0)))
+            (decrease (x ) 1)
+            (decrease (battery-level ) 1))
     )
     (:action increase_y
      :parameters ()
@@ -50,7 +49,7 @@
             (<= (y ) (- (max_y ) 1)))
      :effect (and
             (increase (y ) 1)
-            (decrease (battery-level ) 1))
+            (assign (battery-level ) (+ (* 1.0 (battery-level )) (+ (* 0.1 (battery-level-full )) -3.0))))
     )
     (:action decrease_y
      :parameters ()
@@ -58,9 +57,8 @@
             (>= (battery-level ) 1)
             (>= (y ) (+ (min_y ) 0)))
      :effect (and
-            (assign (y ) (* 1.0 (y )))
-            (decrease (battery-level ) 1)
-            (assign (z ) (+ (* 1.0 (z )) -1.0)))
+            (decrease (y ) 1)
+            (decrease (battery-level ) 1))
     )
     (:action increase_z
      :parameters ()
@@ -69,7 +67,7 @@
             (<= (z ) (- (max_z ) 1)))
      :effect (and
             (increase (z ) 1)
-            (decrease (battery-level ) 1))
+            (assign (battery-level ) (+ (* 1.0 (battery-level )) (+ (* 0.1 (battery-level-full )) -3.0))))
     )
     (:action decrease_z
      :parameters ()
@@ -77,9 +75,8 @@
             (>= (battery-level ) 1)
             (>= (z ) (+ (min_z ) 0)))
      :effect (and
-            (assign (z ) (* 1.0 (z )))
-            (decrease (battery-level ) 1)
-            (assign (x ) (+ (* 1.0 (x )) -1.0)))
+            (decrease (z ) 1)
+            (decrease (battery-level ) 1))
     )
     (:action visit
      :parameters (?l - location)

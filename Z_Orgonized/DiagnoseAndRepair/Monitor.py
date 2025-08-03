@@ -29,7 +29,7 @@ def process_state(state):
 
     # Process fluents
     for k, v in state['fluents'].items():
-        combined[normalize_key(k)] = v
+        combined[str(list(k))] = v
 
     # Process predicates with bool conversion
     for k, v in state['predicates'].items():
@@ -63,7 +63,7 @@ class Monitor:
         different_keys = []
         # Compare fluents
         for key, val in dict1.get('fluents', {}).items():
-            norm_key = normalize_key(key)
+            norm_key = str(list(key))
 
             if norm_key in dict2 and not np.isclose(dict2[norm_key], val):
                 different_keys.append(key)

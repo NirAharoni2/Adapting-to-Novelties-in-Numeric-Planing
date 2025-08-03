@@ -39,7 +39,7 @@
             (>= (battery-level ) 1)
             (>= (x ) (+ (min_x ) 0)))
      :effect (and
-            (decrease (x ) 1)
+            (assign (x ) (* 1.0 (x )))
             (decrease (battery-level ) 1)
             (assign (y ) (+ (* 1.0 (y )) -1.0)))
     )
@@ -58,8 +58,9 @@
             (>= (battery-level ) 1)
             (>= (y ) (+ (min_y ) 0)))
      :effect (and
-            (decrease (y ) 1)
-            (decrease (battery-level ) 1))
+            (assign (y ) (* 1.0 (y )))
+            (decrease (battery-level ) 1)
+            (assign (z ) (+ (* 1.0 (z )) -1.0)))
     )
     (:action increase_z
      :parameters ()
@@ -76,7 +77,7 @@
             (>= (battery-level ) 1)
             (>= (z ) (+ (min_z ) 0)))
      :effect (and
-            (decrease (z ) 1)
+            (assign (z ) (* 1.0 (z )))
             (decrease (battery-level ) 1)
             (assign (x ) (+ (* 1.0 (x )) -1.0)))
     )

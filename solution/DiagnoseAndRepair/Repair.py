@@ -224,8 +224,9 @@ class Repair:
             model.fit(X, Y[y_key])
             coefs = dict(zip(x_keys, model.coef_))
             coefs['__intercept__'] = model.intercept_
-            rounded = {k: round(v, decimals) for k, v in coefs.items() if v != 0}
-            results[y_key] = rounded
+            rounded = {k: round(v, decimals) for k, v in coefs.items()}
+            filtered_state = {k: v for k, v in rounded.items() if v != 0 and v != 0.0}
+            results[y_key] = filtered_state
 
         return results
 
@@ -256,6 +257,8 @@ class Repair:
                     best_result['__intercept__'] = round(model.intercept_, decimals)
                     best_score = score
 
+            rounded = {k: round(v, decimals) for k, v in coefs.items()}
+            filtered_state = {k: v for k, v in rounded.items() if v != 0 and v != 0.0}
             results[y_key] = best_result
 
         return results

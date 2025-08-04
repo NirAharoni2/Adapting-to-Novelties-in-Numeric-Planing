@@ -26,7 +26,7 @@ def reset_only_domains(domain_name):
     PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
     # Build the domain path relative to the project root
-    domain_path = PROJECT_ROOT / "ipc2023-dataset" / domain_name / "domain_world.pddl"
+    domain_path = PROJECT_ROOT / "dataset" / domain_name / "domain_world.pddl"
     shutil.copyfile(domain_path, Config.get_domain())
     print(f"Reset: {Config.get_domain()} ← {domain_path}")
 
@@ -42,7 +42,7 @@ def reset(domain_name):
     PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
     # New relative path
-    plans_folder = PROJECT_ROOT / "ipc2023-dataset" / domain_name / "instances" / "plans"
+    plans_folder = PROJECT_ROOT / "dataset" / domain_name / "instances" / "plans"
     if os.path.exists(plans_folder):
         for filename in os.listdir(plans_folder):
             file_path = os.path.join(plans_folder, filename)
@@ -61,7 +61,7 @@ def run_problems(domain_name, start_id, end_id, repair_methode_id, score_list, n
         domain_name (str): The domain to run (e.g., 'drone').
         start_id (int): Start problem ID.
         end_id (int): End problem ID.
-        repair_methode_id (int): ID of the repair strategy (-8=base/oracle, -1=no repair, 1+=various repairs).
+        repair_methode_id (int): ID of the repair strategy (-2=base/oracle, -1=no repair, 1+=various repairs).
         score_list (list): The list where success scores will be appended.
         novelty_id (int): Novelty scenario being tested.
         inject_novelty_at (int): Problem index to inject novelty.
@@ -72,7 +72,7 @@ def run_problems(domain_name, start_id, end_id, repair_methode_id, score_list, n
     print(f"Repair method: {repair_methode_id}")
     learned_model_id = -1
 
-    if repair_methode_id == -8:
+    if repair_methode_id == -2:
         Config.update_domain_to_be_env_domain(domain_name, novelty_id)
     else:
         Config.update_domain(domain_name)
@@ -96,7 +96,7 @@ def run_problems(domain_name, start_id, end_id, repair_methode_id, score_list, n
 
         if not agent.create_new_plan():
             print("Couldn't generate initial plan.")
-            if repair_methode_id == -8 or novelty_id == -1:
+            if repair_methode_id == -2 or novelty_id == -1:
                 score_list.append(env.score)
                 continue
             else:
@@ -105,7 +105,7 @@ def run_problems(domain_name, start_id, end_id, repair_methode_id, score_list, n
                     score_list.append(env.score)
                     continue
 
-        if repair_methode_id == -1:
+        if repair_methode_id == -1 or repair_methode_id == -2:
             succeeded = env.simulate_run_without_repair()
         else:
             succeeded = env.simulate_run()
@@ -147,7 +147,7 @@ def main(novelty_id=None, domain_name=None):
     score_with_repair4 = []
 
     # Run evaluations
-    learned_model_base = run_problems(domain_name, start, end, -8, score_base, novelty_id, inject_novelty_at)
+    learned_model_base = run_problems(domain_name, start, end, -2, score_base, novelty_id, inject_novelty_at)
     learned_model_no_repair = run_problems(domain_name, start, end, -1, score_without_repair, novelty_id, inject_novelty_at)
     learned_model_r1 = run_problems(domain_name, start, end, 1, score_with_repair1, novelty_id, inject_novelty_at)
     learned_model_r2 = run_problems(domain_name, start, end, 2, score_with_repair2, novelty_id, inject_novelty_at)
@@ -172,7 +172,7 @@ def main(novelty_id=None, domain_name=None):
         writer.writerow(["Label", "Score", "Learned Model ID"])
         for label, (score, model_id) in legendToList.items():
             writer.writerow([label, score, model_id])
-
+    print(f"A CSV representing the results is saved in {file_path}")
     plot_from_dict(legendToList, f"{domain_name}_novelty_{novelty_id}", f"{domain_name}_novelty_{novelty_id}", novelty_intro_idx=0)
 
 

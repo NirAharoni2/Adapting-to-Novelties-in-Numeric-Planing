@@ -22,7 +22,7 @@ class Environment_Model:
             domain_name (str): Name of the domain to load.
         """
         self.domain_name = domain_name
-        self.model_path = Path(fr"{Config.DOMAINS_PATH}\{self.domain_name}\domain_world.pddl")
+        self.model_path = Path(fr"{Config.DOMAINS_PATH}/{self.domain_name}/domain_world.pddl")
 
     def get_model_path(self):
         """
@@ -54,10 +54,10 @@ class Environment_Model:
         Args:
             novelty_id (int): Identifier of the novelty to inject.
         """
-        self.model_path = Path(fr"{Config.DOMAINS_PATH}\{self.domain_name}\novelty_domain_{novelty_id}.pddl")
+        self.model_path = Path(fr"{Config.DOMAINS_PATH}/{self.domain_name}/novelty_domain_{novelty_id}.pddl")
 
     def returnToNoNovelty(self):
         """
         Reverts the domain model back to the original (non-novel) version.
         """
-        self.model_path = Path(fr"{Config.DOMAINS_PATH}\{self.domain_name}\domain_world.pddl")
+        self.model_path = Path(fr"{Config.DOMAINS_PATH}/{self.domain_name}/domain_world.pddl")

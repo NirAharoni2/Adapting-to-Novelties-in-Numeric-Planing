@@ -175,7 +175,7 @@ difficulty_map = {
     "hard": [7, 8, 9]
 }
 
-base_dir = r"\Felix\results_csv"  # Directory containing CSVs for each domain/difficulty
+base_dir = r"/Felix/results_csv"  # Directory containing CSVs for each domain/difficulty
 
 for domain in domains:
     for difficulty in difficulties:

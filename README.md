@@ -17,7 +17,7 @@ This project simulates an agent that plans and acts in PDDL-based environments, 
 
 ```
 Felix/
-├── ipc2023-dataset/                       # PDDL domains and problem instances (original + novelty)
+├── dataset/                       # PDDL domains and problem instances (original + novelty)
 │   ├── expedition/                        # Domain-specific folder
 │   │   ├── domain_world.pddl             # Original domain model
 │   │   ├── novelty_domain_1.pddl         # Novelty-induced domain model (example)
@@ -71,12 +71,12 @@ Felix/
 ---
 
 ## ⚙️ Installation & Setup
-
+The code has been tested on the Windows 11 operating system and is recommended for use with this project
 ```bash
 # Environment:
 # - Python 3.10.16
 # - pip 24.0
-
+# - Tested on Window 11 with pycharm
 # 1. Extract the ZIP archive
 $ unzip Felix.zip
 $ cd Felix
@@ -106,11 +106,13 @@ $ pip install -r requirements.txt
 
 ## Running Experiments
 Important: Always run these commands from inside the Felix folder (project root)
-```bash
+
+-When running an experiment, all repair methods are executed.```bash
+
 # Run all novelties for a domain
 $ python -m solution.main minecraft all
 
-# Run a specific novelty (note there are 1 to 9 novelties)
+# Run a specific novelty (note there are 9 novelties, the last arguments selects which one, choose from 1 to 9)
 $ python -m solution.main minecraft 3 
 
 # Run novelties starting from a given index
@@ -138,14 +140,16 @@ $ python -m plots.cactus_plots.cactus_plotter
 
 ## \ Repair Methods Used and baselines
 
+#An ID that starts with a minus sign means no repair method is applied.
+
 | ID | Method         | Description                              |
-|----| -------------- |------------------------------------------|
-| -- | Oracle         | Oracle model (no novelty)                |
-| -- | No Repair      | Reuses broken model, no fix applied      |
-| 1  | Rel. Variables | Repair using relevant variables only     |
-| 2  | All Variables  | Repair using all variables               |
-| 3  | All Monomials  | Includes polynomial combinations (deg 2) |
-| 4  | Adaptive       | Chooses best-fitting model per input var |
+|---| -------------- |------------------------------------------|
+|-2 | Oracle         | Oracle model (no novelty)                |
+|-1 | No Repair      | Reuses broken model, no fix applied      |
+| 1 | Rel. Variables | Repair using relevant variables only     |
+| 2 | All Variables  | Repair using all variables               |
+| 3 | All Monomials  | Includes polynomial combinations (deg 2) |
+| 4 | Adaptive       | Chooses best-fitting model per input var |
 
 ---
 

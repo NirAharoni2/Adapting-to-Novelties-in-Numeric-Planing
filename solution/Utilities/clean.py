@@ -17,9 +17,9 @@ def remove_domain_2025_files(*folders):
 
 # Example usage:
 # replace these with your actual folder paths
-folder1 = r"C:\Felix\ipc2023-dataset\minecraft"
-folder2 = r"C:\Felix\ipc2023-dataset\expedition"
-folder3 = r"C:\Felix\ipc2023-dataset\drone"
-folder4 = r"C:\Felix\ipc2023-dataset\sailing"
+folder1 = r"C:/Felix/ipc2023-dataset/minecraft"
+folder2 = r"C:/Felix/ipc2023-dataset/expedition"
+folder3 = r"C:/Felix/ipc2023-dataset/drone"
+folder4 = r"C:/Felix/ipc2023-dataset/sailing"
 
 remove_domain_2025_files(folder1, folder2, folder3, folder4)

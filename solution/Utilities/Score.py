@@ -72,5 +72,6 @@ def plot_from_dict(data_dict, plot_title, filename, novelty_intro_idx=None):
     os.makedirs(save_dir, exist_ok=True)
     save_path = os.path.join(save_dir, filename + ".png")
     plt.savefig(save_path)
+    print(f"A plot representing the results is saved in: {save_path}")
 
     #plt.show()

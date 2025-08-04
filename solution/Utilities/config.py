@@ -20,7 +20,7 @@ class Config:
 
     # Construct paths relative to the project root
     BASE_PATH = BASE_DIR / "nyx"
-    DOMAINS_PATH = BASE_DIR / "ipc2023-dataset"
+    DOMAINS_PATH = BASE_DIR / "dataset"
 
     ENHSP_PATH = f"{BASE_PATH}/ENHSP"
     METRIC_FF_PATH = f"{BASE_PATH}/METRIC_FF"
@@ -42,7 +42,7 @@ class Config:
     @classmethod
     def update_domain(cls, domain_name):
         cls.domain_name = domain_name
-        cls.domain_path = fr"{cls.DOMAINS_PATH}\{domain_name}\domain_{cls.time}.pddl"
+        cls.domain_path = fr"{cls.DOMAINS_PATH}/{domain_name}/domain_{cls.time}.pddl"
         cls.problem_path = None
 
     @classmethod
@@ -64,5 +64,5 @@ class Config:
     @classmethod
     def update_domain_to_be_env_domain(cls, domain_name,novelty_id):
         cls.domain_name = domain_name
-        cls.domain_path = fr"{cls.DOMAINS_PATH}\{domain_name}\novelty_domain_{novelty_id}.pddl"
+        cls.domain_path = fr"{cls.DOMAINS_PATH}/{domain_name}/novelty_domain_{novelty_id}.pddl"
         cls.problem_path = None

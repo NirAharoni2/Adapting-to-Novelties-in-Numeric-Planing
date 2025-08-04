@@ -1,7 +1,7 @@
 import os
 from enum import Enum
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 
 class ErrorFlag(Enum):
@@ -14,13 +14,19 @@ class ErrorFlag(Enum):
 
 class Config:
     # Base Paths
-    BASE_NYX_PATH = "C:/studies/github/project"
-    DOMAINS_PATH = r"C:\Felix\ipc2023-dataset"
-    ENHSP_PATH = f"{BASE_NYX_PATH}/ENHSP"
-    METRIC_FF_PATH = f"{BASE_NYX_PATH}/METRIC_FF"
-    NYX_PATH = f"{BASE_NYX_PATH}/nyxMain"
-    NSAM_PATH = f"{BASE_NYX_PATH}/sam_learning"
-    VALIDATOR_DIRECTORY = f"{BASE_NYX_PATH}/VAL"
+
+    # Automatically resolve the base path (project root)
+    BASE_DIR = Path(__file__).resolve().parents[2]  # two levels up from config.py
+
+    # Construct paths relative to the project root
+    BASE_PATH = BASE_DIR / "nyx"
+    DOMAINS_PATH = BASE_DIR / "ipc2023-dataset"
+
+    ENHSP_PATH = f"{BASE_PATH}/ENHSP"
+    METRIC_FF_PATH = f"{BASE_PATH}/METRIC_FF"
+    NYX_PATH = f"{BASE_PATH}/nyxMain"
+    NSAM_PATH = f"{BASE_PATH}/sam_learning"
+    VALIDATOR_DIRECTORY = f"{BASE_PATH}/VAL"
 
     # Active domain/problem (can be changed globally)
     domain_path = ""

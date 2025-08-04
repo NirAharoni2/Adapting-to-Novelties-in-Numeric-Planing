@@ -1,3 +1,5 @@
+import os
+import csv
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
@@ -7,7 +9,6 @@ import seaborn as sns
 # Style and configuration settings
 # -------------------------------
 
-# Mapping raw labels (from CSV) to clean, human-readable names
 label_name_map = {
     "base": "Base",
     "no repair": "No Repair",
@@ -17,7 +18,6 @@ label_name_map = {
     "repair4": "Adaptive",
 }
 
-# Final plotting order of the strategies
 style_order = [
     "Base",
     "No Repair",
@@ -27,7 +27,6 @@ style_order = [
     "Adaptive",
 ]
 
-# Define line styles, marker styles, and colors for each strategy
 line_styles = {
     "Base": (0, (3, 5)),
     "No Repair": (1, (5, 2)),
@@ -56,47 +55,65 @@ colors = {
 }
 
 # -------------------------------
-# Data Loading and Preprocessing
+# Load and compile model IDs from files
 # -------------------------------
 
-# Load the CSV file containing experiment results
-df = pd.read_csv("../compiled_model_ids.csv")
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+input_folder = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', 'results_csv'))
 
-# Drop rows with missing 'model_id'
+domains = ["sailing", "minecraft", "drone", "expedition"]
+
+compiled_rows = []
+
+for domain in domains:
+    for i in range(1, 10):
+        file_name = f"{domain}_{i}_data.csv"
+        file_path = os.path.join(input_folder, file_name)
+
+        if not os.path.exists(file_path):
+            print(f"Missing: {file_name}")
+            continue
+
+        source = f"{domain}_novelty{i}"
+        with open(file_path, newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                label = row['Label'].strip()
+                model_id_raw = row['Learned Model ID'].strip()
+                model_id = None if model_id_raw == '-1' else float(model_id_raw)
+                compiled_rows.append({
+                    "source": source,
+                    "label": label,
+                    "model_id": model_id
+                })
+
+# Build DataFrame in memory
+df = pd.DataFrame(compiled_rows)
+
+# -------------------------------
+# Preprocessing and Plotting
+# -------------------------------
+
 df = df.dropna(subset=["model_id"])
 df["model_id"] = df["model_id"].astype(float)
-
-# Extract domain name from 'source' field (e.g., "drone_1_dta.csv" → "drone")
 df["domain"] = df["source"].apply(lambda s: s.split("_")[0])
 
-# Identify all unique domains in the dataset
-domains = df["domain"].unique()
+unique_domains = df["domain"].unique()
 
-# -------------------------------
-# Plotting per domain
-# -------------------------------
-
-# Generate one cactus plot per domain
-for domain in domains:
-    domain_df = df[df["domain"] == domain]  # Filter data for current domain
-
+for domain in unique_domains:
+    domain_df = df[df["domain"] == domain]
     fig, ax = plt.subplots(figsize=(10, 6))
 
     for strategy in style_order:
-        # Get raw labels corresponding to the current display name
         raw_labels = [k for k, v in label_name_map.items() if v == strategy]
-
-        # Filter and sort strategy data by model_id (ascending)
         strategy_df = domain_df[domain_df["label"].isin(raw_labels)].sort_values(by="model_id")
 
         if strategy_df.empty:
-            continue  # Skip if no data for this strategy
+            continue
 
-        # X-axis: index of novelty (1, 2, 3, ...)
         x = range(1, len(strategy_df) + 1)
         y = strategy_df["model_id"].values
 
-        # Plot the data
         ax.plot(
             x,
             y,
@@ -108,7 +125,6 @@ for domain in domains:
             markersize=6,
         )
 
-    # Axis labels and formatting
     ax.set_xlabel("Novelty #", fontsize=27)
     ax.set_ylabel("Instances #", fontsize=27)
     ax.tick_params(axis='both', which='major', labelsize=24)
@@ -116,8 +132,11 @@ for domain in domains:
     ax.grid(True)
     fig.tight_layout()
 
-    # Save figure to file
-    out_path = f"cactus_{domain}_learned_model_id.png"
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    save_dir = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', 'plots', 'cactus_plots'))
+    os.makedirs(save_dir, exist_ok=True)
+
+    out_path = os.path.join(save_dir, f"cactus_{domain}_learned_model_id.png")
     plt.savefig(out_path)
     plt.close()
-    print(f"Saved domain cactus plot to '{out_path}'")
+    print(f" Saved domain cactus plot to '{out_path}'")

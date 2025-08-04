@@ -37,7 +37,7 @@ Felix/
 ├── PDDL2Gym/                             # Gym-like simulator for PDDL environments
 ├── plots/                                # Generated evaluation plots
 │   ├── cactus_plots/                     # Cactus plots per domain/novelty, Includes the Plotter 
-│   ├── csv_in_plot/                      # CSVs used during plotting, Includes the Plotter 
+│   ├── csv_in_plot/                      # CSVs used during plotting
 │   ├── legend/                           # Legend info for plots, Includes the Plotter 
 │   └── moving_graph_plots/              # Moving average performance graphs, Includes the Plotter 
 ├── results_csv/                          # Output CSVs from evaluation runs
@@ -56,9 +56,6 @@ Felix/
 │   │   ├── Enviroment.py                # Main environment simulation runner
 │   │   └── Environment_Model.py         # Paths and novelty toggling
 │   │
-│   ├── plotters/                        # Plot generation scripts
-│   │   ├── cactus_plotter.py            # Cactus plots per domain
-│   │   └── moving_graphes_plotter.py    # Moving average plots
 │   │
 │   ├── Utilities/                       # Config and shared tools
 │   │   ├── config.py                    # File path and config manager
@@ -75,35 +72,49 @@ Felix/
 
 ## ⚙️ Installation & Setup
 
-> 🗂️ This project is distributed as a ZIP file. No need to clone a Git repository.
-
 ```bash
+# Environment:
+# - Python 3.10.16
+# - pip 24.0
+
 # 1. Extract the ZIP archive
 $ unzip Felix.zip
 $ cd Felix
 
 # 2. (Optional) Create a virtual environment
-$ python -m venv venv
-$ source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+## Option A: Using venv (standard Python virtual environment)
+$ py -3.10 -m venv venv
+
+### On Unix/macOS:
+$ source venv/bin/activate
+
+### On Windows:
+> venv\Scripts\activate
+
+## Option B: Using conda
+$ conda create -n felix_env python=3.10
+$ conda activate felix_env
 
 # 3. Install dependencies
 $ pip install -r requirements.txt
+
 
 ```
 
 ---
 
 ## Running Experiments
-
+Important: Always run these commands from inside the Felix folder (project root)
 ```bash
 # Run all novelties for a domain
-$ python -m solution/main.py minecraft all
+$ python -m solution.main minecraft all
 
-# Run a specific novelty
-$ python -m solution/main.py minecraft 3
+# Run a specific novelty (note there are 1 to 9 novelties)
+$ python -m solution.main minecraft 3 
 
 # Run novelties starting from a given index
-$ python -m solution/main.py minecraft from 5
+$ python -m solution.main minecraft from 5
 ```
 
 Output results will be stored in:
@@ -114,11 +125,13 @@ Output results will be stored in:
 
 ## Plotting Results
 
-To generate summary plots from `results_csv` data:
+To generate moving graph and cactus plots for every domain run from `results_csv` data:
 
+Important: Always run these commands from inside the Felix folder (project root)
 ```bash
-$ python solution/plotters/cactus_plotter.py
-$ python solution/plotters/moving_graphes_plotter.py
+$ python -m plots.moving_graph_plots.moving_graphs_plotter
+
+$ python -m plots.cactus_plots.cactus_plotter
 ```
 
 ---

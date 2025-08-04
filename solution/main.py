@@ -2,6 +2,7 @@ import csv
 import sys
 import shutil
 import os
+from pathlib import Path
 
 from solution.Environment.Enviroment import Environment
 from solution.Utilities.Score import plot_from_dict
@@ -22,7 +23,10 @@ def reset_only_domains(domain_name):
     """
     Resets the domain PDDL file (used to temporarily undo repaired domains).
     """
-    domain_path = fr"C:\Felix\ipc2023-dataset\{domain_name}\domain_world.pddl"
+    PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+    # Build the domain path relative to the project root
+    domain_path = PROJECT_ROOT / "ipc2023-dataset" / domain_name / "domain_world.pddl"
     shutil.copyfile(domain_path, Config.get_domain())
     print(f"Reset: {Config.get_domain()} ← {domain_path}")
 
@@ -34,8 +38,11 @@ def reset(domain_name):
     # Reset domain file
     reset_only_domains(domain_name)
 
-    # Clear all old plan files
-    plans_folder = fr"C:\Felix\ipc2023-dataset\{domain_name}\instances\plans"
+    # Assuming this is already defined
+    PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+    # New relative path
+    plans_folder = PROJECT_ROOT / "ipc2023-dataset" / domain_name / "instances" / "plans"
     if os.path.exists(plans_folder):
         for filename in os.listdir(plans_folder):
             file_path = os.path.join(plans_folder, filename)

@@ -131,6 +131,7 @@ To generate moving graph and cactus plots for every domain run from `results_csv
 
 Important: Always run these commands from inside the Felix folder (project root)
 ```bash
+
 $ python -m plots.moving_graph_plots.moving_graphs_plotter
 
 $ python -m plots.cactus_plots.cactus_plotter

@@ -7,7 +7,7 @@ from itertools import combinations_with_replacement
 
 from solution.Utilities.config import Config
 from solution.Utilities.parsedModel import Parse_Model
-
+from pysr import PySRRegressor
 
 def filter_valid_predicates(action_parts: list[str], predicate_dict: dict[tuple, int]) -> dict[tuple, int]:
     """
@@ -144,6 +144,28 @@ class Repair:
         results = self.multi_output_linear_regression(self.data[action])
         self.update_model(action, results)
 
+    def repair_action_all_vars_symbolic(self, LastObservation, fullAction, newObservation, different_keys):
+        """
+        Learns models using all valid action-related variables.
+        """
+        action = fullAction[0]
+
+        if self.data.get(action) and self.data[action][0]:
+            different_keys = list(self.data[action][0][0].keys())
+        else:
+            different_keys = self.generalize_facts_for_list(different_keys, fullAction)
+
+        x1 = filter_valid_predicates(fullAction, LastObservation["fluents"])
+        x1 = self.generalize_facts(x1, fullAction)
+
+        x2 = filter_valid_predicates(fullAction, newObservation["fluents"])
+        y2 = self.generalize_facts(x2, fullAction)
+        y2 = {k: y2[k] for k in different_keys if k in y2}
+
+        self.data[action].append([y2, x1])
+        results = self.multi_output_symbolic(self.data[action])
+        self.update_model(action, results)
+
     def repair_action_adaptive(self, LastObservation, fullAction, newObservation, different_keys):
         """
         Tries multiple regression forms (basic, full, monomials) and picks the one with highest R² score.
@@ -155,8 +177,8 @@ class Repair:
         else:
             different_keys = self.generalize_facts_for_list(different_keys, fullAction)
 
-        x1 = self.generalize_facts(filter_valid_predicates(fullAction, LastObservation["fluents"]), fullAction)
-        y2 = self.generalize_facts(filter_valid_predicates(fullAction, newObservation["fluents"]), fullAction)
+        x1 = self.generalize_facts(fullAction, LastObservation["fluents"], fullAction)
+        y2 = self.generalize_facts(fullAction, newObservation["fluents"], fullAction)
         y2 = {k: y2[k] for k in different_keys if k in y2}
 
         self.data[action].append([y2, x1])
@@ -261,6 +283,85 @@ class Repair:
             results[y_key] = best_result
 
         return results
+
+
+    def multi_output_symbolic(self, data, decimals=5):
+        """
+        Trains one linear regression model per target variable.
+
+        Args:
+            data (list): Pairs of output and input dicts.
+            decimals (int): Decimal rounding for output coefficients.
+
+        Returns:
+            dict: Learned models.
+        """
+        x_keys = sorted({k for _, x in data for k in x.keys()})
+        y_keys = sorted({k for y, _ in data for k in y.keys()})
+
+        filled_data = []
+        for y, x in data:
+            x_full = {k: x.get(k, 0.0) for k in x_keys}
+            y_full = {k: y.get(k, 0.0) for k in y_keys}
+            filled_data.append((y_full, x_full))
+
+        X = np.array([[x[k] for k in x_keys] for _, x in filled_data])
+        Y = {y_key: np.array([y[y_key] for y, _ in filled_data]) for y_key in y_keys}
+
+        results = {}
+        for y_key in y_keys:
+            model = PySRRegressor(
+                niterations=120,
+                population_size=800,
+                maxsize=15,
+                unary_operators=("sin", "cos"),  # adjust ops to your problem
+                binary_operators=("+", "-", "*", "/"),
+                loss="L2DistLoss()",
+                model_selection="best_complexity",
+                parsimony=1e-4,
+                random_state=0,
+                feature_names=[f"x{i}" for i in range(X.shape[1])],
+                progress=True,
+            )
+            model.fit(X, Y[y_key])
+            coefs = dict(zip(x_keys, model.coef_))
+            coefs['__intercept__'] = model.intercept_
+            rounded = {k: round(v, decimals) for k, v in coefs.items()}
+            filtered_state = {k: v for k, v in rounded.items() if v != 0 and v != 0.0}
+            results[y_key] = filtered_state
+
+        return results
+
+
+    def fit_symbolic_regression(self, X, y):
+        """
+        Fit symbolic regression with PySR on all data and return model + R^2 score.
+
+        Parameters:
+            X (np.ndarray): shape (n_samples, n_features)
+            y (np.ndarray): shape (n_samples,)
+
+        Returns:
+            model: trained PySRRegressor
+            r2: float, R^2 score on training data
+        """
+        model = PySRRegressor(
+            niterations=120,
+            population_size=800,
+            maxsize=15,
+            unary_operators=("sin", "cos"),  # adjust ops to your problem
+            binary_operators=("+", "-", "*", "/"),
+            loss="L2DistLoss()",
+            model_selection="best_complexity",
+            parsimony=1e-4,
+            random_state=0,
+            feature_names=[f"x{i}" for i in range(X.shape[1])],
+            progress=True,
+        )
+
+        model.fit(X, y)
+        r2 = r2_score(y, model.predict(X))
+        return model, r2
 
     def generate_expressions(self, model_dict):
         """

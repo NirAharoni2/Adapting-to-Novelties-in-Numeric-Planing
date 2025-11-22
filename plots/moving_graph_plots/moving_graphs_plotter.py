@@ -181,14 +181,14 @@ for domain in domains:
     for difficulty in difficulties:
         file_indices = difficulty_map[difficulty]
         file_paths = [
-            os.path.join(base_dir, f"{domain}_{i}_data.csv")
+            os.path.join("../../",base_dir, f"{domain}_{i}_data.csv")
             for i in file_indices
         ]
 
         # Safety check — skip if no files exist
         file_paths = [f for f in file_paths if os.path.isfile(f)]
         if not file_paths:
-            print(f"⚠️ No files found for {domain} - {difficulty}")
+            print(f" No files found for {domain} - {difficulty}")
             continue
 
         # Compute average scores and plot

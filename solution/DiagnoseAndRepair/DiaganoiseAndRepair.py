@@ -60,7 +60,9 @@ class DiagnoseAndRepair:
             #all monomials
             elif self.repair_id == 4:
                 self.repair.repair_action_adaptive(LastObservation, action, newObservation, data["different_keys"])
-
+            #adaptive
+            elif self.repair_id == 5:
+                self.repair.repair_action_all_vars_symbolic(LastObservation, action, newObservation, data["different_keys"])
         # Update plan failure flag if a discrepancy was fatal to the plan
         if data["planFailed"]:
             self.planFailed = True

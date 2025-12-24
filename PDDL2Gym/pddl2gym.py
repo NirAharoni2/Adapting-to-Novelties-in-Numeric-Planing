@@ -184,6 +184,23 @@ class PDDL2GYM(gym.Env):
     def planning_step(self, action):
         """Execute one time step within the environment using PDDL action."""
         action_descriptor = parse_action_call(action)
+
+        #nir added
+        #seacrh the action
+        #check if i need extra objects
+        #add the missings
+
+        #curent solution can be better:
+        for grounded_action_call in self.grounded_action_calls:
+            if grounded_action_call.name == action_descriptor.name:
+                # if
+                isSubset = set(action_descriptor.parameters).issubset(grounded_action_call.grounded_call_objects)
+                same_length = len(action_descriptor.parameters) == len(grounded_action_call.grounded_call_objects)
+                if not same_length and isSubset:
+                    action_descriptor.parameters = grounded_action_call.grounded_call_objects
+                else:
+                    break
+        #end nir
         operator = Operator(
             action=self.odomain.actions[action_descriptor.name],
             domain=self.odomain,

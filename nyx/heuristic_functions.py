@@ -70,6 +70,14 @@ def heuristic_function(state):
         saved = {}
 
         # Parse the state
+
+        for key, value in constants.state_constants.items():
+            var = eval(key)  # Convert string key back to tuple
+            if var[0] == "d":
+                person_d[var[1]] = value
+                if var[1] not in people:
+                    people.append(var[1])
+
         for key, value in state.items():
             var = eval(key)  # Convert string key back to tuple
             if var[0] == "x":

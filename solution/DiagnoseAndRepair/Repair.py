@@ -5,22 +5,23 @@ import numpy as np
 
 from itertools import combinations_with_replacement
 
+from sympy.strategies.core import switch
+
 from solution.Utilities.config import Config
 from solution.Utilities.parsedModel import Parse_Model
 from pysr import PySRRegressor
 
-def filter_valid_predicates(action_parts: list[str], predicate_dict: dict[tuple, int]) -> dict[tuple, int]:
+def filter_valid_predicates(action, predicate_dict: dict[tuple, int]) -> dict[tuple, int]:
     """
     Filters predicates so that only those whose arguments are part of the action are kept.
 
     Args:
-        action_parts (list): Action name followed by concrete arguments (e.g. ['move', 'a0', 'b0']).
+        action (Action)
         predicate_dict (dict): Dictionary of predicates.
 
     Returns:
         dict: Filtered dictionary of predicates that are relevant to the given action.
     """
-    params = action_parts[1:]
     filtered = {}
 
     for key, value in predicate_dict.items():
@@ -28,7 +29,7 @@ def filter_valid_predicates(action_parts: list[str], predicate_dict: dict[tuple,
             filtered[key] = value
             continue
         pred_args_list = key[1:]
-        if all(arg in params for arg in pred_args_list):
+        if all(arg in action.groundedParameters for arg in pred_args_list):
             filtered[key] = value
 
     return filtered
@@ -78,6 +79,12 @@ def generate_nested_combinations(term_dict, degree):
 
     return result
 
+class Action:
+    def __init__(self, fullAction):
+        self.fullAction = fullAction
+        self.name = fullAction[0]
+        self.groundedParameters = fullAction[1:]
+
 
 class Repair:
     """
@@ -90,7 +97,40 @@ class Repair:
 
     def __init__(self):
         self.data = defaultdict(list)
+        self.addedParameters = defaultdict(list)
         self.parsed_model = None
+
+
+    def mainRepair(self, repairId, LastObservation, fullAction, newObservation, different_keys):
+        action = Action(fullAction)
+        self.addMissingParamsToAction(different_keys, action)
+        # Optionally reuse previously detected keys
+        differentKeysLifted = self.getDifferentKeys(action, different_keys)
+        LastObservationFluents = LastObservation["fluents"]
+        newObservationFluents = newObservation["fluents"]
+        repairMethod = lambda: ()
+        # Select the repair strategy based on the repair_id
+        # rel variables
+        if repairId == 1:
+            repairMethod = self.repair_action_rel_vars
+        # all variabels
+        elif repairId == 2:
+            repairMethod = self.repair_action_all_vars
+        # all monomials
+        elif repairId == 3:
+            repairMethod = self.repair_action_all_monomials
+        # adaptive
+        elif repairId == 4:
+            repairMethod = self.repair_action_adaptive
+        # symbolic
+        elif repairId == 5:
+            repairMethod = self.repair_action_all_vars_symbolic
+        # adaptive upgraded
+        elif repairId == 6:
+            repairMethod = self.repair_action_adaptive_upgraded
+        repairMethod(LastObservationFluents, action, newObservationFluents, differentKeysLifted)
+        return False
+
 
     def initialize(self):
         """
@@ -98,124 +138,125 @@ class Repair:
         """
         self.parsed_model = Parse_Model()
 
-    def repair_action_rel_vars(self, LastObservation, fullAction, newObservation, different_keys):
+    def repair_action_rel_vars(self, LastObservationFluents, action, newObservationFluents, differentKeysLifted):
         """
         Repairs action by learning a model for only the changed fluents based on relevant state variables.
         """
-        action = fullAction[0]
+        x1 = self.generalize_facts(LastObservationFluents, action)
+        x1 = {k: x1[k] for k in differentKeysLifted if k in x1}
 
-        # Optionally reuse previously detected keys
-        if self.data.get(action) and self.data[action][0]:
-            different_keys = list(self.data[action][0][0].keys())
-        else:
-            different_keys = self.generalize_facts_for_list(different_keys, fullAction)
+        y2 = self.generalize_facts(newObservationFluents, action)
+        y2 = {k: y2[k] for k in differentKeysLifted if k in y2}
 
-        x1 = LastObservation["fluents"]
-        x1 = self.generalize_facts(x1, fullAction)
-        x1 = {k: x1[k] for k in different_keys if k in x1}
+        self.data[action.name].append([y2, x1])
+        results = self.multi_output_linear_regression(self.data[action.name])
+        self.update_model(action.name, results)
 
-        x2 = newObservation["fluents"]
-        y2 = self.generalize_facts(x2, fullAction)
-        y2 = {k: y2[k] for k in different_keys if k in y2}
 
-        self.data[action].append([y2, x1])
-        results = self.multi_output_linear_regression(self.data[action])
-        self.update_model(action, results)
-
-    def repair_action_all_vars(self, LastObservation, fullAction, newObservation, different_keys):
+    def repair_action_all_vars(self, LastObservationFluents, action, newObservationFluents, differentKeysLifted):
         """
         Learns models using all valid action-related variables.
         """
-        action = fullAction[0]
 
-        if self.data.get(action) and self.data[action][0]:
-            different_keys = list(self.data[action][0][0].keys())
-        else:
-            different_keys = self.generalize_facts_for_list(different_keys, fullAction)
+        x1 = filter_valid_predicates(action, LastObservationFluents)
+        x1 = self.generalize_facts(x1, action)
 
-        x1 = filter_valid_predicates(fullAction, LastObservation["fluents"])
-        x1 = self.generalize_facts(x1, fullAction)
+        x2 = filter_valid_predicates(action, newObservationFluents)
+        y2 = self.generalize_facts(x2, action)
+        y2 = {k: y2[k] for k in differentKeysLifted if k in y2}
 
-        x2 = filter_valid_predicates(fullAction, newObservation["fluents"])
-        y2 = self.generalize_facts(x2, fullAction)
-        y2 = {k: y2[k] for k in different_keys if k in y2}
+        self.data[action.name].append([y2, x1])
+        results = self.multi_output_linear_regression(self.data[action.name])
+        self.update_model(action.name, results)
 
-        self.data[action].append([y2, x1])
-        results = self.multi_output_linear_regression(self.data[action])
-        self.update_model(action, results)
-
-    def repair_action_all_vars_symbolic(self, LastObservation, fullAction, newObservation, different_keys):
+    def repair_action_all_vars_symbolic(self, LastObservationFluents, action, newObservationFluents, differentKeysLifted):
         """
         Learns models using all valid action-related variables.
         """
-        action = fullAction[0]
 
-        if self.data.get(action) and self.data[action][0]:
-            different_keys = list(self.data[action][0][0].keys())
-        else:
-            different_keys = self.generalize_facts_for_list(different_keys, fullAction)
+        x1 = filter_valid_predicates(action, LastObservationFluents)
+        x1 = self.generalize_facts(x1, action)
 
-        x1 = filter_valid_predicates(fullAction, LastObservation["fluents"])
-        x1 = self.generalize_facts(x1, fullAction)
+        x2 = filter_valid_predicates(action, newObservationFluents)
+        y2 = self.generalize_facts(x2, action)
+        y2 = {k: y2[k] for k in differentKeysLifted if k in y2}
 
-        x2 = filter_valid_predicates(fullAction, newObservation["fluents"])
-        y2 = self.generalize_facts(x2, fullAction)
-        y2 = {k: y2[k] for k in different_keys if k in y2}
+        self.data[action.name].append([y2, x1])
+        results = self.multi_output_symbolic(self.data[action.name])
+        self.update_model(action.name, results)
 
-        self.data[action].append([y2, x1])
-        results = self.multi_output_symbolic(self.data[action])
-        self.update_model(action, results)
-
-    def repair_action_adaptive(self, LastObservation, fullAction, newObservation, different_keys):
+    def repair_action_adaptive(self, LastObservationFluents, action, newObservationFluents, differentKeysLifted):
         """
         Tries multiple regression forms (basic, full, monomials) and picks the one with highest R² score.
         """
-        action = fullAction[0]
 
-        if self.data.get(action) and self.data[action][0]:
-            different_keys = list(self.data[action][0][0].keys())
-        else:
-            different_keys = self.generalize_facts_for_list(different_keys, fullAction)
+        x1 = self.generalize_facts(filter_valid_predicates(action, LastObservationFluents), action)
+        y2 = self.generalize_facts(filter_valid_predicates(action, newObservationFluents), action)
+        y2 = {k: y2[k] for k in differentKeysLifted if k in y2}
 
-        x1 = self.generalize_facts(fullAction, LastObservation["fluents"], fullAction)
-        y2 = self.generalize_facts(fullAction, newObservation["fluents"], fullAction)
-        y2 = {k: y2[k] for k in different_keys if k in y2}
-
-        self.data[action].append([y2, x1])
+        self.data[action.name].append([y2, x1])
 
         unique_states = {
             tuple(tuple(sorted(d.items())) for d in state)
-            for state in self.data[action]
+            for state in self.data[action.name]
         }
 
         if len(unique_states) >= 2:
-            data1 = [[y, {k: x[k] for k in y.keys() if k in x}] for y, x in self.data[action]]
-            data2 = self.data[action]
-            data3 = [[y, generate_nested_combinations(x, degree=2)] for y, x in self.data[action]]
+            data1 = [[y, {k: x[k] for k in y.keys() if k in x}] for y, x in self.data[action.name]]
+            data2 = self.data[action.name]
+            data3 = [[y, generate_nested_combinations(x, degree=2)] for y, x in self.data[action.name]]
 
-            results = self.multi_output_linear_regression_for_adaptive(action, [data1, data2, data3])
-            self.update_model(action, results)
+            results = self.multi_output_linear_regression_for_adaptive(action.name, [data1, data2, data3])
+            self.update_model(action.name, results)
 
-    def repair_action_all_monomials(self, LastObservation, fullAction, newObservation, different_keys):
+    def repair_action_adaptive_upgraded(self, LastObservationFluents, action, newObservationFluents, differentKeysLifted):
+        """
+        Tries multiple regression forms (basic, full, monomials) and picks the one with highest R² score.
+        """
+
+
+        x1 = self.generalize_facts(LastObservationFluents, action)
+        y2 = self.generalize_facts(newObservationFluents, action)
+        y2 = {k: y2[k] for k in differentKeysLifted if k in y2}
+
+        self.data[action.name].append([y2, x1])
+
+        unique_states = {
+            tuple(tuple(sorted(d.items())) for d in state)
+            for state in self.data[action.name]
+        }
+
+        if len(unique_states) >= 2:
+            data1 = [[y, {k: x[k] for k in y.keys() if k in x}] for y, x in self.data[action.name]]
+            data2 = self.data[action.name]
+            data3 = [[y, generate_nested_combinations(x, degree=2)] for y, x in self.data[action.name]]
+
+            results = self.multi_output_linear_regression_for_adaptive(action.name, [data1, data2, data3])
+            self.update_model(action.name, results)
+        return False
+
+    def repair_action_all_monomials(self, LastObservationFluents, action, newObservationFluents, differentKeysLifted):
         """
         Repairs action by using monomial features up to degree 2.
         """
-        action = fullAction[0]
+        x1 = self.generalize_facts(filter_valid_predicates(action, LastObservationFluents), action)
+        y2 = self.generalize_facts(filter_valid_predicates(action, newObservationFluents), action)
+        y2 = {k: y2[k] for k in differentKeysLifted if k in y2}
 
-        if self.data.get(action) and self.data[action][0]:
-            different_keys = list(self.data[action][0][0].keys())
-        else:
-            different_keys = self.generalize_facts_for_list(different_keys, fullAction)
-
-        x1 = self.generalize_facts(filter_valid_predicates(fullAction, LastObservation["fluents"]), fullAction)
-        y2 = self.generalize_facts(filter_valid_predicates(fullAction, newObservation["fluents"]), fullAction)
-        y2 = {k: y2[k] for k in different_keys if k in y2}
-
-        self.data[action].append([y2, x1])
-        data = [[y, generate_nested_combinations(x, degree=2)] for y, x in self.data[action]]
+        self.data[action.name].append([y2, x1])
+        data = [[y, generate_nested_combinations(x, degree=2)] for y, x in self.data[action.name]]
 
         results = self.multi_output_linear_regression(data)
-        self.update_model(action, results)
+        self.update_model(action.name, results)
+
+
+    def getDifferentKeys(self, action, different_keys):
+        if self.data.get(action.name) and self.data[action.name][0]:
+            different_keys = list(self.data[action.name][0][0].keys())
+        else:
+            different_keys = self.generalize_facts_for_list(different_keys, action.fullAction)
+        return different_keys
+
 
     def multi_output_linear_regression(self, data, decimals=5):
         """
@@ -398,19 +439,17 @@ class Repair:
         for key, expr in self.generate_expressions(results).items():
             self.parsed_model.update_action_effect(action, key, expr)
 
-        with open(Config.domain_path, 'w') as f:
-            f.write(self.parsed_model.rebuild_pddl_domain())
+        self.parsed_model.commit()
 
     def generalize_facts(self, facts, action):
         """
         Replaces concrete constants in fluents with their corresponding variables.
         """
-        action_name, *args = action
-        param_vars = self.parsed_model.get_parameters_of_action(action_name)
-        if len(param_vars) != len(args):
+        param_vars = self.parsed_model.get_parameters_of_action(action.name)
+        if len(param_vars) != len(action.groundedParameters):
             raise ValueError("Mismatch between action args and param vars")
 
-        replacement = {c: v for c, v in zip(args, param_vars)}
+        replacement = {c: v for c, v in zip(action.groundedParameters, param_vars)}
         generalized = {}
 
         for key, val in facts.items():
@@ -421,7 +460,7 @@ class Repair:
             if all(a in replacement for a in args):
                 new_key = (func, *[replacement[a] for a in args])
                 generalized[new_key] = val
-                self.parsed_model.add_function(func, new_key[1:], action_name)
+                self.parsed_model.add_function(func, new_key[1:], action.name)
 
         return generalized
 
@@ -446,3 +485,22 @@ class Repair:
             generalized.append(new_key)
 
         return generalized
+
+    def addMissingParamsToAction(self, different_keys, action):
+        #key is ('d', 'p0') // (functionName, groundedParams...)
+        #action is (actionName, groundedParams...)
+        isMissing = False
+
+        for key in different_keys:
+            functionName = key[0]
+            for i, param in enumerate(key[1:]):
+                if param not in action.groundedParameters:
+                    isMissing = True
+                    theFunctionsParams = self.parsed_model.get_parameters(functionName)
+                    self.parsed_model.addParameterToAction(action.name, theFunctionsParams[i])
+        self.parsed_model.commit()
+        return isMissing
+
+
+    def addMissingParameterToAction(self, actionName, groundedParameter):
+        pass

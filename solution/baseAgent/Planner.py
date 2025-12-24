@@ -55,7 +55,6 @@ class Planner:
         domain_path = Config.domain_path
         problem_path = Config.problem_path
         plan_path = Config.plan_path
-
         with suppress_stdout():
             if Config.domain_name == "drone":
                 nyx.runner(domain_path, problem_path, ["-timeout:60", "search:gbfs", "custom_heuristic:3"])

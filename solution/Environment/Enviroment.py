@@ -76,7 +76,6 @@ class Environment:
         while True:
             for i in range(self.agent.get_plan_length()):
                 action = self.agent.act()
-
                 with suppress_stdout():
                     new_observation, reward, terminated, truncated, _ = self.env.planning_step(action)
 

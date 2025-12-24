@@ -10,6 +10,9 @@ class Parse_Model:
         parser = PDDL_Parser(Config.domain_path, Config.problem_path)
         self.parsed_domain = parser.domain
 
+    def commit(self):
+        with open(Config.domain_path, 'w') as f:
+            f.write(self.rebuild_pddl_domain())
 
     def rebuild_pddl_domain(self):
         domain = self.parsed_domain
@@ -125,34 +128,62 @@ class Parse_Model:
         #for function in new_functions:
         #action.parameters.append(function)
 
-
-    #get for example xl and return ?l
+    #example: function: x ?b - boat
+    #self.parsed_domain.functions is a list of dicts form key: x to {'?b' : the type of ?b for example 'boat'}
+    #input: function key for example x
+    #returns all the parameters x gets => [?b]
     def get_parameters_name(self, function_key):
         return list(self.parsed_domain.functions[function_key].keys())
 
+    # example: function: x ?b - boat
+    # self.parsed_domain.functions is a list of dicts form key: x to {'?b' : the type of ?b for example 'boat'}
+    #input: function key for example x
+    #returns all the types x gets => ['boat']
     def get_parameters_type(self, function_key):
         return list(self.parsed_domain.functions[function_key].values())
+
+
+
+    def get_parameters(self, function_key):
+        return list(self.parsed_domain.functions[function_key].items())
 
     #get ?l and return if in the paramters of the function
     #this is brokennn
     def check_if_exist(self, action_name, parameter_name):
         theAct = None
-        for act in self.parsed_domain.actions:
-            if act.name == action_name:
-                theAct = act
-                break
+        theAct = self.getActionByName(action_name)
         types = [param[1] for param in theAct.parameters]
         return all(elem in types for elem in parameter_name)
 
 
+    # input: action name (for example 'go_north_east')
+    # return: all the parameters names of the function (for example ['?b'])
     def get_parameters_of_action(self, actionName):
+        theAct = self.getActionByName(actionName)
+        names = [param[0] for param in theAct.parameters]
+        return names
+
+    # input: action name (for example 'go_north_east') and parameter (for example ['?p','person']
+    # void: add the parameter to the action's paramters
+    # in case '?p' exists it replaces ?p with ?p1 and adds ['?p2','person'])
+    def addParameterToAction(self, actionName, parameter):
+        parameter = list(parameter)
+        theAct = self.getActionByName(actionName)
+        for param in theAct.parameters:
+            alreadyExistName = param[0] # for example '?p'
+            theNewParamName = parameter[0]
+            if alreadyExistName == theNewParamName:
+                param[0] = self.addNumber1(param[0])
+                parameter[0] = self.incrementNumber(parameter[0], param[0])
+        theAct.parameters.append(parameter)
+
+    def getActionByName(self, actionName):
         theAct = None
         for act in self.parsed_domain.actions:
             if act.name == actionName:
                 theAct = act
                 break
-        names = [param[0] for param in theAct.parameters]
-        return names
+        return theAct
 
     def add_function(self, func_tuple, func_params, action_name):
         func_name = func_tuple
@@ -170,3 +201,22 @@ class Parse_Model:
 
             self.parsed_domain.functions[func_name] = {k: v for k, v in func_params if k in parametersList}
 
+    import re
+
+    def get_trailing_number(self, s: str):
+        match = re.search(r'(\d+)$', s)
+        return int(match.group(1)) if match else None
+
+    #transform '?p' => '?p1'
+    #if already have number dosen't do anything ('?p1' => '?p1')
+    def addNumber1(self, s: str):
+        if self.get_trailing_number(s) is None:
+            return s + str(1)
+
+    #input: the newParam (ex: '?p'), the alreadyExistingParam (ex: '?p1')
+    #(transform '?p1' => '?p2')
+    #return '?p2'
+    def incrementNumber(self, theNewParam, theCollidingParam):
+        oldNumber = self.get_trailing_number(theCollidingParam)
+        if oldNumber is not None:
+            return theNewParam + str(oldNumber + 1)

@@ -4,6 +4,8 @@ import shutil
 import os
 from pathlib import Path
 
+from nnf import false
+
 from solution.Environment.Enviroment import Environment
 from solution.Utilities.Score import plot_from_dict
 from solution.Utilities.config import Config
@@ -17,13 +19,15 @@ REPAIR_RELEVANT_VARIABLES = 1
 REPAIR_ALL_VARIABLES = 2
 REPAIR_ALL_MONOMIALS = 3
 REPAIR_ADAPTIVE = 4
+REPAIR_ADAPTIVE_UPDATED = 6
 repair_names = {
     ORACLE: "ORACLE",
     NO_REPAIR: "NO_REPAIR",
     REPAIR_RELEVANT_VARIABLES: "REPAIR_RELEVANT_VARIABLES",
     REPAIR_ALL_VARIABLES: "REPAIR_ALL_VARIABLES",
     REPAIR_ALL_MONOMIALS: "REPAIR_ALL_MONOMIALS",
-    REPAIR_ADAPTIVE: "REPAIR_ADAPTIVE"
+    REPAIR_ADAPTIVE: "REPAIR_ADAPTIVE",
+    REPAIR_ADAPTIVE_UPDATED: "REPAIR_ADAPTIVE_UPDATED"
 }
 # ============================================================
 # GLOBAL VARIABLES
@@ -131,7 +135,7 @@ def experiment_1(repair_methode_id):
 
         if files_are_equal(env.environmentModel.get_model_path(), Config.get_domain()) and learned_model_id == -1:
             learned_model_id = index - start + 1
-            print("Fixed domain detected!")
+            print("The novelty has been learnt!")
 
     return learned_model_id, score_list
 
@@ -251,8 +255,9 @@ def main(novelty_id_arg=None, domain_name_arg=None):
         #("no repair", NO_REPAIR),
         #("repair1", REPAIR_RELEVANT_VARIABLES),
         #("repair2", REPAIR_ALL_VARIABLES),
-        #("repair3", REPAIR_ALL_MONOMIALS),
-        ("repair4", REPAIR_ADAPTIVE),
+        ("repair3", REPAIR_ALL_MONOMIALS),
+        #("repair4", REPAIR_ADAPTIVE),
+        ("repair6", REPAIR_ADAPTIVE_UPDATED),
     ]
 
     results = {name: experiment_1(mode) for name, mode in modes}
@@ -336,11 +341,16 @@ def run_novelties(domain_name, start=1, end=10, use_main2=False):
 
 def main_entry():
     if len(sys.argv) < 3:
-        run_novelties("minecraft", start=6, use_main2=True)
+        run_novelties("sailing", start=2, use_main2=False)
 
     domain_name = sys.argv[1]
     command = sys.argv[2]
     use_main2 = sys.argv[3] == "2"
+    if len(sys.argv) == 5 and sys.argv[4] == 'false':
+        print('add parameters off')
+        Config.ADD_PARAMETERS = False
+    else:
+        print('add parameters on')
     if command == "all":
         run_novelties(domain_name, use_main2=use_main2)
 

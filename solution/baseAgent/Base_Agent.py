@@ -1,3 +1,5 @@
+import os
+
 from solution.DiagnoseAndRepair.DiaganoiseAndRepair import DiagnoseAndRepair
 from solution.Utilities.config import Config
 from solution.baseAgent.Plan import Plan
@@ -48,6 +50,7 @@ class Agent:
         self.DiagnoseAndRepair.planFailed = False
         created_plan = self.planner.create_plan()
         if not created_plan:
+            print("hi")
             return False
         self.DiagnoseAndRepair.initiliazeSimulator()
         return True
@@ -62,6 +65,7 @@ class Agent:
             newObservation (Any): The resulting state after the action was taken.
         """
         self.DiagnoseAndRepair.receive_transition(LastObservation, action, newObservation)
+
 
     def get_plan_length(self):
         """

@@ -61,7 +61,7 @@ def plot_from_dict(data_dict, plot_title, filename, novelty_intro_idx=None):
         )
 
     plt.xlabel('problem_id')
-    plt.ylabel('number of problems solved so far')
+    plt.ylabel('Number of retries until a solution was found')
     plt.title(plot_title)
     plt.legend()
     plt.grid(True)
@@ -83,7 +83,7 @@ def legend_from_csv(path):
     with open(path, newline='', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            label = row['Label']
+            label = row['Label'] if row['Label'] != "base" else "oracle"
             score = ast.literal_eval(row['Score'])
             model_id = int(row['Learned Model ID'])
             legend[label] = (score, model_id)
@@ -94,7 +94,7 @@ def legend_from_csv(path):
 # ---------- YOUR evaluation loop (extended to call the helpers) ----------
 
 # Domains and problem difficulty levels to evaluate
-domains = ["minecraft", "expedition"]
+domains = ["minecraft", "expedition", "sailing"]
 difficulties = ["easy", "medium", "hard"]
 
 # Mapping difficulty levels to specific CSV file indices

@@ -47,25 +47,11 @@ class DiagnoseAndRepair:
         data = self.monitor.check_inequality(LastObservation, newObservation)
 
         if data["inequality"]:
-            # Select the repair strategy based on the repair_id
-            #rel variables
-            if self.repair_id == 1:
-                self.repair.repair_action_rel_vars(LastObservation, action, newObservation, data["different_keys"])
-            #all variabels
-            elif self.repair_id == 2:
-                self.repair.repair_action_all_vars(LastObservation, action, newObservation, data["different_keys"])
-            #adaptive
-            elif self.repair_id == 3:
-                self.repair.repair_action_all_monomials(LastObservation, action, newObservation, data["different_keys"])
-            #all monomials
-            elif self.repair_id == 4:
-                self.repair.repair_action_adaptive(LastObservation, action, newObservation, data["different_keys"])
-            #adaptive
-            elif self.repair_id == 5:
-                self.repair.repair_action_all_vars_symbolic(LastObservation, action, newObservation, data["different_keys"])
+            self.repair.mainRepair(self.repair_id, LastObservation, action, newObservation, data["different_keys"])
         # Update plan failure flag if a discrepancy was fatal to the plan
         if data["planFailed"]:
             self.planFailed = True
+
 
     def initiliazeSimulator(self):
         """

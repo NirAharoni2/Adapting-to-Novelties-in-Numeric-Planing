@@ -21,7 +21,7 @@ class Config:
     # Construct paths relative to the project root
     BASE_PATH = BASE_DIR / "nyx"
     DOMAINS_PATH = BASE_DIR / "dataset"
-
+    ADD_PARAMETERS = True
     ENHSP_PATH = f"{BASE_PATH}/ENHSP"
     METRIC_FF_PATH = f"{BASE_PATH}/METRIC_FF"
     NYX_PATH = f"{BASE_PATH}/nyxMain"

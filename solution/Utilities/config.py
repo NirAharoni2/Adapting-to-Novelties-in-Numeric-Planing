@@ -16,6 +16,7 @@ class Config:
     # Base Paths
 
     # Automatically resolve the base path (project root)
+    checkSignature = False
     BASE_DIR = Path(__file__).resolve().parents[2]  # two levels up from config.py
 
     # Construct paths relative to the project root
@@ -29,11 +30,13 @@ class Config:
     VALIDATOR_DIRECTORY = f"{BASE_PATH}/VAL"
 
     # Active domain/problem (can be changed globally)
+
     domain_path = ""
     problem_path = ""
     plan_path = ""
     time = datetime.now().strftime("%Y%m%d_%H%M%S")
     domain_name = ""
+    next = False
 
     @classmethod
     def update_time(cls):
@@ -66,3 +69,11 @@ class Config:
         cls.domain_name = domain_name
         cls.domain_path = fr"{cls.DOMAINS_PATH}/{domain_name}/novelty_domain_{novelty_id}.pddl"
         cls.problem_path = None
+
+    @classmethod
+    def getOriginalDomain(cls):
+        return cls.BASE_DIR / "dataset" / cls.domain_name / "domain_world.pddl"
+
+    @classmethod
+    def setContinue(cls, state):
+        cls.next = state

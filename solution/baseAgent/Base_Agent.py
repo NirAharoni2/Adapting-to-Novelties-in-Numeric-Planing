@@ -66,7 +66,8 @@ class Agent:
         """
         self.DiagnoseAndRepair.receive_transition(LastObservation, action, newObservation)
 
-
+    def afterProblem(self):
+        self.DiagnoseAndRepair.afterProblem()
     def get_plan_length(self):
         """
         Returns the number of remaining actions in the current plan.

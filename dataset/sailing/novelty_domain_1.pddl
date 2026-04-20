@@ -12,6 +12,7 @@
         (x ?b - boat)
         (y ?b - boat)
         (d ?t - person)
+        (drift_factor)
     )
     (:action go_north_east
      :parameters (?b - boat ?t - person)

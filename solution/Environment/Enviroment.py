@@ -1,6 +1,9 @@
+import json
+import os
 from pathlib import Path
 from PDDL2Gym.pddl2gym import PDDL2GYM
 from solution.Environment.Environment_Model import Environment_Model
+from solution.Utilities.config import Config
 from solution.baseAgent.Planner import suppress_stdout
 
 
@@ -60,6 +63,7 @@ class Environment:
             max_steps=1000
         )
 
+
     def simulate_run(self):
         """
         Simulates an agent's run with monitoring and repair enabled.
@@ -72,22 +76,24 @@ class Environment:
             bool: True if the agent reached the goal; False otherwise.
         """
         observation, _ = self.env.reset()
-
         while True:
+
             for i in range(self.agent.get_plan_length()):
                 action = self.agent.act()
                 with suppress_stdout():
                     new_observation, reward, terminated, truncated, _ = self.env.planning_step(action)
 
                 if reward != -1:
-                    self.agent.receive_transition(observation, action, new_observation)
+                    if not Config.next:
+                        self.agent.receive_transition(observation, action, new_observation)
 
                 if reward == 1:
                     self.score += 1
+                    self.agent.afterProblem()
                     return True
 
                 observation = new_observation
-
+            self.agent.afterProblem()
             return False  # Plan completed, but goal not reached
 
     def simulate_run_without_repair(self):
@@ -104,12 +110,12 @@ class Environment:
         while True:
             for i in range(self.agent.get_plan_length()):
                 action = self.agent.act()
-
                 with suppress_stdout():
                     new_observation, reward, terminated, truncated, _ = self.env.planning_step(action)
 
                 if reward == 1:
                     self.score += 1
                     return True
+                observation = new_observation
 
             return False  # Plan exhausted, goal not reached

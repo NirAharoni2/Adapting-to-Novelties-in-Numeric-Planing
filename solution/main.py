@@ -4,15 +4,15 @@ import shutil
 import os
 from pathlib import Path
 
-from nnf import false
+from solution.Utilities.parsedModel import Parse_Model
 
 from solution.Environment.Enviroment import Environment
 from solution.Utilities.Score import plot_from_dict
 from solution.Utilities.config import Config
 from solution.baseAgent.Base_Agent import Agent
 from solution.Utilities.compare_files import files_are_equal
-
-
+from solution.Utilities.clean import remove_domain_2026_files
+import time
 ORACLE = -2
 NO_REPAIR = -1
 REPAIR_RELEVANT_VARIABLES = 1
@@ -20,6 +20,7 @@ REPAIR_ALL_VARIABLES = 2
 REPAIR_ALL_MONOMIALS = 3
 REPAIR_ADAPTIVE = 4
 REPAIR_ADAPTIVE_UPDATED = 6
+REPAIR_ADAPTIVE_UPDATED_new = 7
 repair_names = {
     ORACLE: "ORACLE",
     NO_REPAIR: "NO_REPAIR",
@@ -27,7 +28,8 @@ repair_names = {
     REPAIR_ALL_VARIABLES: "REPAIR_ALL_VARIABLES",
     REPAIR_ALL_MONOMIALS: "REPAIR_ALL_MONOMIALS",
     REPAIR_ADAPTIVE: "REPAIR_ADAPTIVE",
-    REPAIR_ADAPTIVE_UPDATED: "REPAIR_ADAPTIVE_UPDATED"
+    REPAIR_ADAPTIVE_UPDATED: "REPAIR_ADAPTIVE_UPDATED",
+    REPAIR_ADAPTIVE_UPDATED_new: "REPAIR_ADAPTIVE_UPDATED_new",
 }
 # ============================================================
 # GLOBAL VARIABLES
@@ -38,6 +40,18 @@ start = -1
 end = -1
 inject_novelty_at = -1
 
+def clean():
+    folder9 = r"C:/Felix/dataset/minecraft"
+    folder1 = r"C:/Felix/dataset/minecraftnew"
+    folder2 = r"C:/Felix/dataset/expedition"
+    folder3 = r"C:/Felix/dataset/drone"
+    folder4 = r"C:/Felix/dataset/sailing"
+    folder5 = r"C:/Felix/dataset/counters"
+    folder6 = r"C:/Felix/dataset/sailingNew"
+    folder7 = r"C:/Felix/dataset/droneNew"
+    folder8 = r"C:/Felix/dataset/expeditionNew"
+
+    remove_domain_2026_files([folder9, folder1, folder2, folder3, folder4, folder5, folder6, folder7, folder8])
 
 def set_instance_plan_paths(instance_number: int):
     """
@@ -55,20 +69,23 @@ def reset_only_domains():
 
     # Build the domain path relative to the project root
     domain_path = PROJECT_ROOT / "dataset" / domain_name / "domain_world.pddl"
-    shutil.copyfile(domain_path, Config.get_domain())
-    print(f"Reset: {Config.get_domain()} ← {domain_path}")
+    Parse_Model().resetEffects(domain_path)
+
+
 
 
 def reset():
     """
     Resets both the domain file and clears the plan folder for a fresh start.
     """
-    # Reset domain file
-    reset_only_domains()
 
     # Assuming this is already defined
     PROJECT_ROOT = Path(__file__).resolve().parents[1]
+    # Reset domain file
 
+    domain_path = PROJECT_ROOT / "dataset" / domain_name / "domain_world.pddl"
+    shutil.copyfile(domain_path, Config.get_domain())
+    print(f"Reset: {Config.get_domain()} ← {domain_path}")
     # New relative path
     plans_folder = PROJECT_ROOT / "dataset" / domain_name / "instances" / "plans"
     if os.path.exists(plans_folder):
@@ -91,7 +108,12 @@ def experiment_1(repair_methode_id):
         int: The index at which a repaired model was successfully learned, or -1 if none.
         array: score list
     """
+    if repair_methode_id == REPAIR_ADAPTIVE_UPDATED or repair_methode_id == REPAIR_ADAPTIVE_UPDATED_new:
+        Config.checkSignature = True
+    else:
+        Config.checkSignature = False
     score_list = []
+    otherResults = []
     learned_model_id = -1
 
     if repair_methode_id == -2:
@@ -113,119 +135,43 @@ def experiment_1(repair_methode_id):
             env.injectNovelty(novelty_id)
         print(f"Starting problem_id={index}")
         env.initialize_new_problem_env(index)
-        if not agent.create_new_plan():
+        start_plan_time = time.perf_counter()
+        isCreated = agent.create_new_plan()
+        end_plan_time = time.perf_counter()
+        if not isCreated:
             print("Couldn't generate initial plan.")
             if repair_methode_id in [NO_REPAIR, ORACLE]:
                 score_list.append(env.score)
                 continue
             else:
                 reset_only_domains()
-                if not agent.create_new_plan():
+                start_plan_time = time.perf_counter()
+                isCreated = agent.create_new_plan()
+                end_plan_time = time.perf_counter()
+                if not isCreated:
                     print("Couldn't generate a plan to this problem with reset domain.")
                     score_list.append(env.score)
                     continue
-
+        start_execute_time = time.perf_counter()
         if repair_methode_id in [NO_REPAIR, ORACLE]:
             succeeded = env.simulate_run_without_repair()
         else:
             succeeded = env.simulate_run()
+        end_execute_time = time.perf_counter()
 
+        runtimePlan = end_plan_time - start_plan_time
+        runtimeExecute = end_execute_time - start_execute_time
+
+        otherResults.append([runtimePlan, runtimeExecute, agent.get_plan_length()])
         score_list.append(env.score)
         print(f"problem_id={index}, succeeded: {succeeded}, total_score: {env.score}")
 
-        if files_are_equal(env.environmentModel.get_model_path(), Config.get_domain()) and learned_model_id == -1:
+        if files_are_equal(env.environmentModel.get_model_path(), Config.get_domain()) and learned_model_id == -1 and repair_methode_id not in [NO_REPAIR, ORACLE]:
             learned_model_id = index - start + 1
             print("The novelty has been learnt!")
 
-    return learned_model_id, score_list
+    return learned_model_id, score_list, list(zip(*otherResults))
 
-
-def experiment_2(repair_methode_id, unsolvable):
-    """
-    Runs a sequence of problem instances with a specified repair strategy.
-
-    Args:
-        repair_methode_id (int): ID of the repair strategy (-2=base/oracle, -1=no repair, 1+=various repairs).
-    Returns:
-        int: The index at which a repaired model was successfully learned, or -1 if none.
-        array: score list
-    """
-
-    learned_model_id = -1
-    score_list = []
-    if repair_methode_id == -2:
-        Config.update_domain_to_be_env_domain(domain_name, novelty_id)
-    else:
-        Config.update_domain(domain_name)
-        reset()
-    agent = Agent(repair_methode_id)
-    env = Environment(domain_name, agent)
-    env.returnToNoNovelty()
-
-    print(f"Repair method: {repair_names[repair_methode_id]}")
-    for index in range(start, end):
-        if index in unsolvable:
-            print(f"problem_id={index}, unsolvable")
-            score_list.append(-1)
-            continue
-        counter = 0
-        set_instance_plan_paths(index)
-        if index == inject_novelty_at:
-            print(f"Injecting novelty at problem_id={index}")
-            env.injectNovelty(novelty_id)
-        print(f"Starting problem_id={index}")
-        env.initialize_new_problem_env(index)
-
-        skip_to_next_problem = False
-
-        while True:
-            counter += 1
-            if not agent.create_new_plan():
-                print("Couldn't generate initial plan.")
-                if repair_methode_id in [NO_REPAIR, ORACLE]:
-                    score_list.append(-1)
-                    if repair_methode_id == ORACLE:
-                        unsolvable.append(index)
-                    skip_to_next_problem = True
-                    break
-                else:
-                    reset_only_domains()
-                    if not agent.create_new_plan():
-                        print("Couldn't generate a plan to this problem with reset domain.")
-                        score_list.append(-1)
-                        skip_to_next_problem = True
-                        break
-
-            if repair_methode_id in [NO_REPAIR, ORACLE]:
-                # no repair and oracle don't need to try again
-                succeeded = env.simulate_run_without_repair()
-                if succeeded:
-                    score_list.append(counter)
-                else:
-                    score_list.append(-1)
-                    if repair_methode_id == ORACLE:
-                        unsolvable.append(index)
-                print(f"problem_id={index}, succeeded: {succeeded}")
-                break
-            else:
-                succeeded = env.simulate_run()
-            if succeeded:
-                score_list.append(counter)
-                print(f"problem_id={index}, succeeded: {succeeded}")
-                break
-            if counter >= 100:
-                score_list.append(counter)
-                print(f"problem_id={index}, succeeded: {False}, broke out ")
-                break
-
-        if skip_to_next_problem:
-            continue  # <<< actually continues the outer for-loop
-
-        if files_are_equal(env.environmentModel.get_model_path(), Config.get_domain()) and learned_model_id == -1:
-            learned_model_id = index - start + 1
-            print("Fixed domain detected!")
-
-    return learned_model_id, score_list
 
 
 def main(novelty_id_arg=None, domain_name_arg=None):
@@ -249,25 +195,24 @@ def main(novelty_id_arg=None, domain_name_arg=None):
 
     # Run evaluations
     print(f"Running: domain={domain_name}, novelty_id={novelty_id}")
-
     modes = [
-        #("base", ORACLE),
-        #("no repair", NO_REPAIR),
-        #("repair1", REPAIR_RELEVANT_VARIABLES),
-        #("repair2", REPAIR_ALL_VARIABLES),
-        ("repair3", REPAIR_ALL_MONOMIALS),
-        #("repair4", REPAIR_ADAPTIVE),
-        ("repair6", REPAIR_ADAPTIVE_UPDATED),
-    ]
+        #("oracle", ORACLE),
+        #("base domain - no repair", NO_REPAIR),
+        #("rel. variables repair", REPAIR_RELEVANT_VARIABLES),
+        #("all variables repair", REPAIR_ALL_VARIABLES),
+        #("all monomials repair", REPAIR_ALL_MONOMIALS),
+        #("adaptive repair base", REPAIR_ADAPTIVE),
+        ("adaptive repair + support for signature change", REPAIR_ADAPTIVE_UPDATED_new),
 
+    ]
     results = {name: experiment_1(mode) for name, mode in modes}
 
     legendToList = {
         name: (
             score,
-            -1 if name in {"base", "no repair"} else model
+            model
         )
-        for name, (model, score) in results.items()
+        for name, (model, score, _) in results.items()
     }
 
     os.makedirs("results_csv", exist_ok=True)
@@ -275,88 +220,32 @@ def main(novelty_id_arg=None, domain_name_arg=None):
 
     with open(file_path, mode="w", newline="") as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(["Label", "Score", "Learned Model ID"])
-        for label, (score, model_id) in legendToList.items():
-            writer.writerow([label, score, model_id])
+        writer.writerow(["Label", "Score", "Learned Model ID", "planing time", "execute & repair time", "Plan Length"])
+        for label, (model_id, score, extraResults) in results.items():
+            writer.writerow([label, score, model_id, extraResults[0], extraResults[1], extraResults[2]])
     print(f"A CSV representing the results is saved in {file_path}")
     plot_from_dict(legendToList, f"{domain_name}_novelty_{novelty_id}", f"{domain_name}_novelty_{novelty_id}", novelty_intro_idx=0)
 
 
-def main2(novelty_id_arg=None, domain_name_arg=None):
-    """
-    Runs all evaluations for a single domain and novelty, and saves the results.
-
-    Args:
-        novelty_id (int): The novelty scenario number.
-        domain_name (str): The name of the domain to run.
-    """
-    global domain_name, novelty_id, start, end, inject_novelty_at
-    domain_name = domain_name_arg
-    novelty_id = novelty_id_arg
-    if novelty_id >= 7 or (domain_name == "sailing" and novelty_id >= 4):
-        start = 51
-        end = 101
-    else:
-        start = 1
-        end = 51
-    inject_novelty_at = start
-
-    # Run evaluations
-    print(f"Running: domain={domain_name}, novelty_id={novelty_id}")
-
-    modes = [
-        ("base", ORACLE),
-        ("no repair", NO_REPAIR),
-        ("repair1", REPAIR_RELEVANT_VARIABLES),
-        ("repair2", REPAIR_ALL_VARIABLES),
-        ("repair3", REPAIR_ALL_MONOMIALS),
-        ("repair4", REPAIR_ADAPTIVE),
-    ]
-    unsolvable = []
-    results = {name: experiment_2(mode, unsolvable) for name, mode in modes}
-
-    legendToList = {
-        name: (
-            score,
-            -1 if name in {"base", "no repair"} else model
-        )
-        for name, (model, score) in results.items()
-    }
-
-    os.makedirs("results_csv_experiment_2", exist_ok=True)
-    file_path = os.path.join("results_csv_experiment_2", f"{domain_name}_{novelty_id}_data.csv")
-
-    with open(file_path, mode="w", newline="") as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(["Label", "Score", "Learned Model ID"])
-        for label, (score, model_id) in legendToList.items():
-            writer.writerow([label, score, model_id])
-    print(f"A CSV representing the results is saved in {file_path}")
-    plot_from_dict(legendToList, f"{domain_name}_novelty_{novelty_id}", f"{domain_name}_novelty_{novelty_id}", novelty_intro_idx=0)
-
-def run_novelties(domain_name, start=1, end=10, use_main2=False):
+def run_novelties(domain_name, start=1, end=10):
     for i in range(start, end):
         Config.update_time() if start != 1 else None
-        (main2 if use_main2 else main)(i, domain_name)
+        main(i, domain_name)
 
 def main_entry():
+    clean()
     if len(sys.argv) < 3:
-        run_novelties("sailing", start=2, use_main2=False)
+        run_novelties("minecraftNew", start=4, end=5)
+        return
 
     domain_name = sys.argv[1]
     command = sys.argv[2]
-    use_main2 = sys.argv[3] == "2"
-    if len(sys.argv) == 5 and sys.argv[4] == 'false':
-        print('add parameters off')
-        Config.ADD_PARAMETERS = False
-    else:
-        print('add parameters on')
     if command == "all":
-        run_novelties(domain_name, use_main2=use_main2)
+        run_novelties(domain_name)
 
     elif command == "from" and len(sys.argv) == 5:
         start_novelty = int(sys.argv[4])
-        run_novelties(domain_name, start=start_novelty, use_main2=use_main2)
+        run_novelties(domain_name, start=start_novelty)
 
     else:
         novelty_id = int(command)

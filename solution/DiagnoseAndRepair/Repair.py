@@ -2,8 +2,9 @@ from collections import defaultdict, Counter
 from sklearn.metrics import r2_score
 from sklearn.linear_model import LinearRegression
 import numpy as np
-
 from itertools import combinations_with_replacement
+from ortools.linear_solver import pywraplp
+import time
 
 from sympy.strategies.core import switch
 
@@ -81,7 +82,6 @@ def generate_nested_combinations(term_dict, degree):
 
 class Action:
     def __init__(self, fullAction):
-        self.fullAction = fullAction
         self.name = fullAction[0]
         self.groundedParameters = fullAction[1:]
 
@@ -96,16 +96,24 @@ class Repair:
     """
 
     def __init__(self):
+        self.currentTry = defaultdict()
+        self.fullData = defaultdict(list)
         self.data = defaultdict(list)
-        self.addedParameters = defaultdict(list)
-        self.parsed_model = None
+        self.addedParametersChanged = defaultdict(list)
+        self.addedParametersMakeChange = defaultdict(list)
+        self.parsed_model : Parse_Model = None
+        self.numOfPredicates = 0
+        self.blockNewData = False
+
 
 
     def mainRepair(self, repairId, LastObservation, fullAction, newObservation, different_keys):
         action = Action(fullAction)
-        self.addMissingParamsToAction(different_keys, action)
+        if Config.checkSignature:
+            self.addMissingParamsToAction(different_keys, action)
         # Optionally reuse previously detected keys
         differentKeysLifted = self.getDifferentKeys(action, different_keys)
+
         LastObservationFluents = LastObservation["fluents"]
         newObservationFluents = newObservation["fluents"]
         repairMethod = lambda: ()
@@ -127,7 +135,9 @@ class Repair:
             repairMethod = self.repair_action_all_vars_symbolic
         # adaptive upgraded
         elif repairId == 6:
-            repairMethod = self.repair_action_adaptive_upgraded
+            repairMethod = self.repair_action_adaptive
+        elif repairId == 7:
+            repairMethod = self.repair_action_adaptive_new
         repairMethod(LastObservationFluents, action, newObservationFluents, differentKeysLifted)
         return False
 
@@ -189,7 +199,10 @@ class Repair:
         """
         Tries multiple regression forms (basic, full, monomials) and picks the one with highest R² score.
         """
+        if self.blockNewData:
+            return
 
+        self.numOfPredicates = len(filter_valid_predicates(action, LastObservationFluents))
         x1 = self.generalize_facts(filter_valid_predicates(action, LastObservationFluents), action)
         y2 = self.generalize_facts(filter_valid_predicates(action, newObservationFluents), action)
         y2 = {k: y2[k] for k in differentKeysLifted if k in y2}
@@ -207,7 +220,55 @@ class Repair:
             data3 = [[y, generate_nested_combinations(x, degree=2)] for y, x in self.data[action.name]]
 
             results = self.multi_output_linear_regression_for_adaptive(action.name, [data1, data2, data3])
-            self.update_model(action.name, results)
+            if not Config.next:
+                self.update_model(action.name, results)
+
+
+    def repair_action_adaptive_new(self, LastObservationFluents, action, newObservationFluents, differentKeysLifted):
+        """
+        Tries multiple regression forms (basic, full, monomials) and picks the one with highest R² score.
+        """
+
+
+        if self.blockNewData:
+            return
+
+
+        self.numOfPredicates = len(filter_valid_predicates(action, LastObservationFluents))
+        print(LastObservationFluents)
+        x1 = self.generalize_facts(filter_valid_predicates(action, LastObservationFluents), action)
+        print(x1)
+        y2 = self.generalize_facts(filter_valid_predicates(action, newObservationFluents), action)
+        y2 = {k: y2[k] for k in differentKeysLifted if k in y2}
+        self.data[action.name].append([y2, x1])
+        self.fullData[action.name].append([y2, LastObservationFluents, action])
+
+        unique_states = {
+            tuple(tuple(sorted(d.items())) for d in state)
+            for state in self.data[action.name]
+        }
+        if len(unique_states) >= 2:
+            if action.name in self.currentTry:
+
+                # do this before entering this function maybe
+                # only add the new variable,
+                # create new data (a,b1,b2) => (a^2 ,a * b1, a*b2, b1^2, b2^2)
+                data = []
+                for dataRow in self.fullData[action.name]:
+                    x1 = self.generalize_facts(filter_valid_predicates(action, dataRow[1]), action)
+                    newParam = self.getKeysOfCertinType(dataRow[1], action.name)
+                    data.append({'y': dataRow[0], 'oldParams': x1, 'newParam': newParam,'action': dataRow[2]})
+
+                results = self.multi_output_linear_regression_for_adaptive_new(action.name, data)
+            else:
+                data1 = [[y, {k: x[k] for k in y.keys() if k in x}] for y, x in self.data[action.name]]
+                data2 = self.data[action.name]
+                data3 = [[y, generate_nested_combinations(x, degree=2)] for y, x in self.data[action.name]]
+
+                results = self.multi_output_linear_regression_for_adaptive(action.name, [data1, data2, data3])
+
+            if not Config.next:
+                self.update_model(action.name, results)
 
     def repair_action_adaptive_upgraded(self, LastObservationFluents, action, newObservationFluents, differentKeysLifted):
         """
@@ -254,7 +315,7 @@ class Repair:
         if self.data.get(action.name) and self.data[action.name][0]:
             different_keys = list(self.data[action.name][0][0].keys())
         else:
-            different_keys = self.generalize_facts_for_list(different_keys, action.fullAction)
+            different_keys = self.generalize_facts_for_list(different_keys, action)
         return different_keys
 
 
@@ -320,11 +381,110 @@ class Repair:
                     filtered_state = {k: v for k, v in rounded.items() if v != 0 and v != 0.0}
                     best_score = score
                     best_result = filtered_state
+            print(actionName)
+            print(best_score)
+            # num of vars in monomial = 1 + self.numOfPredicates * (1+ self.numOfPredicates)
+            print(len(list_data[2]))
+            print(len(list_data[2][0][1].keys()) + 1)
+            if not self.blockNewData and Config.checkSignature and best_score < 0.9999 and len(list_data[2]) > (len(list_data[2][0][1].keys()) + 1):
+                print('here')
+                self.addParameter(actionName)
+                self.data[actionName] = []
+                self.blockNewData = True
 
+                #if rock not 0.99 than add a rnadom paramter that is not already int he action to
+                #changing parameters
+                #than at the start of next loop add them
             results[y_key] = best_result
 
         return results
 
+    def multi_output_linear_regression_for_adaptive_new(self, actionName, data_rows):
+        y_targets = list(data_rows[0]['y'].keys())
+        results = {}
+        start_plan_time = time.perf_counter()
+        for target in y_targets:
+            print(f"--- Solving for target fluent: {target} ---")
+
+            # 1. Create the solver (SCIP handles MIP problems with floats)
+            solver = pywraplp.Solver.CreateSolver('CBC')
+
+            # Extract keys for a (oldParams) and b (newParam)
+            a_keys = list(data_rows[0]['oldParams'].keys())
+            all_b_keys = set()
+            for row in data_rows:
+                all_b_keys.update(row['newParam'].keys())
+            b_keys = sorted(list(all_b_keys))
+
+            n_a = len(a_keys)
+
+            n_b = len(b_keys)
+
+            # 2. Variables
+            # x_a are coefficients for the original state fluents
+            x_a = [solver.NumVar(-100.0, 100.0, f'x_a_{i}') for i in range(n_a)]
+            # x_b are coefficients for the new action parameters
+            x_b = solver.NumVar(-100.0, 100.0, f'x_b')
+            constant = solver.NumVar(-100.0, 100.0, 'C')
+
+            # 3. Objective: Minimize Sum of Absolute Errors
+            error_vars = []
+
+            for i, row in enumerate(data_rows):
+                y_val = row['y'][target]
+
+                # Binary switches: Only one 'b' parameter is active per row
+                z = [solver.IntVar(0, 1, f'z_{i}_{j}') for j in range(n_b)]
+                solver.Add(solver.Sum(z) == 1)
+
+                # Linearize the z[j] * x_b[j] term using Big-M
+                b_contribution = solver.NumVar(-1000.0, 1000.0, f'b_contrib_{i}')
+                M = 1000
+
+                for j in range(n_b):
+                    b_key = b_keys[j]
+
+                    # Check if this row actually contains this specific parameter
+                    if b_key in row['newParam']:
+                        b_val = row['newParam'][b_key]
+
+                        # If z[j] == 1, b_contribution must equal (b_val * x_b[j])
+                        solver.Add(b_contribution <= (b_val * x_b) + M * (1 - z[j]))
+                        solver.Add(b_contribution >= (b_val * x_b) - M * (1 - z[j]))
+                    else:
+                        # If the parameter doesn't exist in this row, this z MUST be 0
+                        solver.Add(z[j] == 0)
+
+                # Total Prediction: sum(a*x_a) + b_contribution + constant
+                a_sum = sum(row['oldParams'][a_keys[k]] * x_a[k] for k in range(n_a))
+                prediction = a_sum + b_contribution + constant
+
+                # Error variable for this specific row (slack variable)
+                row_err = solver.NumVar(0, 10000.0, f'err_{i}')
+                solver.Add(prediction - y_val <= row_err)
+                solver.Add(y_val - prediction <= row_err)
+                error_vars.append(row_err)
+
+            solver.Minimize(solver.Sum(error_vars))
+
+            # 4. Solve and Store Results
+            status = solver.Solve()
+
+            if status == pywraplp.Solver.OPTIMAL or status == pywraplp.Solver.FEASIBLE:
+                results[target] = {
+                    'a_coeffs': {a_keys[k]: x_a[k].solution_value() for k in range(n_a)},
+                    'b_coeff': x_b.solution_value(),
+                    'constant': constant.solution_value(),
+                    'total_error': solver.Objective().Value()
+                }
+                print(f"Result: {status} (Error: {results[target]['total_error']})")
+            else:
+                print(f"Result: No solution found for {target}")
+        print(results)
+        end_plan_time = time.perf_counter()
+        runtimePlan = end_plan_time - start_plan_time
+        print(f"time: {runtimePlan}")
+        return results
 
     def multi_output_symbolic(self, data, decimals=5):
         """
@@ -439,16 +599,18 @@ class Repair:
         for key, expr in self.generate_expressions(results).items():
             self.parsed_model.update_action_effect(action, key, expr)
 
-        self.parsed_model.commit()
+        #self.parsed_model.commit()
 
     def generalize_facts(self, facts, action):
         """
         Replaces concrete constants in fluents with their corresponding variables.
         """
         param_vars = self.parsed_model.get_parameters_of_action(action.name)
-        if len(param_vars) != len(action.groundedParameters):
-            raise ValueError("Mismatch between action args and param vars")
-
+        if len(param_vars) < len(action.groundedParameters):
+            raise ValueError(
+                f"Not enough param vars ({len(param_vars)}) to cover "
+                f"action args ({len(action.groundedParameters)})"
+            )
         replacement = {c: v for c, v in zip(action.groundedParameters, param_vars)}
         generalized = {}
 
@@ -468,11 +630,14 @@ class Repair:
         """
         Generalizes a list of fluent keys using the same logic as `generalize_facts`.
         """
-        action_name, *args = action
+        action_name = action.name
+        args = action.groundedParameters
         param_vars = self.parsed_model.get_parameters_of_action(action_name)
-        if len(param_vars) != len(args):
-            raise ValueError("Mismatch between action args and param vars")
-
+        if len(param_vars) < len(action.groundedParameters):
+            raise ValueError(
+                f"Not enough param vars ({len(param_vars)}) to cover "
+                f"action args ({len(action.groundedParameters)})"
+            )
         replacement = {c: v for c, v in zip(args, param_vars)}
         generalized = []
 
@@ -481,26 +646,77 @@ class Repair:
                 generalized.append(key)
                 continue
             func, *args = key
-            new_key = (func, *[replacement[a] for a in args])
-            generalized.append(new_key)
+            if all(a in replacement for a in args):
+                new_key = (func, *[replacement[a] for a in args])
+                generalized.append(new_key)
 
         return generalized
 
     def addMissingParamsToAction(self, different_keys, action):
         #key is ('d', 'p0') // (functionName, groundedParams...)
         #action is (actionName, groundedParams...)
-        isMissing = False
+
 
         for key in different_keys:
             functionName = key[0]
             for i, param in enumerate(key[1:]):
                 if param not in action.groundedParameters:
-                    isMissing = True
+                    action.groundedParameters.append(param)
                     theFunctionsParams = self.parsed_model.get_parameters(functionName)
-                    self.parsed_model.addParameterToAction(action.name, theFunctionsParams[i])
-        self.parsed_model.commit()
-        return isMissing
+                    #this if is inaccurate and its clause might cause later problems
+
+                    # if its not true its means we they are equal and we already added the param (used when replanned)
+                    paramsNotEqual = len(action.groundedParameters) != len(
+                        self.parsed_model.get_parameters_of_action(action.name))
+
+                    if not all(item in self.addedParametersChanged[action.name] for item in theFunctionsParams) and paramsNotEqual:
+                        self.parsed_model.addParameterToAction(action.name, theFunctionsParams[i])
+                        self.addedParametersChanged[action.name].extend(theFunctionsParams)
+        #self.parsed_model.commit()
 
 
     def addMissingParameterToAction(self, actionName, groundedParameter):
         pass
+
+    def afterProblem(self):
+        #for key, value in self.addedParametersChanged.items():
+        #    self.parsed_model.addParameterToAction(key, value) # action.name, theFunctionsParams[i]
+        # commit the new parameters
+        Config.setContinue(False)
+        self.addedParametersChanged = defaultdict(list)
+        self.blockNewData = False
+        self.parsed_model.commit()
+
+    def addParameter(self, actionName):
+        tried = self.addedParametersMakeChange[actionName]
+        for parameter in tried:
+            self.parsed_model.removeParameterFromAction(actionName, parameter)
+            print(f"removed {parameter} from {actionName}")
+        triedTypes = [item[1] for item in tried]
+        alreadyIn = self.parsed_model.get_types_in_action(actionName)
+        possibleAdditions = self.parsed_model.possibleNewParameters().get('object')
+        #reverse possibleAdditions[::-1]
+        for possibleAddition in possibleAdditions:
+            if possibleAddition not in alreadyIn and possibleAddition not in triedTypes:
+                newParameter = [f'?{possibleAddition[0]}', possibleAddition]
+                newParameter = self.parsed_model.addParameterToAction(actionName, newParameter)
+                print(Config.getOriginalDomain())
+                self.parsed_model.resetEffects(Config.getOriginalDomain())
+                Config.setContinue(True)
+                self.currentTry[actionName] = newParameter
+                self.addedParametersMakeChange[actionName].append(newParameter)
+                self.blockNewData = True
+                print(f"added {newParameter} to {actionName}")
+                break
+
+    def getKeysOfCertinType(self, fullData: dict[tuple, int], actionName: str):
+        dataOfCertainTypeParameter = {}
+        for key, value in fullData.items():
+            thisFunction = key[0]
+            #currently if the function has more than two parameters it dosen't work properly
+            functionsTypes = self.parsed_model.get_parameters_type(thisFunction)
+            thisType = functionsTypes[0] if len(functionsTypes) > 0 else None
+            if thisType == self.currentTry[actionName][1]:
+                dataOfCertainTypeParameter[key] = value
+        return dataOfCertainTypeParameter
+

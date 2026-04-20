@@ -98,8 +98,8 @@ class Plan(list):
 
 
         time = float("0.000")
-        print(action_lookup)
-        print(action_name)
+        #print(action_lookup)
+        #print(action_name)
         action = action_lookup[' '.join(action_name)]
         plan.append_action(action, time, expand_time_passing=expand_time_passing)
 

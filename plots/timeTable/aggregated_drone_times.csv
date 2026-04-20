@@ -1,0 +1,101 @@
+Domain,Level,Label,Avg Planning,Avg Exec & Repair
+sailing,Level 1 (1-3),oracle,0.16110067533232117,0.02387140133418143
+sailing,Level 1 (1-3),base domain - no repair,0.16158707533283934,0.0247702359984396
+sailing,Level 1 (1-3),all monomials repair,0.16153959933357934,0.15178866466643134
+sailing,Level 1 (1-3),adaptive repair base,0.14597358333393154,0.1404969479999272
+sailing,Level 1 (1-3),adaptive repair + support for signature change,0.14093936333238768,0.1396913373332548
+sailing,Level 2 (4-6),oracle,1.0610817481748982,0.05249129646503286
+sailing,Level 2 (4-6),base domain - no repair,0.14016872133399982,0.023917813998802256
+sailing,Level 2 (4-6),all monomials repair,0.2322041253326461,0.19672503000144692
+sailing,Level 2 (4-6),adaptive repair base,0.2433013813337311,0.2761562100010148
+sailing,Level 2 (4-6),adaptive repair + support for signature change,0.2403930046671303,0.2796639293341044
+sailing,Level 3 (7-9),oracle,8.19859076466586,0.04216029733322405
+sailing,Level 3 (7-9),base domain - no repair,0.1490135380002903,0.031179834666739528
+sailing,Level 3 (7-9),all monomials repair,0.18458164133383737,0.22771313133183868
+sailing,Level 3 (7-9),adaptive repair base,0.1810300920016986,0.368853433332212
+sailing,Level 3 (7-9),adaptive repair + support for signature change,0.1848749879995982,0.3721185553345519
+minecraft,Level 1 (1-3),oracle,0.13283469533431344,0.0060650066668555755
+minecraft,Level 1 (1-3),base domain - no repair,0.07794394666707376,0.0045308373336835454
+minecraft,Level 1 (1-3),all monomials repair,0.1375666600004964,0.023038094000366983
+minecraft,Level 1 (1-3),adaptive repair base,0.12469768866770513,0.01953633200008577
+minecraft,Level 1 (1-3),adaptive repair + support for signature change,0.12741661066625964,0.020339608666739274
+minecraft,Level 2 (4-6),oracle,0.10888286666692389,0.004137407333085623
+minecraft,Level 2 (4-6),base domain - no repair,0.07317324533311571,0.003637610000053731
+minecraft,Level 2 (4-6),all monomials repair,0.10651193533296464,0.01618625000002794
+minecraft,Level 2 (4-6),adaptive repair base,0.10483048666646937,0.016214639999282857
+minecraft,Level 2 (4-6),adaptive repair + support for signature change,0.10469499066666078,0.01631056333358477
+minecraft,Level 3 (7-9),oracle,0.08796433628879681,0.014174799595080464
+minecraft,Level 3 (7-9),base domain - no repair,0.07618584466719767,0.004577840666364258
+minecraft,Level 3 (7-9),all monomials repair,0.18326714666637903,0.05030179799941834
+minecraft,Level 3 (7-9),adaptive repair base,0.17956456666627976,0.05392169733240735
+minecraft,Level 3 (7-9),adaptive repair + support for signature change,0.17952440199917571,0.05268957933294586
+drone,Level 1 (1-3),oracle,0.11403081599977061,0.016999285999894104
+drone,Level 1 (1-3),base domain - no repair,0.08497498400009741,0.020187936666601066
+drone,Level 1 (1-3),all monomials repair,0.3144622326667255,0.11521632466681088
+drone,Level 1 (1-3),adaptive repair base,0.0992469593333226,0.08404829599996448
+drone,Level 1 (1-3),adaptive repair + support for signature change,0.09463853266655253,0.07940105933334658
+drone,Level 2 (4-6),oracle,3.158060174666607,0.01897879400004361
+drone,Level 2 (4-6),base domain - no repair,0.08620724799994302,0.021803469999819452
+drone,Level 2 (4-6),all monomials repair,0.8332525706663727,0.18412104866666293
+drone,Level 2 (4-6),adaptive repair base,0.3124236953332729,0.0950977926669293
+drone,Level 2 (4-6),adaptive repair + support for signature change,0.3087104526670009,0.09781587066633317
+drone,Level 3 (7-9),oracle,6.693806167999839,0.036883331000099134
+drone,Level 3 (7-9),base domain - no repair,0.12874181266670348,0.0363826246666819
+drone,Level 3 (7-9),all monomials repair,0.9441481653336572,0.3736720600005356
+drone,Level 3 (7-9),adaptive repair base,0.8581587526665923,0.4096516626664864
+drone,Level 3 (7-9),adaptive repair + support for signature change,0.8684559960002177,0.43537578066636345
+expedition,Level 1 (1-3),oracle,0.35438843333366093,0.080070322000635
+expedition,Level 1 (1-3),base domain - no repair,0.09952110666655549,0.030705079999073254
+expedition,Level 1 (1-3),all monomials repair,0.40887763199978505,0.192487365998968
+expedition,Level 1 (1-3),adaptive repair base,0.34010221733372115,0.149587051999697
+expedition,Level 1 (1-3),adaptive repair + support for signature change,0.3475046446664298,0.15623358933322984
+expedition,Level 2 (4-6),oracle,0.4009312019993861,0.0908330513346785
+expedition,Level 2 (4-6),base domain - no repair,0.1258410759999727,0.049561209331926266
+expedition,Level 2 (4-6),all monomials repair,0.4077564133329239,0.17807488266708482
+expedition,Level 2 (4-6),adaptive repair base,0.3717215953344324,0.16828390866479218
+expedition,Level 2 (4-6),adaptive repair + support for signature change,0.37747552333341444,0.1763370793320549
+expedition,Level 3 (7-9),oracle,6.474990885575817,0.49734469357596955
+expedition,Level 3 (7-9),base domain - no repair,0.12649739733380558,0.045749236666354894
+expedition,Level 3 (7-9),all monomials repair,0.6333117693325524,0.7093749993342015
+expedition,Level 3 (7-9),adaptive repair base,0.6178336726658987,0.7212609766674237
+expedition,Level 3 (7-9),adaptive repair + support for signature change,0.6091650959995362,0.7096964826668409
+sailingNew,Level 1 (1-3),oracle,5.4578620486664775,0.055219732000065656
+sailingNew,Level 1 (1-3),base domain - no repair,0.15473805333361573,0.02627229933331061
+sailingNew,Level 1 (1-3),all monomials repair,0.1468303746667031,0.8371530120004901
+sailingNew,Level 1 (1-3),adaptive repair base,0.1367495973330127,0.7086156313329898
+sailingNew,Level 1 (1-3),adaptive repair + support for signature change,0.22886547800061333,0.3655361220001456
+sailingNew,Level 2 (4-6),oracle,0.8584213806667685,0.004194586666781105
+sailingNew,Level 2 (4-6),base domain - no repair,0.21618068533338372,0.013453696000069612
+sailingNew,Level 2 (4-6),all monomials repair,0.7298557059998712,0.07831822466670323
+sailingNew,Level 2 (4-6),adaptive repair base,0.8061415473333667,0.1176233259999329
+sailingNew,Level 2 (4-6),adaptive repair + support for signature change,0.5786048466668096,0.07290795800011741
+minecraftNew,Level 1 (1-3),oracle,1.1880985510340116,0.005539661414970263
+minecraftNew,Level 1 (1-3),base domain - no repair,0.0707674533333208,0.00493231800000558
+minecraftNew,Level 1 (1-3),all monomials repair,0.47470225933333116,0.1250085780000139
+minecraftNew,Level 1 (1-3),adaptive repair base,0.5092841533333331,0.18926807133334175
+minecraftNew,Level 1 (1-3),adaptive repair + support for signature change,1.0867308593333351,0.023655802666670143
+minecraftNew,Level 2 (4-6),adaptive repair + support for signature change,1.6826335720016505,0.09657662767172344
+minecraftNew,Level 2 (4-6),oracle,2.9658961006669897,0.017031810666618793
+minecraftNew,Level 2 (4-6),base domain - no repair,0.07758974066668695,0.008125302999930379
+minecraftNew,Level 2 (4-6),all monomials repair,1.00396608466656,0.7948708153330274
+minecraftNew,Level 2 (4-6),adaptive repair base,1.4992098610002964,1.341123695333396
+expeditionNew,Level 1 (1-3),oracle,7.81110752333431,0.15146360733371694
+expeditionNew,Level 1 (1-3),base domain - no repair,0.11215513999942535,0.0966518479991161
+expeditionNew,Level 1 (1-3),all monomials repair,0.46802691066657043,0.21940197799995076
+expeditionNew,Level 1 (1-3),adaptive repair base,0.9168272366664799,0.39965527000041523
+expeditionNew,Level 1 (1-3),adaptive repair + support for signature change,2.3428407413334935,0.23770528533350443
+expeditionNew,Level 2 (4-6),oracle,8.044783718666876,0.11989744933322072
+expeditionNew,Level 2 (4-6),base domain - no repair,0.09497125599960177,0.06532028266597384
+expeditionNew,Level 2 (4-6),all monomials repair,0.44414370599969205,0.247444174666792
+expeditionNew,Level 2 (4-6),adaptive repair base,0.6423779680004615,0.3019442626656383
+expeditionNew,Level 2 (4-6),adaptive repair + support for signature change,0.9017080406667084,0.33745306999946484
+droneNew,Level 1 (1-3),oracle,3.014953624666765,0.027156765999728428
+droneNew,Level 1 (1-3),base domain - no repair,0.14336046799997956,0.052203213333171634
+droneNew,Level 1 (1-3),all monomials repair,1.3530220253331453,0.36826875733286824
+droneNew,Level 1 (1-3),adaptive repair base,0.9692316940001183,0.23289496466659332
+droneNew,Level 1 (1-3),adaptive repair + support for signature change,1.979560712666668,0.19180570866607013
+droneNew,Level 2 (4-6),oracle,0.20987364966548439,0.056086087665898954
+droneNew,Level 2 (4-6),base domain - no repair,0.18008797199989202,0.06913212833377959
+droneNew,Level 2 (4-6),all monomials repair,3.0076280980001804,1.094982884666533
+droneNew,Level 2 (4-6),adaptive repair base,2.8943307050001263,1.1878349496660425
+droneNew,Level 2 (4-6),adaptive repair + support for signature change,1.494038524332718,0.6032920013330294

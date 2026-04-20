@@ -23,7 +23,7 @@
      :effect (and
             (not (at ?s ?w1))
             (at ?s ?w2)
-            (assign (sled_supplies ?s) (+ (* 1.5 (sled_supplies ?s)) -3.0)))
+            (assign (sled_supplies ?s) (+ (* 1.1 (sled_supplies ?s)) -2.4)))
     )
     (:action move_backwards
      :parameters (?s - sled ?w1 - waypoint ?w2 - waypoint)

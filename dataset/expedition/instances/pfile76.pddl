@@ -8,9 +8,9 @@
 
   (:init
     (at s0 w0_0)
-    (= (sled_capacity s0) 7)
+    (= (sled_capacity s0) 8)
     (= (sled_supplies s0) 6)
-    (= (factor) 0.92455)
+    (= (factor) 0.63093)
     (= (waypoint_supplies w0_0) 1000)
     (= (waypoint_supplies w0_1) 0)
     (= (waypoint_supplies w0_2) 0)

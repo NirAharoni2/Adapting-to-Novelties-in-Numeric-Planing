@@ -11,6 +11,7 @@ class Parse_Model:
         self.parsed_domain = parser.domain
 
     def commit(self):
+
         with open(Config.domain_path, 'w') as f:
             f.write(self.rebuild_pddl_domain())
 
@@ -163,6 +164,11 @@ class Parse_Model:
         names = [param[0] for param in theAct.parameters]
         return names
 
+    def get_types_in_action(self, actionName):
+        theAct = self.getActionByName(actionName)
+        names = [param[1] for param in theAct.parameters]
+        return names
+
     # input: action name (for example 'go_north_east') and parameter (for example ['?p','person']
     # void: add the parameter to the action's paramters
     # in case '?p' exists it replaces ?p with ?p1 and adds ['?p2','person'])
@@ -173,9 +179,10 @@ class Parse_Model:
             alreadyExistName = param[0] # for example '?p'
             theNewParamName = parameter[0]
             if alreadyExistName == theNewParamName:
-                param[0] = self.addNumber1(param[0])
-                parameter[0] = self.incrementNumber(parameter[0], param[0])
+                demoParam = self.addNumber1(param[0])
+                parameter[0] = self.incrementNumber(parameter[0], demoParam)
         theAct.parameters.append(parameter)
+        return parameter
 
     def getActionByName(self, actionName):
         theAct = None
@@ -220,3 +227,27 @@ class Parse_Model:
         oldNumber = self.get_trailing_number(theCollidingParam)
         if oldNumber is not None:
             return theNewParam + str(oldNumber + 1)
+
+
+    def possibleNewParameters(self):
+        return self.parsed_domain.types
+
+
+    def resetEffects(self, originalDomain):
+        parser = PDDL_Parser(originalDomain, Config.problem_path)
+        original_parsed_domain = parser.domain
+        for action in original_parsed_domain.actions:
+            currentAction = self.getActionByName(action.name)
+            currentAction.effects = action.effects
+        self.commit()
+
+    #gets parameter = ["?a", "axe"]
+    def removeParameterFromAction(self, actionName, parameter):
+        parameter = list(parameter)
+        theAct = self.getActionByName(actionName)
+        for param in theAct.parameters:
+            alreadyExistName = param[0] # for example '?p'
+            theNewParamName = parameter[0]
+            if alreadyExistName == theNewParamName:
+                theAct.parameters.remove(parameter)
+        return parameter

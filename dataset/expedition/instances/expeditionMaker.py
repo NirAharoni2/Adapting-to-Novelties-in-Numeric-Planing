@@ -144,7 +144,7 @@ def generate_pddl_problem_with_factor(sleds, waypoint_supplies, factor, problem_
 def write_to_file_with_factor(num_instances):
     import random
 
-    problem_id = 51
+    problem_id = 76
 
     for _ in range(num_instances):
         # Randomly choose number of waypoints (between 5 and 6, inclusive)
@@ -170,7 +170,7 @@ def write_to_file_with_factor(num_instances):
         waypoint_supplies[0] = 1000
         factor = round(random.uniform(0.5, 1),5)
 
-        file_path = rf"C:\newProject\ipc2023-dataset\expedition\instances\pfile{problem_id}.pddl"
+        file_path = rf"C:\Felix\dataset\expedition\instances\pfile{problem_id}.pddl"
         content = generate_pddl_problem_with_factor(sleds, waypoint_supplies, factor, f"instance_{problem_id}")
 
         with open(file_path, 'w') as f:
@@ -179,6 +179,6 @@ def write_to_file_with_factor(num_instances):
         problem_id += 1
 
 
-write_to_file_with_factor(50)
+write_to_file_with_factor(1)
 
 

@@ -1,0 +1,41 @@
+Domain,Level,Label,Avg Planning,Avg Exec & Repair,Base Domain,Source,Row Label
+sailing,Level 1 (1-3),oracle,0.1611006753323211,0.0238714013341814,Sailing,Original,easy
+sailing,Level 1 (1-3),adaptive repair + support for signature change,0.1409393633323876,0.1396913373332548,Sailing,Original,easy
+sailing,Level 2 (4-6),oracle,1.0610817481748982,0.0524912964650328,Sailing,Original,medium
+sailing,Level 2 (4-6),adaptive repair + support for signature change,0.2403930046671303,0.2796639293341044,Sailing,Original,medium
+sailing,Level 3 (7-9),oracle,8.19859076466586,0.042160297333224,Sailing,Original,hard
+sailing,Level 3 (7-9),adaptive repair + support for signature change,0.1848749879995982,0.3721185553345519,Sailing,Original,hard
+minecraft,Level 1 (1-3),oracle,0.1328346953343134,0.0060650066668555,Minecraft,Original,easy
+minecraft,Level 1 (1-3),adaptive repair + support for signature change,0.1274166106662596,0.0203396086667392,Minecraft,Original,easy
+minecraft,Level 2 (4-6),oracle,0.1088828666669238,0.0041374073330856,Minecraft,Original,medium
+minecraft,Level 2 (4-6),adaptive repair + support for signature change,0.1046949906666607,0.0163105633335847,Minecraft,Original,medium
+minecraft,Level 3 (7-9),oracle,0.0879643362887968,0.0141747995950804,Minecraft,Original,hard
+minecraft,Level 3 (7-9),adaptive repair + support for signature change,0.1795244019991757,0.0526895793329458,Minecraft,Original,hard
+drone,Level 1 (1-3),oracle,0.1140308159997706,0.0169992859998941,Drone,Original,easy
+drone,Level 1 (1-3),adaptive repair + support for signature change,0.0946385326665525,0.0794010593333465,Drone,Original,easy
+drone,Level 2 (4-6),oracle,3.158060174666607,0.0189787940000436,Drone,Original,medium
+drone,Level 2 (4-6),adaptive repair + support for signature change,0.3087104526670009,0.0978158706663331,Drone,Original,medium
+drone,Level 3 (7-9),oracle,6.693806167999839,0.0368833310000991,Drone,Original,hard
+drone,Level 3 (7-9),adaptive repair + support for signature change,0.8684559960002177,0.4353757806663634,Drone,Original,hard
+expedition,Level 1 (1-3),oracle,0.3543884333336609,0.080070322000635,Expedition,Original,easy
+expedition,Level 1 (1-3),adaptive repair + support for signature change,0.3475046446664298,0.1562335893332298,Expedition,Original,easy
+expedition,Level 2 (4-6),oracle,0.4009312019993861,0.0908330513346785,Expedition,Original,medium
+expedition,Level 2 (4-6),adaptive repair + support for signature change,0.3774755233334144,0.1763370793320549,Expedition,Original,medium
+expedition,Level 3 (7-9),oracle,6.474990885575817,0.4973446935759695,Expedition,Original,hard
+expedition,Level 3 (7-9),adaptive repair + support for signature change,0.6091650959995362,0.7096964826668409,Expedition,Original,hard
+sailingNew,Level 1 (1-3),oracle,5.4578620486664775,0.0552197320000656,Sailing,New,lv. 1
+sailingNew,Level 1 (1-3),adaptive repair + support for signature change,0.2288654780006133,0.3655361220001456,Sailing,New,lv. 1
+sailingNew,Level 2 (4-6),oracle,0.8584213806667685,0.0041945866667811,Sailing,New,lv 2
+sailingNew,Level 2 (4-6),adaptive repair + support for signature change,0.5786048466668096,0.0729079580001174,Sailing,New,lv 2
+minecraftNew,Level 1 (1-3),oracle,1.1880985510340116,0.0055396614149702,Minecraft,New,lv. 1
+minecraftNew,Level 1 (1-3),adaptive repair + support for signature change,1.0867308593333351,0.0236558026666701,Minecraft,New,lv. 1
+minecraftNew,Level 2 (4-6),adaptive repair + support for signature change,1.6826335720016503,0.0965766276717234,Minecraft,New,lv 2
+minecraftNew,Level 2 (4-6),oracle,2.9658961006669897,0.0170318106666187,Minecraft,New,lv 2
+expeditionNew,Level 1 (1-3),oracle,7.81110752333431,0.1514636073337169,Expedition,New,lv. 1
+expeditionNew,Level 1 (1-3),adaptive repair + support for signature change,2.342840741333493,0.2377052853335044,Expedition,New,lv. 1
+expeditionNew,Level 2 (4-6),oracle,8.044783718666876,0.1198974493332207,Expedition,New,lv 2
+expeditionNew,Level 2 (4-6),adaptive repair + support for signature change,0.9017080406667084,0.3374530699994648,Expedition,New,lv 2
+droneNew,Level 1 (1-3),oracle,3.014953624666765,0.0271567659997284,Drone,New,lv. 1
+droneNew,Level 1 (1-3),adaptive repair + support for signature change,1.979560712666668,0.1918057086660701,Drone,New,lv. 1
+droneNew,Level 2 (4-6),oracle,0.2098736496654843,0.0560860876658989,Drone,New,lv 2
+droneNew,Level 2 (4-6),adaptive repair + support for signature change,1.494038524332718,0.6032920013330294,Drone,New,lv 2

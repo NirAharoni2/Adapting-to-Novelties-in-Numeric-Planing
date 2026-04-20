@@ -1,3 +1,5 @@
+from numpy.f2py.auxfuncs import throw_error
+
 from solution.Utilities.config import ErrorFlag, Config
 
 import sys, os
@@ -56,15 +58,18 @@ class Planner:
         problem_path = Config.problem_path
         plan_path = Config.plan_path
         with suppress_stdout():
-            if Config.domain_name == "drone":
+            if Config.domain_name == "drone" or Config.domain_name == "droneNew":
                 nyx.runner(domain_path, problem_path, ["-timeout:60", "search:gbfs", "custom_heuristic:3"])
-            elif Config.domain_name == "expedition":
+            elif Config.domain_name == "expedition" or Config.domain_name == "expeditionNew":
                 nyx.runner(domain_path, problem_path, ["-timeout:60", "search:gbfs", "custom_heuristic:1"])
-            elif Config.domain_name == "sailing":
+            elif Config.domain_name == "sailing" or Config.domain_name == "sailingNew":
                 nyx.runner(domain_path, problem_path, ["-timeout:60", "search:gbfs", "custom_heuristic:2"])
-            elif Config.domain_name == "minecraft":
-                nyx.runner(domain_path, problem_path, ["-timeout:60", "search:bfs"])
-
+            elif Config.domain_name == "minecraft" or Config.domain_name == "minecraftNew":
+                nyx.runner(domain_path, problem_path, ["-timeout:10", "search:bfs"])
+            elif Config.domain_name == "counters":
+                nyx.runner(domain_path, problem_path, ["-timeout:10", "search:gbfs", "custom_heuristic:4"])
+            else:
+                throw_error('not existing domain')
         if not os.path.isfile(plan_path):
             return False
 

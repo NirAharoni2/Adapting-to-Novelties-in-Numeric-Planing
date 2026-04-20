@@ -1,0 +1,6 @@
+     0.000:	decrement c0 r2	[0.0]
+     0.000:	decrement c0 r2	[0.0]
+     0.000:	decrement c0 r2	[0.0]
+     0.000:	decrement c0 r2	[0.0]
+     0.000:	increment c3	[0.0]
+     0.000:	increment c1	[0.0]

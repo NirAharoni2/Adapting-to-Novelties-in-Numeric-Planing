@@ -173,3 +173,22 @@ def heuristic_function(state):
         )
 
         return heuristic_value
+
+    if constants.CUSTOM_HEURISTIC_ID == 4:
+        state = state.state_vars
+        counter_keys = sorted(state.keys(), key=lambda x: int(x.split("'")[3][1:]))
+        vals = [state[k] for k in counter_keys]
+
+        h_cost = 0.0
+        current_vals = list(vals)
+
+        for i in range(len(current_vals) - 1):
+            left_val = current_vals[i]
+            right_val = current_vals[i + 1]
+
+            if not (left_val + 1 <= right_val):
+                diff = (left_val + 1) - right_val
+                h_cost += diff
+                current_vals[i + 1] = left_val + 1
+
+        return h_cost

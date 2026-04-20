@@ -1,3 +1,4 @@
+from PDDL2Gym.repair import repair
 from solution.DiagnoseAndRepair.Monitor import Monitor
 from solution.DiagnoseAndRepair.Repair import Repair
 
@@ -59,3 +60,6 @@ class DiagnoseAndRepair:
         """
         if not self.repair.parsed_model:
             self.repair.initialize()
+
+    def afterProblem(self):
+        self.repair.afterProblem()

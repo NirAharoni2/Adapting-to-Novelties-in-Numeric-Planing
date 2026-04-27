@@ -235,9 +235,7 @@ class Repair:
 
 
         self.numOfPredicates = len(filter_valid_predicates(action, LastObservationFluents))
-        print(LastObservationFluents)
         x1 = self.generalize_facts(filter_valid_predicates(action, LastObservationFluents), action)
-        print(x1)
         y2 = self.generalize_facts(filter_valid_predicates(action, newObservationFluents), action)
         y2 = {k: y2[k] for k in differentKeysLifted if k in y2}
         self.data[action.name].append([y2, x1])
@@ -255,11 +253,13 @@ class Repair:
                 # create new data (a,b1,b2) => (a^2 ,a * b1, a*b2, b1^2, b2^2)
                 data = []
                 for dataRow in self.fullData[action.name]:
-                    x1 = self.generalize_facts(filter_valid_predicates(action, dataRow[1]), action)
-                    newParam = self.getKeysOfCertinType(dataRow[1], action.name)
-                    data.append({'y': dataRow[0], 'oldParams': x1, 'newParam': newParam,'action': dataRow[2]})
+                    x1 = self.removeNewParam(self.generalize_facts(filter_valid_predicates(dataRow[2], dataRow[1]), dataRow[2]), dataRow[2])
 
-                results = self.multi_output_linear_regression_for_adaptive_new(action.name, data)
+                    newParam = self.getKeysOfCertinType(dataRow[1], dataRow[2])
+                    # monomilas with x1^2 and newparams * x1
+                    data.append({'y': dataRow[0], 'oldParams': x1, 'newParam': newParam,'action': dataRow[2]})
+                print(data)
+                results = self.multi_output_linear_regression_for_adaptive_new(data)
             else:
                 data1 = [[y, {k: x[k] for k in y.keys() if k in x}] for y, x in self.data[action.name]]
                 data2 = self.data[action.name]
@@ -399,7 +399,8 @@ class Repair:
 
         return results
 
-    def multi_output_linear_regression_for_adaptive_new(self, actionName, data_rows):
+    def multi_output_linear_regression_for_adaptive_new(self, data_rows):
+        LIMIT = 100
         y_targets = list(data_rows[0]['y'].keys())
         results = {}
         start_plan_time = time.perf_counter()
@@ -422,10 +423,11 @@ class Repair:
 
             # 2. Variables
             # x_a are coefficients for the original state fluents
-            x_a = [solver.NumVar(-100.0, 100.0, f'x_a_{i}') for i in range(n_a)]
+            x_a = [solver.NumVar(-LIMIT, LIMIT, f'x_a_{i}') for i in range(n_a)]
             # x_b are coefficients for the new action parameters
-            x_b = solver.NumVar(-100.0, 100.0, f'x_b')
-            constant = solver.NumVar(-100.0, 100.0, 'C')
+            #list of size len( a_keys * b_singleKey  + b + b^2)
+            x_b = solver.NumVar(-LIMIT, LIMIT, f'x_b')
+            constant = solver.NumVar(-LIMIT, LIMIT, 'C')
 
             # 3. Objective: Minimize Sum of Absolute Errors
             error_vars = []
@@ -470,20 +472,40 @@ class Repair:
             # 4. Solve and Store Results
             status = solver.Solve()
 
+            # 4. Get MILP Size
+            num_vars = solver.NumVariables()
+            num_constraints = solver.NumConstraints()
+
+            # Optional: Identify how many are binary vs continuous
+            num_binaries = sum(1 for v in solver.variables() if v.integer() and v.lb() == 0 and v.ub() == 1)
+
+            end_plan_time = time.perf_counter()
+            runtimePlan = end_plan_time - start_plan_time
+
+            functionNameOfBsKey = b_keys[0][0]
+            #get the first but need to change for more params
+            function = self.parsed_model.get_function(functionNameOfBsKey)
+
             if status == pywraplp.Solver.OPTIMAL or status == pywraplp.Solver.FEASIBLE:
                 results[target] = {
                     'a_coeffs': {a_keys[k]: x_a[k].solution_value() for k in range(n_a)},
-                    'b_coeff': x_b.solution_value(),
+                    'b_coeff': {function: x_b.solution_value()},
                     'constant': constant.solution_value(),
-                    'total_error': solver.Objective().Value()
+                    'total_error': solver.Objective().Value(),
+                    'MILP': f"MILP Size for {target}: {num_vars} variables ({num_binaries} binary), {num_constraints} constraints",
+                    'runtimePlan': runtimePlan
                 }
                 print(f"Result: {status} (Error: {results[target]['total_error']})")
             else:
                 print(f"Result: No solution found for {target}")
         print(results)
-        end_plan_time = time.perf_counter()
-        runtimePlan = end_plan_time - start_plan_time
+        print(self.clean_and_merge(results, LIMIT))
+        results = self.clean_and_merge(results, LIMIT)
+
         print(f"time: {runtimePlan}")
+
+
+
         return results
 
     def multi_output_symbolic(self, data, decimals=5):
@@ -709,14 +731,52 @@ class Repair:
                 print(f"added {newParameter} to {actionName}")
                 break
 
-    def getKeysOfCertinType(self, fullData: dict[tuple, int], actionName: str):
+    def getKeysOfCertinType(self, dataRow: dict[tuple, int], action: Action):
         dataOfCertainTypeParameter = {}
-        for key, value in fullData.items():
+        groundedParameter = None
+        for key, value in dataRow.items():
+            thisFunction = key[0]
+            if len(key) >= 2:
+                groundedParameter = key[1]
+            #currently if the function has more than two parameters it dosen't work properly
+            functionsTypes = self.parsed_model.get_parameters_type(thisFunction)
+            thisType = functionsTypes[0] if len(functionsTypes) > 0 else None
+            if thisType == self.currentTry[action.name][1]:
+                dataOfCertainTypeParameter[key] = value
+                if groundedParameter in action.groundedParameters:
+                    return {key: value}
+        return dataOfCertainTypeParameter
+
+
+    def clean_and_merge(self, input_data, boundary=100.0, tolerance=1):
+        refined_output = {}
+
+        for target_key, values in input_data.items():
+            # Initialize the sub-dictionary for this target
+            refined_output[target_key] = {}
+
+            # Filter a_coeffs: keep only if NOT near -100 or 100
+            for coeff_key, val in values['a_coeffs'].items():
+                if abs(abs(val) - boundary) > tolerance:
+                    refined_output[target_key][coeff_key] = round(val,5)
+
+            for coeff_key, val in values['b_coeff'].items():
+                if abs(abs(val) - boundary) > tolerance:
+                    refined_output[target_key][coeff_key] = round(val,5)
+
+            refined_output[target_key]['__intercept__'] = values['constant']
+
+        return refined_output
+
+    def removeNewParam(self, dataRow: dict[tuple, int], action: Action):
+        dataWithoutCertainTypeParameter = {}
+
+        for key, value in dataRow.items():
             thisFunction = key[0]
             #currently if the function has more than two parameters it dosen't work properly
             functionsTypes = self.parsed_model.get_parameters_type(thisFunction)
             thisType = functionsTypes[0] if len(functionsTypes) > 0 else None
-            if thisType == self.currentTry[actionName][1]:
-                dataOfCertainTypeParameter[key] = value
-        return dataOfCertainTypeParameter
+            if thisType != self.currentTry[action.name][1]:
+                dataWithoutCertainTypeParameter[key] = value
 
+        return dataWithoutCertainTypeParameter

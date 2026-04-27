@@ -148,6 +148,9 @@ class Parse_Model:
     def get_parameters(self, function_key):
         return list(self.parsed_domain.functions[function_key].items())
 
+    def get_function(self, function_key):
+        return function_key, *self.parsed_domain.functions[function_key].keys()
+
     #get ?l and return if in the paramters of the function
     #this is brokennn
     def check_if_exist(self, action_name, parameter_name):

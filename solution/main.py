@@ -202,7 +202,9 @@ def main(novelty_id_arg=None, domain_name_arg=None):
         #("all variables repair", REPAIR_ALL_VARIABLES),
         #("all monomials repair", REPAIR_ALL_MONOMIALS),
         #("adaptive repair base", REPAIR_ADAPTIVE),
-        ("adaptive repair + support for signature change", REPAIR_ADAPTIVE_UPDATED_new),
+        ("adaptive repair + support for signature change", REPAIR_ADAPTIVE_UPDATED),
+
+        ("adaptive repair + support for signature change++", REPAIR_ADAPTIVE_UPDATED_new),
 
     ]
     results = {name: experiment_1(mode) for name, mode in modes}

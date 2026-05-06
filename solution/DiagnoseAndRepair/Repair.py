@@ -104,6 +104,8 @@ class Repair:
         self.parsed_model : Parse_Model = None
         self.numOfPredicates = 0
         self.blockNewData = False
+        self.tick = 0
+        self.retry_delay = 10
 
 
 
@@ -246,8 +248,8 @@ class Repair:
             for state in self.data[action.name]
         }
         if len(unique_states) >= 2:
-            if action.name in self.currentTry:
-
+            if action.name in self.currentTry and self.tick % self.retry_delay == 0:
+                self.tick = self.tick + 1
                 # do this before entering this function maybe
                 # only add the new variable,
                 # create new data (a,b1,b2) => (a^2 ,a * b1, a*b2, b1^2, b2^2)
@@ -260,6 +262,10 @@ class Repair:
                     data.append({'y': dataRow[0], 'oldParams': x1, 'newParam': newParam,'action': dataRow[2]})
                 print(data)
                 results = self.multi_output_linear_regression_for_adaptive_new(data)
+                if results:
+                    self.update_model(action.name, results)
+                    self.parsed_model.commit()
+
             else:
                 data1 = [[y, {k: x[k] for k in y.keys() if k in x}] for y, x in self.data[action.name]]
                 data2 = self.data[action.name]
@@ -268,7 +274,8 @@ class Repair:
                 results = self.multi_output_linear_regression_for_adaptive(action.name, [data1, data2, data3])
 
             if not Config.next:
-                self.update_model(action.name, results)
+                if results:
+                    self.update_model(action.name, results)
 
     def repair_action_adaptive_upgraded(self, LastObservationFluents, action, newObservationFluents, differentKeysLifted):
         """
@@ -388,6 +395,7 @@ class Repair:
             print(len(list_data[2][0][1].keys()) + 1)
             if not self.blockNewData and Config.checkSignature and best_score < 0.9999 and len(list_data[2]) > (len(list_data[2][0][1].keys()) + 1):
                 print('here')
+                self.tick = 0
                 self.addParameter(actionName)
                 self.data[actionName] = []
                 self.blockNewData = True
@@ -401,6 +409,8 @@ class Repair:
 
     def multi_output_linear_regression_for_adaptive_new(self, data_rows):
         LIMIT = 100
+        TIME_LIMIT_MS = 300000
+
         y_targets = list(data_rows[0]['y'].keys())
         results = {}
         start_plan_time = time.perf_counter()
@@ -471,6 +481,7 @@ class Repair:
 
             # 4. Solve and Store Results
             start_plan_time = time.perf_counter()
+            solver.SetTimeLimit(TIME_LIMIT_MS)
             status = solver.Solve()
             end_plan_time = time.perf_counter()
             runtimePlan = end_plan_time - start_plan_time
@@ -505,8 +516,6 @@ class Repair:
         results = self.clean_and_merge(results, LIMIT)
 
         print(f"time: {runtimePlan}")
-
-
 
         return results
 
@@ -759,11 +768,11 @@ class Repair:
 
             # Filter a_coeffs: keep only if NOT near -100 or 100
             for coeff_key, val in values['a_coeffs'].items():
-                if abs(abs(val) - boundary) > tolerance:
+                if abs(abs(val) - boundary) > tolerance and round(val,5) != 0:
                     refined_output[target_key][coeff_key] = round(val,5)
 
             for coeff_key, val in values['b_coeff'].items():
-                if abs(abs(val) - boundary) > tolerance:
+                if abs(abs(val) - boundary) > tolerance and round(val,5) != 0:
                     refined_output[target_key][coeff_key] = round(val,5)
 
             refined_output[target_key]['__intercept__'] = round(values['constant'],5)

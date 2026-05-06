@@ -470,7 +470,10 @@ class Repair:
             solver.Minimize(solver.Sum(error_vars))
 
             # 4. Solve and Store Results
+            start_plan_time = time.perf_counter()
             status = solver.Solve()
+            end_plan_time = time.perf_counter()
+            runtimePlan = end_plan_time - start_plan_time
 
             # 4. Get MILP Size
             num_vars = solver.NumVariables()
@@ -479,8 +482,7 @@ class Repair:
             # Optional: Identify how many are binary vs continuous
             num_binaries = sum(1 for v in solver.variables() if v.integer() and v.lb() == 0 and v.ub() == 1)
 
-            end_plan_time = time.perf_counter()
-            runtimePlan = end_plan_time - start_plan_time
+
 
             functionNameOfBsKey = b_keys[0][0]
             #get the first but need to change for more params
@@ -493,7 +495,7 @@ class Repair:
                     'constant': constant.solution_value(),
                     'total_error': solver.Objective().Value(),
                     'MILP': f"MILP Size for {target}: {num_vars} variables ({num_binaries} binary), {num_constraints} constraints",
-                    'runtimePlan': runtimePlan
+                    'runtime': runtimePlan
                 }
                 print(f"Result: {status} (Error: {results[target]['total_error']})")
             else:
@@ -718,7 +720,7 @@ class Repair:
         alreadyIn = self.parsed_model.get_types_in_action(actionName)
         possibleAdditions = self.parsed_model.possibleNewParameters().get('object')
         #reverse possibleAdditions[::-1]
-        for possibleAddition in possibleAdditions:
+        for possibleAddition in possibleAdditions[::-1]:
             if possibleAddition not in alreadyIn and possibleAddition not in triedTypes:
                 newParameter = [f'?{possibleAddition[0]}', possibleAddition]
                 newParameter = self.parsed_model.addParameterToAction(actionName, newParameter)
@@ -764,7 +766,7 @@ class Repair:
                 if abs(abs(val) - boundary) > tolerance:
                     refined_output[target_key][coeff_key] = round(val,5)
 
-            refined_output[target_key]['__intercept__'] = values['constant']
+            refined_output[target_key]['__intercept__'] = round(values['constant'],5)
 
         return refined_output
 

@@ -235,7 +235,7 @@ def run_novelties(domain_name, start=1, end=10):
 def main_entry():
     clean()
     if len(sys.argv) < 3:
-        run_novelties("minecraftNew", start=4, end=5)
+        run_novelties("minecraftNew", start=4, end=6)
         return
 
     domain_name = sys.argv[1]

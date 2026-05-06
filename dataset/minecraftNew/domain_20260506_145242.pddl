@@ -20,12 +20,12 @@
         (count_pogo_stick)
     )
     (:action get_log
-     :parameters (?a - axe)
+     :parameters (?p - pickaxe)
      :precondition (and
             (>= (trees_in_map ) 1))
      :effect (and
-            (assign (count_log_in_inventory ) (+ (* 0.0 (trees_in_map )) (+ (* 1.0 (count_log_in_inventory )) (+ (* 0.0 (count_planks_in_inventory )) (* 1.0 (value_axe ?a))))))
-            (assign (trees_in_map ) (+ (* 1.0 (trees_in_map )) (+ (* 0.0 (count_log_in_inventory )) (+ (* 0.0 (count_planks_in_inventory )) (* -1.0 (value_axe ?a)))))))
+            (increase (count_log_in_inventory ) 1)
+            (decrease (trees_in_map ) 1))
     )
     (:action craft_plank
      :parameters ()

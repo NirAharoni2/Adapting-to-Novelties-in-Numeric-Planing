@@ -1,5 +1,4 @@
-     0.000:	get_log a2	[0.0]
-     0.000:	get_log a2	[0.0]
+     0.000:	get_log a0	[0.0]
      0.000:	get_log a2	[0.0]
      0.000:	get_log a2	[0.0]
      0.000:	get_log a2	[0.0]

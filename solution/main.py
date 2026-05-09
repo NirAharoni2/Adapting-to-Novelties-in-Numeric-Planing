@@ -196,7 +196,7 @@ def main(novelty_id_arg=None, domain_name_arg=None):
     # Run evaluations
     print(f"Running: domain={domain_name}, novelty_id={novelty_id}")
     modes = [
-        #("oracle", ORACLE),
+        ("oracle", ORACLE),
         #("base domain - no repair", NO_REPAIR),
         #("rel. variables repair", REPAIR_RELEVANT_VARIABLES),
         #("all variables repair", REPAIR_ALL_VARIABLES),
@@ -237,7 +237,7 @@ def run_novelties(domain_name, start=1, end=10):
 def main_entry():
     clean()
     if len(sys.argv) < 3:
-        run_novelties("minecraftNew", start=4, end=6)
+        run_novelties("minecraftNew", start=5, end=7)
         return
 
     domain_name = sys.argv[1]

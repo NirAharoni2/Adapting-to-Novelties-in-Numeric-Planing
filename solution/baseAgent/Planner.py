@@ -65,7 +65,7 @@ class Planner:
             elif Config.domain_name == "sailing" or Config.domain_name == "sailingNew":
                 nyx.runner(domain_path, problem_path, ["-timeout:60", "search:gbfs", "custom_heuristic:2"])
             elif Config.domain_name == "minecraft" or Config.domain_name == "minecraftNew":
-                nyx.runner(domain_path, problem_path, ["-timeout:10", "search:bfs"])
+                nyx.runner(domain_path, problem_path, ["-timeout:30", "search:bfs"])
             elif Config.domain_name == "counters":
                 nyx.runner(domain_path, problem_path, ["-timeout:10", "search:gbfs", "custom_heuristic:4"])
             else:

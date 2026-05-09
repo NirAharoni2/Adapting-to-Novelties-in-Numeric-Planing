@@ -1,4 +1,6 @@
-     0.000:	get_log p1	[0.0]
+     0.000:	get_log p0	[0.0]
+     0.000:	get_log p0	[0.0]
+     0.000:	get_log p0	[0.0]
      0.000:	craft_plank	[0.0]
      0.000:	craft_plank	[0.0]
      0.000:	craft_plank	[0.0]

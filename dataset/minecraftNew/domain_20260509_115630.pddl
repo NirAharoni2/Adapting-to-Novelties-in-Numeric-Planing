@@ -24,8 +24,8 @@
      :precondition (and
             (>= (trees_in_map ) 1))
      :effect (and
-            (assign (count_log_in_inventory ) (+ (* 1.0 (count_log_in_inventory )) (* 1.0 (value_axe ?a))))
-            (assign (trees_in_map ) (+ (* 1.0 (trees_in_map )) (* -1.0 (value_axe ?a)))))
+            (assign (count_log_in_inventory ) (+ (* 1.0 (* (value_axe ?a) (value_axe ?a))) (* 1.0 (count_log_in_inventory ))))
+            (assign (trees_in_map ) (+ (* -1.0 (* (value_axe ?a) (value_axe ?a))) (* 1.0 (trees_in_map )))))
     )
     (:action craft_plank
      :parameters ()

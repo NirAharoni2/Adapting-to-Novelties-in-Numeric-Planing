@@ -148,7 +148,7 @@ def plot_from_dict(data_dict, plot_title, filename, novelty_intro_idx=None):
     plt.xticks(fontsize=24)
     plt.yticks(fontsize=24)
     plt.grid(True)
-    # plt.title(plot_title, fontsize=30)
+    #plt.title(plot_title, fontsize=30)
     # plt.legend(fontsize=20)
 
     # Save plot
@@ -181,34 +181,65 @@ difficulty_map = {
 #     "level1": [1, 2, 3],
 #     "level2": [4, 5, 6],
 # }
-
+####### uncomment from here
 base_dir = r"results_csv"  # Directory containing CSVs for each domain/difficulty
+#
+# for domain in domains:
+#     for difficulty in difficulties:
+#         file_indices = difficulty_map[difficulty]
+#         file_paths = [
+#             os.path.join("../../",base_dir, f"{domain}_{i}_data.csv")
+#             for i in file_indices
+#         ]
+#
+#         # Safety check — skip if no files exist
+#         file_paths = [f for f in file_paths if os.path.isfile(f)]
+#         if not file_paths:
+#             print(f" No files found for {domain} - {difficulty}")
+#             continue
+#
+#         # Compute average scores and plot
+#         averages = average_scores_from_csvs(file_paths)
+#         plot_title = f"{domain.capitalize()}: {difficulty.capitalize()} Set"
+#         plot_filename = f"{domain}_{difficulty}"
+#
+#         plot_from_dict(averages, plot_title, plot_filename)
+#
+#
+# domains = ["sailingNew", "minecraftNew", "expeditionNew", "droneNew"]
+#
+# difficulties = ["level1", "level2"]
+#
+# # Mapping difficulty levels to specific CSV file indices
+# difficulty_map = {
+#     "level1": [1, 2, 3],
+#     "level2": [4, 5, 6],
+# }
+#
+# for domain in domains:
+#     for difficulty in difficulties:
+#         file_indices = difficulty_map[difficulty]
+#         file_paths = [
+#             os.path.join("../../",base_dir, f"{domain}_{i}_data.csv")
+#             for i in file_indices
+#         ]
+#
+#         # Safety check — skip if no files exist
+#         file_paths = [f for f in file_paths if os.path.isfile(f)]
+#         if not file_paths:
+#             print(f" No files found for {domain} - {difficulty}")
+#             continue
+#
+#         # Compute average scores and plot
+#         averages = average_scores_from_csvs(file_paths)
+#         plot_title = f"{domain.capitalize()}: {difficulty.capitalize()} Set"
+#         plot_filename = f"{domain}_{difficulty}"
+#
+#         plot_from_dict(averages, plot_title, plot_filename)
 
-for domain in domains:
-    for difficulty in difficulties:
-        file_indices = difficulty_map[difficulty]
-        file_paths = [
-            os.path.join("../../",base_dir, f"{domain}_{i}_data.csv")
-            for i in file_indices
-        ]
+domains = ["minecraftLvl2Experiments"]
 
-        # Safety check — skip if no files exist
-        file_paths = [f for f in file_paths if os.path.isfile(f)]
-        if not file_paths:
-            print(f" No files found for {domain} - {difficulty}")
-            continue
-
-        # Compute average scores and plot
-        averages = average_scores_from_csvs(file_paths)
-        plot_title = f"{domain.capitalize()}: {difficulty.capitalize()} Set"
-        plot_filename = f"{domain}_{difficulty}"
-
-        plot_from_dict(averages, plot_title, plot_filename)
-
-
-domains = ["sailingNew", "minecraftNew", "expeditionNew", "droneNew"]
-
-difficulties = ["level1", "level2"]
+difficulties = ["level1"]
 
 # Mapping difficulty levels to specific CSV file indices
 difficulty_map = {

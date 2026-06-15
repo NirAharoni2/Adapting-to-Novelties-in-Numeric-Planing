@@ -39,6 +39,16 @@ class Config:
     next = False
 
     @classmethod
+    def get_results_csv_dir(cls):
+        return cls.BASE_DIR / "results_csv"
+    @classmethod
+    def get_database_dir(cls):
+        return cls.BASE_DIR / "dataset"
+    @classmethod
+    def get_csv_in_plot_dir(cls):
+        return cls.BASE_DIR / "plots" / "csv_in_plot"
+
+    @classmethod
     def update_time(cls):
         cls.time = datetime.now().strftime("%Y%m%d_%H%M%S")
 

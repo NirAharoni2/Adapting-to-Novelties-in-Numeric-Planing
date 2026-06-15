@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 import itertools
-
+from solution.Utilities.config import Config
 
 def plot_from_dict(data_dict, plot_title, filename, novelty_intro_idx=None):
     plt.figure(figsize=(10, 6))
@@ -68,7 +68,7 @@ def plot_from_dict(data_dict, plot_title, filename, novelty_intro_idx=None):
     plt.tight_layout()
 
     # Save the figure
-    save_dir = "plots/csv_in_plot"
+    save_dir = Config.get_csv_in_plot_dir()
     os.makedirs(save_dir, exist_ok=True)
     save_path = os.path.join(save_dir, filename + ".png")
     plt.savefig(save_path)

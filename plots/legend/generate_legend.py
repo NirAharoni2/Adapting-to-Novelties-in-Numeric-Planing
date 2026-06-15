@@ -7,6 +7,7 @@ repairName = {
     "all monomials repair": "All Monomials Repair",
     "adaptive repair base": "Adaptive Selection Repair",
     "adaptive repair + support for signature change": "Adaptive Selection with Signature Repair",
+    "adaptive repair + support for signature change with milp": "Adaptive Selection with Signature Repair with milp",
 }
 
 dash_styles = [
@@ -17,8 +18,8 @@ dash_styles = [
     (3, 2, 1, 2) # Adaptive
 ]
 
-markers = ['s', '^', 'D', '*', 'x']
-colors = ['g', 'r', 'c', 'y', 'm']
+markers = ['s', '^', 'D', '*', 'x', 'P', 'v', '<', '>']
+colors = ['g', 'r', 'c', 'y', 'm', 'k', '#ff7f0e', '#2ca02c', '#9467bd']
 
 # Create dummy figure
 fig, ax = plt.subplots(figsize=(12, 2))

@@ -254,3 +254,42 @@ class Parse_Model:
             if alreadyExistName == theNewParamName:
                 theAct.parameters.remove(parameter)
         return parameter
+
+
+
+    def update_model(self, action, results):
+        """
+        Updates the PDDL model based on learned expressions and writes to domain file.
+        """
+        for key, expr in self.generate_expressions(results).items():
+            self.update_action_effect(action, key, expr)
+
+
+
+    def generate_expressions(self, model_dict):
+        """
+        Converts regression models into assign expressions suitable for PDDL models.
+        """
+        def nest_addition(terms):
+            if not terms:
+                return 0
+            if len(terms) == 1:
+                return terms[0]
+            return ["+", terms[0], nest_addition(terms[1:])]
+
+        def tuples_to_lists(obj):
+            if isinstance(obj, tuple):
+                return [tuples_to_lists(x) for x in obj]
+            return obj
+
+        expressions = {}
+
+        for y_key, weights in model_dict.items():
+            gen_y = list(y_key)
+            intercept = weights.get('__intercept__', 0)
+            terms = [["*", coeff, tuples_to_lists(k)] for k, coeff in weights.items() if k != '__intercept__']
+            if intercept != 0:
+                terms.append(intercept)
+            expressions[str(gen_y)] = ["assign", gen_y, nest_addition(terms)]
+
+        return expressions

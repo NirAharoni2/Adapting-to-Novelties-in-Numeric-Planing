@@ -41,15 +41,16 @@ end = -1
 inject_novelty_at = -1
 
 def clean():
-    folder9 = r"C:/Felix/dataset/minecraft"
-    folder1 = r"C:/Felix/dataset/minecraftnew"
-    folder2 = r"C:/Felix/dataset/expedition"
-    folder3 = r"C:/Felix/dataset/drone"
-    folder4 = r"C:/Felix/dataset/sailing"
-    folder5 = r"C:/Felix/dataset/counters"
-    folder6 = r"C:/Felix/dataset/sailingNew"
-    folder7 = r"C:/Felix/dataset/droneNew"
-    folder8 = r"C:/Felix/dataset/expeditionNew"
+    folder9 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\minecraft"
+    folder1 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\minecraftnew"
+    folder2 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\expedition"
+    folder3 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\drone"
+    folder4 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\sailing"
+    folder5 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\counters"
+    folder6 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\sailingNew"
+    folder7 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\droneNew"
+    folder8 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\expeditionNew"
+    folder9 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\minecraftLvl2Experiments"
 
     remove_domain_2026_files([folder9, folder1, folder2, folder3, folder4, folder5, folder6, folder7, folder8])
 
@@ -196,15 +197,15 @@ def main(novelty_id_arg=None, domain_name_arg=None):
     # Run evaluations
     print(f"Running: domain={domain_name}, novelty_id={novelty_id}")
     modes = [
-        ("oracle", ORACLE),
+        #("oracle", ORACLE),
         #("base domain - no repair", NO_REPAIR),
         #("rel. variables repair", REPAIR_RELEVANT_VARIABLES),
         #("all variables repair", REPAIR_ALL_VARIABLES),
         #("all monomials repair", REPAIR_ALL_MONOMIALS),
         #("adaptive repair base", REPAIR_ADAPTIVE),
-        ("adaptive repair + support for signature change", REPAIR_ADAPTIVE_UPDATED),
+        #("adaptive repair + support for signature change", REPAIR_ADAPTIVE_UPDATED),
 
-        ("adaptive repair + support for signature change++", REPAIR_ADAPTIVE_UPDATED_new),
+        ("adaptive repair + support for signature change with milp", REPAIR_ADAPTIVE_UPDATED_new),
 
     ]
     results = {name: experiment_1(mode) for name, mode in modes}
@@ -218,7 +219,7 @@ def main(novelty_id_arg=None, domain_name_arg=None):
     }
 
     os.makedirs("results_csv", exist_ok=True)
-    file_path = os.path.join("results_csv", f"{domain_name}_{novelty_id}_data.csv")
+    file_path = os.path.join(Config.get_results_csv_dir(), f"{domain_name}_{novelty_id}_data.csv")
 
     with open(file_path, mode="w", newline="") as csvfile:
         writer = csv.writer(csvfile)
@@ -237,7 +238,7 @@ def run_novelties(domain_name, start=1, end=10):
 def main_entry():
     clean()
     if len(sys.argv) < 3:
-        run_novelties("minecraftNew", start=5, end=7)
+        run_novelties("minecraftLvl2Experiments", start=3, end=4)
         return
 
     domain_name = sys.argv[1]

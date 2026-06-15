@@ -14,7 +14,7 @@ from pddl_plus_parser.models import State, Operator, ActionCall
 import sys
 import PDDL2Gym.config as CONFIG
 
-sys.path.append(CONFIG.NSAM_PATH)
+sys.path.append('PDDL2Gym')
 from sam_learning.core import EnvironmentSnapshot
 
 

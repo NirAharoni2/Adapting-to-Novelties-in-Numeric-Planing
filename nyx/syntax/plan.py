@@ -100,7 +100,11 @@ class Plan(list):
         time = float("0.000")
         #print(action_lookup)
         #print(action_name)
-        action = action_lookup[' '.join(action_name)]
+        try:
+            action = action_lookup[' '.join(action_name)]
+        except KeyError as e:
+            print(action_lookup)
+            raise e
         plan.append_action(action, time, expand_time_passing=expand_time_passing)
 
         return plan

@@ -6,7 +6,7 @@
     )
 
     (:predicates
-        
+
     )
     (:functions
         (value_pickaxe ?p - pickaxe)

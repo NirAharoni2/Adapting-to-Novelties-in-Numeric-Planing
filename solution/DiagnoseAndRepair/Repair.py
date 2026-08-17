@@ -140,7 +140,6 @@ class Repair:
             data1 = [[y, {k: x[k] for k in y.keys() if k in x}] for y, x in self.data[action.name]]
             data2 = self.data[action.name]
             data3 = [[y, generate_nested_combinations(x, degree=2)] for y, x in self.data[action.name]]
-
             results = multi_output_linear_regression_for_adaptive(action.name, [data1, data2, data3], self)
             if not Config.next:
                 self.parsed_model.update_model(action.name, results)
@@ -173,6 +172,7 @@ class Repair:
             data2 = self.data[action.name]
             data3 = [[y, generate_nested_combinations(x, degree=2)] for y, x in self.data[action.name]]
 
+
             results = multi_output_linear_regression_for_adaptive(action.name, [data1, data2, data3], self)
 
             if self.needNewParameter:
@@ -184,7 +184,7 @@ class Repair:
 
     def add_new_parameter_with_milp(self, action, results_and_error: list[Any]) -> Any:
         if self.currentTry.get(action.name):
-            self.removeParameterSpecific(action.name, self.currentTry[action.name])  # this addes new and removes old
+            self.removeParameter(action.name, self.currentTry[action.name])  # this addes new and removes old
 
         self.needNewParameter = False
         for param in self.parsed_model.possibleNewParameters().get('object'):
@@ -201,7 +201,7 @@ class Repair:
                 # monomilas with x1^2 and newparams * x1
                 data.append(
                     {'y': dataRow[0], 'oldParams': x1, 'newParam': newParam, 'action': dataRow[2]})
-            milp_results, error = multi_output_linear_regression_for_adaptive_with_milp(data, self)
+            milp_results, error = multi_output_monomials_regression_for_adaptive_with_milp(data, self)
             results_and_error.append({"milp_results": milp_results, "error": error, "param": param})
             print(milp_results)
             print(error)
@@ -372,9 +372,10 @@ class Repair:
 
     def addParameter(self, actionName):
         tried = self.addedParametersMakeChange[actionName]
-        for parameter in tried:
-            self.parsed_model.removeParameterFromAction(actionName, parameter)
-            print(f"removed {parameter} from {actionName}")
+        if len(tried) > 0:
+            lastTry = tried[-1]
+            self.parsed_model.removeParameterFromAction(actionName, lastTry)
+            print(f"removed {lastTry} from {actionName}")
         triedTypes = [item[1] for item in tried]
         alreadyIn = self.parsed_model.get_types_in_action(actionName)
         possibleAdditions = self.parsed_model.possibleNewParameters().get('object')
@@ -454,5 +455,12 @@ class Repair:
 
         self.parsed_model.removeParameterFromAction(actionName, torRemoveParameter)
         print(f"removed {torRemoveParameter} to {actionName}")
+
+        self.currentTry[actionName] = None
+
+    #param is ['?d', 'dummy_1']
+    def removeParameter(self, actionName, param):
+        self.parsed_model.removeParameterFromAction(actionName, param)
+        print(f"removed {param} to {actionName}")
 
         self.currentTry[actionName] = None

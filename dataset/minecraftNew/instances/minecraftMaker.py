@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import NoReturn
 
 from common import get_problem_template
+from solution.Utilities.config import Config
 
 TEMPLATE_FILE_PATH = Path("minecraft_template.pddl")
 
@@ -101,11 +102,15 @@ def generate_multiple_problems(
 
 
 def main():
+    seed_id = 3
+    random.seed(seed_id)
+    directory = Path(Config.get_database_dir() / "minecraft" / "instances" / f"seed_{seed_id}")
+    directory.mkdir(parents=True, exist_ok=True)
     generate_multiple_problems(
         min_axe_value=int(0.1),
         max_axe_value=int(1.5),
         max_number_of_axe=int(5),
-        output_folder=Path("C:\Felix\dataset\minecraftNew\instances"),
+        output_folder=directory,
     )
 
 

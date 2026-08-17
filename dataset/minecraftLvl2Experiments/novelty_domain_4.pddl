@@ -2,7 +2,7 @@
     (:requirements :typing :fluents)
 
     (:types
-        axe pickaxe - object
+        axe pickaxe shovel hoe - object
     )
 
     (:predicates
@@ -11,6 +11,8 @@
     (:functions
         (value_pickaxe ?p - pickaxe)
         (value_axe ?a - axe)
+        (value_shovel ?s - shovel)
+        (value_hoe ?h - hoe)
         (trees_in_map)
         (count_log_in_inventory)
         (count_planks_in_inventory)
@@ -25,7 +27,8 @@
             (>= (trees_in_map ) 1))
      :effect (and
             (assign (count_log_in_inventory ) (+ (* 1.0 (count_log_in_inventory )) (* 1.0 (value_axe ?a))))
-            (assign (trees_in_map ) (+ (* 1.0 (trees_in_map )) (* -1.0 (value_axe ?a)))))
+            (assign (trees_in_map ) (+ (* 1.0 (trees_in_map )) (* -1.0 (value_axe ?a))))
+            (assign (value_axe ?a) (+ (* 1.0 (value_axe ?a)) -0.01)))
     )
     (:action craft_plank
      :parameters ()

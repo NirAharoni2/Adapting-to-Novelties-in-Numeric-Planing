@@ -4,6 +4,7 @@ import shutil
 import os
 from pathlib import Path
 
+from dataset.minecraft.instances.minecraftMaker import write_to_file_in_main
 from solution.Utilities.parsedModel import Parse_Model
 
 from solution.Environment.Enviroment import Environment
@@ -51,8 +52,11 @@ def clean():
     folder7 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\droneNew"
     folder8 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\expeditionNew"
     folder9 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\minecraftLvl2Experiments"
+    folder10 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\expeditionLvl2Experiments"
+    folder11 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\sailingLvl2Experiments"
+    folder12 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\droneLvl2Experiments"
 
-    remove_domain_2026_files([folder9, folder1, folder2, folder3, folder4, folder5, folder6, folder7, folder8])
+    remove_domain_2026_files([folder10, folder11, folder12, folder9, folder1, folder2, folder3, folder4, folder5, folder6, folder7, folder8])
 
 def set_instance_plan_paths(instance_number: int):
     """
@@ -73,8 +77,17 @@ def reset_only_domains():
     Parse_Model().resetEffects(domain_path)
 
 
-
-
+def resetPlans():
+    PROJECT_ROOT = Path(__file__).resolve().parents[1]
+    plans_folder = PROJECT_ROOT / "dataset" / domain_name / "instances" / f"seed_{Config.seed}" / "plans"
+    if os.path.exists(plans_folder):
+        for filename in os.listdir(plans_folder):
+            file_path = os.path.join(plans_folder, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+                #print(f"Deleted plan file: {file_path}")
+    else:
+        print(f"Plans folder not found: {plans_folder}")
 def reset():
     """
     Resets both the domain file and clears the plan folder for a fresh start.
@@ -88,7 +101,7 @@ def reset():
     shutil.copyfile(domain_path, Config.get_domain())
     print(f"Reset: {Config.get_domain()} ← {domain_path}")
     # New relative path
-    plans_folder = PROJECT_ROOT / "dataset" / domain_name / "instances" / "plans"
+    plans_folder = PROJECT_ROOT / "dataset" / domain_name / "instances" / f"seed_{Config.seed}" / "plans"
     if os.path.exists(plans_folder):
         for filename in os.listdir(plans_folder):
             file_path = os.path.join(plans_folder, filename)
@@ -119,6 +132,7 @@ def experiment_1(repair_methode_id):
 
     if repair_methode_id == -2:
         Config.update_domain_to_be_env_domain(domain_name, novelty_id)
+        resetPlans()
     else:
         Config.update_domain(domain_name)
         reset()
@@ -128,13 +142,13 @@ def experiment_1(repair_methode_id):
     env.score = 0
     score_list.append(env.score)
 
-    print(f"Repair method: {repair_names[repair_methode_id]}")
+    #print(f"Repair method: {repair_names[repair_methode_id]}")
     for index in range(start, end):
         set_instance_plan_paths(index)
         if index == inject_novelty_at:
-            print(f"Injecting novelty at problem_id={index}")
+            #print(f"Injecting novelty at problem_id={index}")
             env.injectNovelty(novelty_id)
-        print(f"Starting problem_id={index}")
+        #print(f"Starting problem_id={index}")
         env.initialize_new_problem_env(index)
         start_plan_time = time.perf_counter()
         isCreated = agent.create_new_plan()
@@ -143,6 +157,7 @@ def experiment_1(repair_methode_id):
             print("Couldn't generate initial plan.")
             if repair_methode_id in [NO_REPAIR, ORACLE]:
                 score_list.append(env.score)
+                print(f"novelty_id={novelty_id}, seed={Config.seed}, problem_id={index}, succeeded: False")
                 continue
             else:
                 reset_only_domains()
@@ -152,6 +167,8 @@ def experiment_1(repair_methode_id):
                 if not isCreated:
                     print("Couldn't generate a plan to this problem with reset domain.")
                     score_list.append(env.score)
+                    print(f"novelty_id={novelty_id}, seed={Config.seed}, problem_id={index}, succeeded: False")
+
                     continue
         start_execute_time = time.perf_counter()
         if repair_methode_id in [NO_REPAIR, ORACLE]:
@@ -165,6 +182,9 @@ def experiment_1(repair_methode_id):
 
         otherResults.append([runtimePlan, runtimeExecute, agent.get_plan_length()])
         score_list.append(env.score)
+        if not succeeded:
+            print(f"novelty_id={novelty_id}, seed={Config.seed}, problem_id={index}, succeeded: {succeeded}")
+
         print(f"problem_id={index}, succeeded: {succeeded}, total_score: {env.score}")
 
         if files_are_equal(env.environmentModel.get_model_path(), Config.get_domain()) and learned_model_id == -1 and repair_methode_id not in [NO_REPAIR, ORACLE]:
@@ -195,8 +215,9 @@ def main(novelty_id_arg=None, domain_name_arg=None):
     inject_novelty_at = start
 
     # Run evaluations
-    print(f"Running: domain={domain_name}, novelty_id={novelty_id}")
+    print(f"Running: domain={domain_name}, novelty_id={novelty_id}, seed={Config.seed}")
     modes = [
+
         #("oracle", ORACLE),
         #("base domain - no repair", NO_REPAIR),
         #("rel. variables repair", REPAIR_RELEVANT_VARIABLES),
@@ -219,7 +240,7 @@ def main(novelty_id_arg=None, domain_name_arg=None):
     }
 
     os.makedirs("results_csv", exist_ok=True)
-    file_path = os.path.join(Config.get_results_csv_dir(), f"{domain_name}_{novelty_id}_data.csv")
+    file_path = os.path.join(Config.get_results_csv_dir(), f"{domain_name}_novelty_{novelty_id}_seed_{Config.seed}_data.csv")
 
     with open(file_path, mode="w", newline="") as csvfile:
         writer = csv.writer(csvfile)
@@ -227,7 +248,7 @@ def main(novelty_id_arg=None, domain_name_arg=None):
         for label, (model_id, score, extraResults) in results.items():
             writer.writerow([label, score, model_id, extraResults[0], extraResults[1], extraResults[2]])
     print(f"A CSV representing the results is saved in {file_path}")
-    plot_from_dict(legendToList, f"{domain_name}_novelty_{novelty_id}", f"{domain_name}_novelty_{novelty_id}", novelty_intro_idx=0)
+    plot_from_dict(legendToList, f"{domain_name}_novelty_{novelty_id}_seed_{Config.seed}", f"{domain_name}_novelty_{novelty_id}_seed_{Config.seed}", novelty_intro_idx=0)
 
 
 def run_novelties(domain_name, start=1, end=10):
@@ -238,7 +259,10 @@ def run_novelties(domain_name, start=1, end=10):
 def main_entry():
     clean()
     if len(sys.argv) < 3:
-        run_novelties("minecraftLvl2Experiments", start=3, end=4)
+        for novelty_number in range(1,2): #7
+            for seed_number in range(1, 2): #6
+                Config.set_seed(seed_number)
+                run_novelties("droneLvl2Experiments", start=novelty_number, end=novelty_number+1)
         return
 
     domain_name = sys.argv[1]

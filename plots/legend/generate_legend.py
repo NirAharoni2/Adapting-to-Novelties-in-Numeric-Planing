@@ -3,11 +3,11 @@ from matplotlib.lines import Line2D
 
 # Define labels and styles
 repairName = {
-    "base domain - no repair": "base domain - no repair",
+    "base domain - no repair": "Base domain with no repair",
     "all monomials repair": "All Monomials Repair",
     "adaptive repair base": "Adaptive Selection Repair",
     "adaptive repair + support for signature change": "Adaptive Selection with Signature Repair",
-    "adaptive repair + support for signature change with milp": "Adaptive Selection with Signature Repair with milp",
+    #"adaptive repair + support for signature change with milp": "Adaptive Selection with Signature Repair with milp",
 }
 
 dash_styles = [

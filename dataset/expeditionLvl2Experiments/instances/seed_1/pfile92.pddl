@@ -1,0 +1,52 @@
+;; Enrico Scala (enricos83@gmail.com) and Miquel Ramirez (miquel.ramirez@gmail.com)
+(define (problem instance_92)
+	(:domain expedition)
+	(:objects
+		s0 - sled
+		w0_0 w0_1 w0_2 w0_3 w0_4 - waypoint
+		f0 f1 f2 f3 f4 - factor
+		d1_0 d1_1 - dummy_1
+		d2_0 d2_1 - dummy_2
+		d3_0 d3_1 d3_2 - dummy_3
+	)
+  (:init
+        (at s0 w0_0)
+
+        (= (sled_capacity s0) 9.574569992430945)
+
+        (= (sled_supplies s0) 1.8134052509140417)
+
+        (= (factor_value f0) 0.6742709464698217)
+		(= (factor_value f1) 0.5324258744106924)
+		(= (factor_value f2) 0.7375876457610345)
+		(= (factor_value f3) 0.7645185495234355)
+		(= (factor_value f4) 0.9436121255048012)
+
+        (= (dummy_1_value d1_0) 0.8595430897209457)
+		(= (dummy_1_value d1_1) 0.6030688646777727)
+
+        (= (dummy_2_value d2_0) 9.17517048995344)
+		(= (dummy_2_value d2_1) 1.0455200188026987)
+
+        (= (dummy_3_value d3_0) 70.02218435033303)
+		(= (dummy_3_value d3_1) 5.173620823250407)
+		(= (dummy_3_value d3_2) 82.14883280827496)
+
+        (= (waypoint_supplies w0_0) 1000)
+		(= (waypoint_supplies w0_1) 0.0)
+		(= (waypoint_supplies w0_2) 0.0)
+		(= (waypoint_supplies w0_3) 0.0)
+		(= (waypoint_supplies w0_4) 0.0)
+
+		(is_next w0_0 w0_1)
+		(is_next w0_1 w0_2)
+		(is_next w0_2 w0_3)
+		(is_next w0_3 w0_4)
+	)
+	(:goal
+		(and
+			(at s0 w0_4)
+		)
+	)
+)
+

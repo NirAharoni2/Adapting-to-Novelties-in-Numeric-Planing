@@ -43,9 +43,7 @@ class Environment_Model:
         Returns:
             Path: Path to the problem instance file.
         """
-        base_dir = self.model_path.parent / "instances"
-        problem_path = base_dir / f"pfile{i}.pddl"
-        return problem_path
+        return Config.problem_path
 
     def injectNovelty(self, novelty_id):
         """

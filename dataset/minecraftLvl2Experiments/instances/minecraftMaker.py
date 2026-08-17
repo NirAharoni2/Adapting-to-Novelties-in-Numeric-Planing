@@ -114,6 +114,11 @@ def generate_multiple_problems(min_axe_value, max_axe_value, max_number_of_axe, 
 
 
 def main():
+    seed_id = 5
+    random.seed(seed_id)
+    file_path = Path(Config.get_database_dir() / "minecraftLvl2Experiments" / "instances" / f"seed_{seed_id}")
+    file_path.mkdir(parents=True, exist_ok=True)
+
     generate_multiple_problems(
         min_axe_value=int(0.1),
         max_axe_value=int(1.5),
@@ -125,9 +130,11 @@ def main():
         max_hoe_value=int(30),
         max_number_of_axe=int(5),
         total_num_problems=int(100),
-        output_folder=Path(Config.get_database_dir() / "minecraftLvl2Experiments" / "instances"),
+        output_folder=file_path,
     )
 
 
-if __name__ == "__main__":
-    main()
+
+
+# if __name__ == "__main__":
+#     main()

@@ -1,5 +1,5 @@
 import re
-from typing import List, Dict
+from typing import List, Dict, Any
 
 from solution.Utilities.config import Config
 from nyx.PDDL import PDDL_Parser
@@ -176,17 +176,26 @@ class Parse_Model:
     # void: add the parameter to the action's paramters
     # in case '?p' exists it replaces ?p with ?p1 and adds ['?p2','person'])
     def addParameterToAction(self, actionName, parameter):
+        parameter = self.rename_parameter(actionName, parameter)
+        theAct = self.getActionByName(actionName)
+        theAct.parameters.append(parameter)
+        return parameter
+
+    # input: action name (for example 'go_north_east') and parameter (for example ['?p','person']
+    def rename_parameter(self, actionName, parameter):
         parameter = list(parameter)
         theAct = self.getActionByName(actionName)
         for param in theAct.parameters:
-            alreadyExistName = param[0] # for example '?p'
+            alreadyExistName = param[0]  # for example '?p'
             theNewParamName = parameter[0]
             if alreadyExistName == theNewParamName:
                 demoParam = self.addNumber1(param[0])
                 parameter[0] = self.incrementNumber(parameter[0], demoParam)
-        theAct.parameters.append(parameter)
         return parameter
 
+    def getLastAddParameterToAction(self, actionName):
+        theAct = self.getActionByName(actionName)
+        return theAct.parameters[-1]
     def getActionByName(self, actionName):
         theAct = None
         for act in self.parsed_domain.actions:

@@ -30,7 +30,7 @@ class Config:
     VALIDATOR_DIRECTORY = f"{BASE_PATH}/VAL"
 
     # Active domain/problem (can be changed globally)
-
+    seed = 0
     domain_path = ""
     problem_path = ""
     plan_path = ""
@@ -65,14 +65,13 @@ class Config:
     @classmethod
     def update_instance_path(cls, i):
         base_dir = Path(cls.domain_path).parent / "instances"
-        cls.problem_path = base_dir / f"pfile{i}.pddl"
+        #here do receive j   cls.problem_path = base_dir / f"seed_{j}" / f"pfile{i}.pddl"
+        cls.problem_path = base_dir / f"seed_{cls.seed}" / f"pfile{i}.pddl"
 
 
     @classmethod
     def update_plan_path(cls, i):
-        base_dir = Path(cls.domain_path).parent / "instances"
-
-        cls.plan_path = os.path.join(base_dir, "plans", f"plan1_pfile{i}.pddl")
+        cls.plan_path = Path(cls.domain_path).parent / "instances" / f"seed_{cls.seed}" / "plans" / f"plan1_pfile{i}.pddl"
 
     @classmethod
     def update_domain_to_be_env_domain(cls, domain_name,novelty_id):
@@ -87,3 +86,7 @@ class Config:
     @classmethod
     def setContinue(cls, state):
         cls.next = state
+
+    @classmethod
+    def set_seed(cls, seed):
+        cls.seed = seed

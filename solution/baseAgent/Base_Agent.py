@@ -50,7 +50,7 @@ class Agent:
         self.DiagnoseAndRepair.planFailed = False
         created_plan = self.planner.create_plan()
         if not created_plan:
-            print("hi")
+            print("a plan was not created")
             return False
         self.DiagnoseAndRepair.initiliazeSimulator()
         return True

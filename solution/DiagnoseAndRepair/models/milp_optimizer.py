@@ -18,22 +18,34 @@ def transformNewParamsToMonomials(repair, row, k):
     #need to group by key[1] (the parameter) (key = ('xl', 'x0y0z0')), then do bi to each key and do
     #      combined_dict_i = bi_1 | ... | bi_k | a
     #and key will be ( bi_1 | ... | bi_k )
-
-    grouped = defaultdict(dict)
-    for (k0, k1), v in b.items():
-        grouped[k1][k0] = v
-
-    grouped = dict(grouped)
-
+    groups = defaultdict(list)
     for key, value in b.items():
-        bi_lifted_key = tuple((key[0], repair.parsed_model.getLastAddParameterToAction(actionName)[0]))
-        bi = {bi_lifted_key: value}
-        combined_dict_i = bi | a
+        groups[key[1]].append((key, value))
+
+    monomials_new_params = {}
+    for param, items in groups.items():
+        # build bi for each item in the group, then merge them all: bi_1 | ... | bi_k
+        bi_group = {}
+        bi_lifted_keys = []
+        for key, value in items:
+            bi_lifted_key = (key[0], repair.parsed_model.getLastAddParameterToAction(actionName)[0])
+            bi_lifted_keys.append(bi_lifted_key)
+            bi_group[bi_lifted_key] = value
+
+        combined_dict_i = bi_group | a
         all_monomials = generate_nested_combinations(combined_dict_i, k)
-        monomials_new_param_i = {k: v for k, v in all_monomials.items() if (bi_lifted_key in k or bi_lifted_key == k)}
-        monomials_new_params[key] = monomials_new_param_i
-    print(monomials_new_params)
+        monomials_new_param_i = {
+            mk: v for mk, v in all_monomials.items()
+            if any(blk in mk or blk == mk for blk in bi_lifted_keys)
+        }
+
+        # "key" is the merged bi dict — represent as a hashable tuple of its items
+        group_key = tuple(sorted(bi_group.items()))
+        monomials_new_params[group_key] = monomials_new_param_i
+
     return monomials_new_params
+
+
 
 
 def transformToMonomials(repair, data_rows, k):
@@ -50,7 +62,6 @@ def multi_output_monomials_regression_for_adaptive_with_milp(data_rows, repair )
     LIMIT = 100
     TIME_LIMIT_MS = 30000
     data_rows = transformToMonomials(repair, data_rows, 2)
-    print(data_rows[0])
     y_targets = list(data_rows[0]['y'].keys())
     results = {}
     start_plan_time = time.perf_counter()

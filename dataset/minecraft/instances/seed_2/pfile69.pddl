@@ -1,26 +1,24 @@
 ; PolyCraft basic problem
+(define (problem instance_69)
 
-(define (problem basic)
+	(:domain PolyCraft)
 
-    (:domain PolyCraft)
+	(:init
+		(= (trees_in_map) 60)
 
-    (:init
-        ; Map
-        (= (trees_in_map) 18)
-        (= (mine_factor) 1.8)
+		(= (mine_factor) 4.45)
 
-        ; Items
-        (= (count_log_in_inventory) 0)
-        (= (count_planks_in_inventory) 0)
-        (= (count_stick_in_inventory) 0)
-        (= (count_sack_polyisoprene_pellets_in_inventory) 0)
-        (= (count_tree_tap_in_inventory) 0)
-        (= (count_pogo_stick) 0)
-    )
+		(= (count_log_in_inventory) 0)
+		(= (count_planks_in_inventory) 0)
+		(= (count_stick_in_inventory) 0)
+		(= (count_sack_polyisoprene_pellets_in_inventory) 0)
+		(= (count_tree_tap_in_inventory) 0)
+		(= (count_pogo_stick) 0)
+	)
 
-    (:goal
-        (and
-            (= (count_pogo_stick) 1)
-        )
-    )
+	(:goal
+		(and
+			(= (count_pogo_stick) 1)
+		)
+	)
 )

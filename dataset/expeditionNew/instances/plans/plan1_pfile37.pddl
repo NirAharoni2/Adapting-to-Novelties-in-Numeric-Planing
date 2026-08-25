@@ -1,4 +1,0 @@
-     0.000:	move_forwards s0 w0_0 w0_1 f0	[0.0]
-     0.000:	move_forwards s0 w0_1 w0_2 f0	[0.0]
-     0.000:	move_forwards s0 w0_2 w0_3 f0	[0.0]
-     0.000:	move_forwards s0 w0_3 w0_4 f0	[0.0]

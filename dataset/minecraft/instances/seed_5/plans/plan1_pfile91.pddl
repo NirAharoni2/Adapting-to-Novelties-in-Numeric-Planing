@@ -4,6 +4,7 @@
      0.000:	get_log	[0.0]
      0.000:	get_log	[0.0]
      0.000:	get_log	[0.0]
+     0.000:	get_log	[0.0]
      0.000:	craft_plank	[0.0]
      0.000:	craft_plank	[0.0]
      0.000:	craft_plank	[0.0]

@@ -237,7 +237,7 @@ base_dir = r"results_csv"  # Directory containing CSVs for each domain/difficult
 #
 #         plot_from_dict(averages, plot_title, plot_filename)
 
-domains = ["minecraftLvl2Experiments"]
+domains = ["minecraftSignatureChangeExperiments"]
 
 difficulties = ["level1"]
 

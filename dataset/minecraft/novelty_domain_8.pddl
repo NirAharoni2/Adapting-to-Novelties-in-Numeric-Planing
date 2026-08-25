@@ -22,8 +22,8 @@
      :precondition (and
             (>= (trees_in_map ) 1))
      :effect (and
-            (assign (count_log_in_inventory ) (+ (* 0.01 (* (trees_in_map ) (mine_factor ))) (* 1.0 (count_log_in_inventory ))))
-            (assign (trees_in_map ) (+ (* 0.01 (* (trees_in_map ) (mine_factor ))) (* 1.0 (trees_in_map )))))
+            (assign (count_log_in_inventory ) (+ (* 0.001 (* (trees_in_map ) (mine_factor ))) (* 1.0 (count_log_in_inventory ))))
+            (assign (trees_in_map ) (+ (* 0.001 (* (trees_in_map ) (mine_factor ))) (* 1.0 (trees_in_map )))))
     )
     (:action craft_plank
      :parameters ()

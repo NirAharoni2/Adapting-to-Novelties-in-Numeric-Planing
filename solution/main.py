@@ -4,7 +4,6 @@ import shutil
 import os
 from pathlib import Path
 
-from dataset.minecraft.instances.minecraftMaker import write_to_file_in_main
 from solution.Utilities.parsedModel import Parse_Model
 
 from solution.Environment.Enviroment import Environment
@@ -42,7 +41,7 @@ end = -1
 inject_novelty_at = -1
 
 def clean():
-    folder9 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\minecraft"
+    folder0 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\minecraft"
     folder1 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\minecraftnew"
     folder2 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\expedition"
     folder3 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\drone"
@@ -51,12 +50,12 @@ def clean():
     folder6 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\sailingNew"
     folder7 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\droneNew"
     folder8 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\expeditionNew"
-    folder9 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\minecraftLvl2Experiments"
-    folder10 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\expeditionLvl2Experiments"
-    folder11 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\sailingLvl2Experiments"
-    folder12 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\droneLvl2Experiments"
+    folder9 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\minecraftSignatureChangeExperiments"
+    folder10 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\expeditionSignatureChangeExperiments"
+    folder11 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\sailingSignatureChangeExperiments"
+    folder12 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\droneSignatureChangeExperiments"
 
-    remove_domain_2026_files([folder10, folder11, folder12, folder9, folder1, folder2, folder3, folder4, folder5, folder6, folder7, folder8])
+    remove_domain_2026_files([folder0, folder10, folder11, folder12, folder9, folder1, folder2, folder3, folder4, folder5, folder6, folder7, folder8])
 
 def set_instance_plan_paths(instance_number: int):
     """
@@ -226,7 +225,7 @@ def main(novelty_id_arg=None, domain_name_arg=None):
         #("adaptive repair base", REPAIR_ADAPTIVE),
         #("adaptive repair + support for signature change", REPAIR_ADAPTIVE_UPDATED),
 
-        ("adaptive repair + support for signature change with milp", REPAIR_ADAPTIVE_UPDATED_new),
+        #("adaptive repair + support for signature change with milp", REPAIR_ADAPTIVE_UPDATED_new),
 
     ]
     results = {name: experiment_1(mode) for name, mode in modes}
@@ -259,10 +258,10 @@ def run_novelties(domain_name, start=1, end=10):
 def main_entry():
     clean()
     if len(sys.argv) < 3:
-        for novelty_number in range(1,2): #7
+        for novelty_number in range(1, 9): #7
             for seed_number in range(1, 2): #6
                 Config.set_seed(seed_number)
-                run_novelties("droneLvl2Experiments", start=novelty_number, end=novelty_number+1)
+                run_novelties("droneSignatureChangeExperiments", start=novelty_number, end=novelty_number+1)
         return
 
     domain_name = sys.argv[1]

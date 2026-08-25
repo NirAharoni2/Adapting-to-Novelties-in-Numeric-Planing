@@ -1,3 +1,5 @@
+import random
+
 import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
@@ -12,7 +14,7 @@ from pddl_plus_parser.models import State, Operator, ActionCall
 import sys
 import PDDL2Gym.config as CONFIG
 
-sys.path.append(CONFIG.NSAM_PATH)
+sys.path.append('PDDL2Gym')
 from sam_learning.core import EnvironmentSnapshot
 
 
@@ -124,7 +126,8 @@ class PDDL2GYM(gym.Env):
 
         # Add fluents
         for fluent in self.fluent_names:
-            fluents_dict[fluent] = state.state_fluents[fluent].value
+            clean_fluent = tuple(fluent.strip("()").split())
+            fluents_dict[clean_fluent] = state.state_fluents[fluent].value
 
         # Add active predicates
         for grounded_predicates in state.state_predicates.values():
@@ -150,6 +153,7 @@ class PDDL2GYM(gym.Env):
 
     def apply_operator(self, operator):
         # check if the action is valid
+        thisActionNotApplicable = False
         try:
             self._state.is_init = False
             self.last_state = self._state
@@ -160,6 +164,7 @@ class PDDL2GYM(gym.Env):
             self.state = spaces.flatten(self.observation_space, state_vec)
         except Exception as e:
             print(e)
+            thisActionNotApplicable = True
             pass
 
         terminated = True if self.agent.goal_reached(self._state) else False
@@ -167,8 +172,11 @@ class PDDL2GYM(gym.Env):
             not self.have_applicable_action()
         )  # can be used to check if the action is applicable
 
+
         if terminated:
             reward = 1
+        elif thisActionNotApplicable:
+            reward = -1
         elif not_applicable_action:
             reward = -1
         else:
@@ -180,9 +188,48 @@ class PDDL2GYM(gym.Env):
         dictionary = self.pddl2dict()
         return dictionary, reward, terminated, self.truncated, info
 
+    def get_type(self, grounded_parameter, action_objects):
+        try:
+            return action_objects.get(grounded_parameter).type.name
+        except:
+            print()
+
     def planning_step(self, action):
         """Execute one time step within the environment using PDDL action."""
         action_descriptor = parse_action_call(action)
+
+        #nir added
+        #seacrh the action
+        #check if i need extra objects
+        #add the missings
+        possibleParams = []
+        #curent solution can be better:
+
+        for grounded_action_call in self.grounded_action_calls:
+            if grounded_action_call.name == action_descriptor.name:
+                for i in range(len(action_descriptor.parameters)):
+                    type_my = self.get_type(action_descriptor.parameters[i], grounded_action_call.problem_objects)
+                    type_env = self.get_type(grounded_action_call.grounded_call_objects[i], grounded_action_call.problem_objects)
+                    if type_my != type_env:
+                        action_descriptor.parameters.pop(i)
+                        break
+                break
+
+        for grounded_action_call in self.grounded_action_calls:
+            if grounded_action_call.name == action_descriptor.name:
+                # if
+                isSubset = grounded_action_call.grounded_call_objects[:len(action_descriptor.parameters)] == action_descriptor.parameters
+                same_length = len(action_descriptor.parameters) == len(grounded_action_call.grounded_call_objects)
+                if not same_length and isSubset:
+                    #possibleParams.append(grounded_action_call.grounded_call_objects)
+                    action_descriptor.parameters = grounded_action_call.grounded_call_objects
+
+                    break
+
+        #if len(possibleParams) != 0:
+            #action_descriptor.parameters = random.choice(possibleParams)
+            #action_descriptor.parameters = possibleParams[0]
+        #end nir
         operator = Operator(
             action=self.odomain.actions[action_descriptor.name],
             domain=self.odomain,

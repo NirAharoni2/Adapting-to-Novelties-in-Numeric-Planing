@@ -1,0 +1,6 @@
+get_log
+get_log
+craft_plank
+craft_plank
+craft_tree_tap
+craft_wooden_pogo

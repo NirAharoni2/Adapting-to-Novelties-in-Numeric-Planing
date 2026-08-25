@@ -10,9 +10,9 @@ SEED = 63
 def main():
     play_mode = ["rl_learn", "planning_play"][1]
 
-    myPlan = "C:\\newProject\PDDL2Gym\ex\expedition\plans\plan1_pb01.pddl"
-    real_domain = "C:\\newProject\ipc2023-dataset\expedition\domain.pddl"
-    problem = "C:\\newProject\ipc2023-dataset\expedition\instances\pfile1.pddl"
+    myPlan = "C:\\Felix\PDDL2Gym\ex\expedition\plans\plan1_pb01.pddl"
+    real_domain = "C:\\Felix\ipc2023-dataset\expedition\domain.pddl"
+    problem = "C:\\Felix\ipc2023-dataset\expedition\instances\pfile1.pddl"
     # Set up the environment
     env = PDDL2GYM(
         real_domain,

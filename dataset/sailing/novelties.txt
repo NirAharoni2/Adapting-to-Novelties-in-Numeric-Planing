@@ -1,0 +1,28 @@
+1.
+    a. go_south_west is now go_north_east
+    b. go_north_east is now go south_west
+(repair 4 and 1 didn't learn 1 action  because he didn't need to use it to for solve the problems under the current heuristic )
+
+2.
+    a. every action a selected person drifts away ( d = d + (-0.5)) -- (repair 3 didn't learn 1 action correctly because he didn't need to use it to for solve the problems under the current heuristic, he did change the unfinished function )
+
+3.
+    a. the ship can only move in north south west east (not in north-east,....)
+
+4.
+    a. every action a selected person drifts away ( d = d + 0.3 * drift_factor)
+
+5.
+    a. every action a selected person drifts away ( d = d + 0.2 * drift_factor + 0.2)
+
+6.
+    a. every action a selected person drifts away ( d = d + 1 * drift_factor - 3.5)
+
+7.
+    a. every action a selected random person drifts away (d = d +  0.001 *d * drift_factor + 0.1)
+
+8.
+    a. every action a selected random person drifts away (d = d +  0.1 *d * drift_factor + 0.1)
+
+9.
+    a. every action a selected random person drifts away (d = d + (0.001 × drift_factor × d) + (0.01 × drift_factor * drift_factor) + 0.1)

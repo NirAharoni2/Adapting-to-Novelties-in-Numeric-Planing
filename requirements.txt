@@ -1,0 +1,24 @@
+setuptools==66.0.0
+wheel==0.38.4
+gymnasium[classic-control]==0.29.1
+imitation @ git+https://github.com/HumanCompatibleAI/imitation@master
+matplotlib==3.8.3
+networkx==2.8.8
+numpy>=1.23.5,<2.0.0
+numba==0.56.4
+observations==0.1.4
+osqp==1.0.3
+pandas==2.0.1
+pddl_plus_parser==3.12.0
+sb3_contrib==2.2.1
+scipy==1.11.4
+sparsegrad==0.0.15
+stable_baselines3==2.2.1
+torch==2.2.1
+tqdm==4.65.0
+toolz==1.0.0
+seaborn==0.12.2
+anytree==2.8.0
+lark-parser==0.12.0
+ortools==9.8.3296
+pysr==0.16.3

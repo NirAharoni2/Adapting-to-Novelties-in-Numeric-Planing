@@ -1,0 +1,5 @@
+     0.000:	retrieve_supplies s0 w0_0	[0.0]
+     0.000:	move_forwards s0 w0_0 w0_1 f4	[0.0]
+     0.000:	move_forwards s0 w0_1 w0_2 f4	[0.0]
+     0.000:	move_forwards s0 w0_2 w0_3 f4	[0.0]
+     0.000:	move_forwards s0 w0_3 w0_4 f4	[0.0]

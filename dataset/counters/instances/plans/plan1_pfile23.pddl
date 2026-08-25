@@ -1,0 +1,8 @@
+     0.000:	decrement c0 r0	[0.0]
+     0.000:	increment c2	[0.0]
+     0.000:	increment c2	[0.0]
+     0.000:	increment c2	[0.0]
+     0.000:	increment c2	[0.0]
+     0.000:	increment c2	[0.0]
+     0.000:	increment c2	[0.0]
+     0.000:	increment c2	[0.0]

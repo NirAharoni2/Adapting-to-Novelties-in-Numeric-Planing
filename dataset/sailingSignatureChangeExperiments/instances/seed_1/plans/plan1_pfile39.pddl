@@ -1,0 +1,7 @@
+     0.000:	go_south_east b0 p0 e0	[0.0]
+     0.000:	go_south_east b0 p0 e0	[0.0]
+     0.000:	go_south_west b0 p0 e0	[0.0]
+     0.000:	go_south_west b0 p0 e0	[0.0]
+     0.000:	go_south_east b0 p0 e0	[0.0]
+     0.000:	go_west b0 p0 e1	[0.0]
+     0.000:	save_person b0 p0	[0.0]

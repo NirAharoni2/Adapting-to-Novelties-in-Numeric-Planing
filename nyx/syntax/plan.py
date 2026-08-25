@@ -39,38 +39,23 @@ class Plan(list):
                 start_time = round(current_time + (a * time_passing.duration), constants.NUMBER_PRECISION)
                 self.append(self.TrajectoryElement(time_passing, start_time))
 
-    def simulate(self, init: State, grounded_pddl: GroundedPDDLInstance, double_events: bool = False) -> Trace:
+    def simulate(self, init: State) -> State | None:
         current_state = init
-        trace = Trace(current_state)
 
-        for item in self:
-            if item.action.preconditions_func(current_state, constants):
-                time = item.time
+        newState = None
 
-                if item.action.duration > 0:
-                    time = round(time + item.action.duration, constants.NUMBER_PRECISION)
+        if not self:
+            return None
 
-                    for happening_tree in [grounded_pddl.events, grounded_pddl.processes]:
-                        for hp in happening_tree.get_applicable(current_state):
-                            current_state = current_state.apply_happening(hp)
-                            current_state.set_time(time)
-                            trace.append(current_state)
+        item = self.pop(0)  # Remove and retrieve the first item
 
-                    if double_events or constants.DOUBLE_EVENT_CHECK:
-                        for hp2 in grounded_pddl.events.get_applicable(current_state):
-                            current_state = current_state.apply_happening(hp2)
-                            current_state.set_time(time)
-                            trace.append(current_state)
-
-                current_state = current_state.apply_happening(item.action, current_state)
-                current_state.set_time(time)
-                trace.append(current_state)
-            else:
-                break
+        if item.action.preconditions_func(current_state, constants):
+            time = item.time
+            newState = current_state.apply_happening(item.action, current_state)
+            newState.set_time(time)
+            return newState
         else:
-            trace.finished = True
-
-        return trace
+            return None
 
     def print(self, ignore_time_passing: bool = False, out: TextIO = sys.stdout):
         for item in self.iter(ignore_time_passing=ignore_time_passing):
@@ -98,6 +83,29 @@ class Plan(list):
                     action_name, _ = line[1].split('[')
                     action = action_lookup[action_name.strip()]
                     plan.append_action(action, time, expand_time_passing=expand_time_passing)
+
+        return plan
+
+    @classmethod
+    def from_single_action(cls, action_name: str, grounded_pddl: GroundedPDDLInstance,
+                  expand_time_passing: bool = False) -> 'Plan':
+        plan = cls()
+        try:
+            actions_iter = grounded_pddl.actions.iter()
+        except AttributeError:
+            actions_iter = iter(grounded_pddl.actions)
+        action_lookup = {action.grounded_name: action for action in actions_iter}
+
+
+        time = float("0.000")
+        #print(action_lookup)
+        #print(action_name)
+        try:
+            action = action_lookup[' '.join(action_name)]
+        except KeyError as e:
+            print(action_lookup)
+            raise e
+        plan.append_action(action, time, expand_time_passing=expand_time_passing)
 
         return plan
 

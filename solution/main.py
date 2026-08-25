@@ -217,13 +217,13 @@ def main(novelty_id_arg=None, domain_name_arg=None):
     print(f"Running: domain={domain_name}, novelty_id={novelty_id}, seed={Config.seed}")
     modes = [
 
-        #("oracle", ORACLE),
-        #("base domain - no repair", NO_REPAIR),
+        ("oracle", ORACLE),
+        ("base domain - no repair", NO_REPAIR),
         #("rel. variables repair", REPAIR_RELEVANT_VARIABLES),
         #("all variables repair", REPAIR_ALL_VARIABLES),
-        #("all monomials repair", REPAIR_ALL_MONOMIALS),
-        #("adaptive repair base", REPAIR_ADAPTIVE),
-        #("adaptive repair + support for signature change", REPAIR_ADAPTIVE_UPDATED),
+        ("all monomials repair", REPAIR_ALL_MONOMIALS),
+        ("adaptive repair base", REPAIR_ADAPTIVE),
+        ("adaptive repair + support for signature change", REPAIR_ADAPTIVE_UPDATED),
 
         #("adaptive repair + support for signature change with milp", REPAIR_ADAPTIVE_UPDATED_new),
 
@@ -261,7 +261,7 @@ def main_entry():
         for novelty_number in range(1, 9): #7
             for seed_number in range(1, 2): #6
                 Config.set_seed(seed_number)
-                run_novelties("droneSignatureChangeExperiments", start=novelty_number, end=novelty_number+1)
+                run_novelties("minecraft", start=novelty_number, end=novelty_number+1)
         return
 
     domain_name = sys.argv[1]

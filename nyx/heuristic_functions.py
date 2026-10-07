@@ -162,7 +162,7 @@ def heuristic_function(state):
         # Encourage progress: fewer unvisited → smaller value
         unvisited_penalty = len(unvisited) * 3  # tunable weight
         recharge_penalty = manhattan(current_pos, recharge_pos) if battery < 3 else 0
-        battery_bonus = -0.5 * battery  # more battery = lower heuristic
+        battery_bonus = -0.01 * battery  # more battery = lower heuristic
 
         heuristic_value = (
                 dist_to_nearest +

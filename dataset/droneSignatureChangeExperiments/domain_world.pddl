@@ -117,7 +117,7 @@
                         (= (z) 0)                        
                        )
         :effect (and 
-                       (assign (battery-level) (battery-level-full)))
+            (increase (battery-level ) 1))
     )
 
 )

@@ -1,26 +1,21 @@
-;;Instance with 2x2x0 points
+;;Instance with 2x0x2 points
 (define (problem grid_instance_47)
     (:domain drone)
     (:objects
         x0y0z0 - location
-        x0y1z0 - location
-        x0y2z0 - location
-        x1y0z0 - location
-        x1y1z0 - location
-        x1y2z0 - location
-        x2y0z0 - location
-        x2y1z0 - location
-        x2y2z0 - location
+		x0y0z1 - location
+		x0y0z2 - location
+		x1y0z0 - location
+		x1y0z1 - location
+		x1y0z2 - location
+		x2y0z0 - location
+		x2y0z1 - location
+		x2y0z2 - location
+
         bf0 - battery_factor
-        d10 - dummy_1
-        d20 - dummy_2
-        d21 - dummy_2
-        d22 - dummy_2
-        d30 - dummy_3
-        d31 - dummy_3
-        d32 - dummy_3
-        d33 - dummy_3
-        d34 - dummy_3
+        d10 d11 d12 d13 - dummy_1
+        d20 d21 d22 d23 - dummy_2
+        d30 d31 d32 d33 - dummy_3
     )
     (:init
         (= (x) 0)
@@ -29,59 +24,69 @@
         (= (min_x) 0)
         (= (max_x) 2)
         (= (min_y) 0)
-        (= (max_y) 2)
+        (= (max_y) 0)
         (= (min_z) 0)
-        (= (max_z) 0)
+        (= (max_z) 2)
+
         (= (xl x0y0z0) 0)
-        (= (yl x0y0z0) 0)
-        (= (zl x0y0z0) 0)
-        (= (xl x0y1z0) 0)
-        (= (yl x0y1z0) 1)
-        (= (zl x0y1z0) 0)
-        (= (xl x0y2z0) 0)
-        (= (yl x0y2z0) 2)
-        (= (zl x0y2z0) 0)
-        (= (xl x1y0z0) 1)
-        (= (yl x1y0z0) 0)
-        (= (zl x1y0z0) 0)
-        (= (xl x1y1z0) 1)
-        (= (yl x1y1z0) 1)
-        (= (zl x1y1z0) 0)
-        (= (xl x1y2z0) 1)
-        (= (yl x1y2z0) 2)
-        (= (zl x1y2z0) 0)
-        (= (xl x2y0z0) 2)
-        (= (yl x2y0z0) 0)
-        (= (zl x2y0z0) 0)
-        (= (xl x2y1z0) 2)
-        (= (yl x2y1z0) 1)
-        (= (zl x2y1z0) 0)
-        (= (xl x2y2z0) 2)
-        (= (yl x2y2z0) 2)
-        (= (zl x2y2z0) 0)
-        (= (battery-level) 12)
-        (= (battery-level-full) 13)
-        (= (factor_value bf0) 1.26421)
-        (= (dummy_1_value d10) 1.18929)
-        (= (dummy_2_value d20) 4.83321)
-        (= (dummy_2_value d21) 3.06553)
-        (= (dummy_2_value d22) 3.0202)
-        (= (dummy_3_value d30) 0.93032)
-        (= (dummy_3_value d31) 0.64538)
-        (= (dummy_3_value d32) 0.19634)
-        (= (dummy_3_value d33) 0.80579)
-        (= (dummy_3_value d34) 0.42707)
+		(= (yl x0y0z0) 0)
+		(= (zl x0y0z0) 0)
+		(= (xl x0y0z1) 0)
+		(= (yl x0y0z1) 0)
+		(= (zl x0y0z1) 1)
+		(= (xl x0y0z2) 0)
+		(= (yl x0y0z2) 0)
+		(= (zl x0y0z2) 2)
+		(= (xl x1y0z0) 1)
+		(= (yl x1y0z0) 0)
+		(= (zl x1y0z0) 0)
+		(= (xl x1y0z1) 1)
+		(= (yl x1y0z1) 0)
+		(= (zl x1y0z1) 1)
+		(= (xl x1y0z2) 1)
+		(= (yl x1y0z2) 0)
+		(= (zl x1y0z2) 2)
+		(= (xl x2y0z0) 2)
+		(= (yl x2y0z0) 0)
+		(= (zl x2y0z0) 0)
+		(= (xl x2y0z1) 2)
+		(= (yl x2y0z1) 0)
+		(= (zl x2y0z1) 1)
+		(= (xl x2y0z2) 2)
+		(= (yl x2y0z2) 0)
+		(= (zl x2y0z2) 2)
+
+        (= (battery-level) 3)
+        (= (battery-level-full) 42)
+
+        (= (factor_value bf0) 1.18991)
+
+        (= (dummy_1_value d10) 1.15197)
+		(= (dummy_1_value d11) 1.08605)
+		(= (dummy_1_value d12) 1.08963)
+		(= (dummy_1_value d13) 1.21304)
+
+        (= (dummy_2_value d20) 4.45225)
+		(= (dummy_2_value d21) 2.27151)
+		(= (dummy_2_value d22) 4.83692)
+		(= (dummy_2_value d23) 4.02356)
+
+        (= (dummy_3_value d30) 0.14844)
+		(= (dummy_3_value d31) 0.73635)
+		(= (dummy_3_value d32) 0.46137)
+		(= (dummy_3_value d33) 0.56321)
     )
     (:goal (and
         (visited x0y0z0)
-        (visited x0y1z0)
-        (visited x0y2z0)
-        (visited x1y0z0)
-        (visited x1y1z0)
-        (visited x1y2z0)
-        (visited x2y0z0)
-        (visited x2y1z0)
-        (visited x2y2z0)
+		(visited x0y0z1)
+		(visited x0y0z2)
+		(visited x1y0z0)
+		(visited x1y0z1)
+		(visited x1y0z2)
+		(visited x2y0z0)
+		(visited x2y0z1)
+		(visited x2y0z2)
+
         (= (x) 0)
         (= (y) 0)
         (= (z) 0)

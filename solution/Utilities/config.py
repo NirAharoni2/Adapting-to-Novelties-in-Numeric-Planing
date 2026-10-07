@@ -28,7 +28,8 @@ class Config:
     NYX_PATH = f"{BASE_PATH}/nyxMain"
     NSAM_PATH = f"{BASE_PATH}/sam_learning"
     VALIDATOR_DIRECTORY = f"{BASE_PATH}/VAL"
-
+    totalRepairTime = 0
+    totalDiagnoseTime = 0
     # Active domain/problem (can be changed globally)
     seed = 0
     domain_path = ""

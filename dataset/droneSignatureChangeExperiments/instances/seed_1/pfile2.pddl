@@ -3,15 +3,16 @@
     (:domain drone)
     (:objects
         x0y0z0 - location
-        x0y1z0 - location
-        x1y0z0 - location
-        x1y1z0 - location
-        x2y0z0 - location
-        x2y1z0 - location
-        x3y0z0 - location
-        x3y1z0 - location
+		x0y1z0 - location
+		x1y0z0 - location
+		x1y1z0 - location
+		x2y0z0 - location
+		x2y1z0 - location
+		x3y0z0 - location
+		x3y1z0 - location
+
         bf0 - battery_factor
-        d10 - dummy_1
+        d10 d11 d12 - dummy_1
         d20 - dummy_2
         d30 - dummy_3
     )
@@ -25,46 +26,55 @@
         (= (max_y) 1)
         (= (min_z) 0)
         (= (max_z) 0)
+
         (= (xl x0y0z0) 0)
-        (= (yl x0y0z0) 0)
-        (= (zl x0y0z0) 0)
-        (= (xl x0y1z0) 0)
-        (= (yl x0y1z0) 1)
-        (= (zl x0y1z0) 0)
-        (= (xl x1y0z0) 1)
-        (= (yl x1y0z0) 0)
-        (= (zl x1y0z0) 0)
-        (= (xl x1y1z0) 1)
-        (= (yl x1y1z0) 1)
-        (= (zl x1y1z0) 0)
-        (= (xl x2y0z0) 2)
-        (= (yl x2y0z0) 0)
-        (= (zl x2y0z0) 0)
-        (= (xl x2y1z0) 2)
-        (= (yl x2y1z0) 1)
-        (= (zl x2y1z0) 0)
-        (= (xl x3y0z0) 3)
-        (= (yl x3y0z0) 0)
-        (= (zl x3y0z0) 0)
-        (= (xl x3y1z0) 3)
-        (= (yl x3y1z0) 1)
-        (= (zl x3y1z0) 0)
-        (= (battery-level) 7)
-        (= (battery-level-full) 13)
-        (= (factor_value bf0) 1.25982)
-        (= (dummy_1_value d10) 1.00368)
-        (= (dummy_2_value d20) 4.6437)
-        (= (dummy_3_value d30) 0.71784)
+		(= (yl x0y0z0) 0)
+		(= (zl x0y0z0) 0)
+		(= (xl x0y1z0) 0)
+		(= (yl x0y1z0) 1)
+		(= (zl x0y1z0) 0)
+		(= (xl x1y0z0) 1)
+		(= (yl x1y0z0) 0)
+		(= (zl x1y0z0) 0)
+		(= (xl x1y1z0) 1)
+		(= (yl x1y1z0) 1)
+		(= (zl x1y1z0) 0)
+		(= (xl x2y0z0) 2)
+		(= (yl x2y0z0) 0)
+		(= (zl x2y0z0) 0)
+		(= (xl x2y1z0) 2)
+		(= (yl x2y1z0) 1)
+		(= (zl x2y1z0) 0)
+		(= (xl x3y0z0) 3)
+		(= (yl x3y0z0) 0)
+		(= (zl x3y0z0) 0)
+		(= (xl x3y1z0) 3)
+		(= (yl x3y1z0) 1)
+		(= (zl x3y1z0) 0)
+
+        (= (battery-level) 4)
+        (= (battery-level-full) 37)
+
+        (= (factor_value bf0) 1.01018)
+
+        (= (dummy_1_value d10) 1.21656)
+		(= (dummy_1_value d11) 1.37566)
+		(= (dummy_1_value d12) 1.15248)
+
+        (= (dummy_2_value d20) 2.6498)
+
+        (= (dummy_3_value d30) 0.4799)
     )
     (:goal (and
         (visited x0y0z0)
-        (visited x0y1z0)
-        (visited x1y0z0)
-        (visited x1y1z0)
-        (visited x2y0z0)
-        (visited x2y1z0)
-        (visited x3y0z0)
-        (visited x3y1z0)
+		(visited x0y1z0)
+		(visited x1y0z0)
+		(visited x1y1z0)
+		(visited x2y0z0)
+		(visited x2y1z0)
+		(visited x3y0z0)
+		(visited x3y1z0)
+
         (= (x) 0)
         (= (y) 0)
         (= (z) 0)

@@ -42,20 +42,16 @@ inject_novelty_at = -1
 
 def clean():
     folder0 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\minecraft"
-    folder1 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\minecraftnew"
     folder2 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\expedition"
     folder3 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\drone"
     folder4 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\sailing"
     folder5 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\counters"
-    folder6 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\sailingNew"
-    folder7 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\droneNew"
-    folder8 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\expeditionNew"
     folder9 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\minecraftSignatureChangeExperiments"
     folder10 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\expeditionSignatureChangeExperiments"
     folder11 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\sailingSignatureChangeExperiments"
     folder12 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\droneSignatureChangeExperiments"
 
-    remove_domain_2026_files([folder0, folder10, folder11, folder12, folder9, folder1, folder2, folder3, folder4, folder5, folder6, folder7, folder8])
+    remove_domain_2026_files([folder0, folder10, folder11, folder12, folder9, folder2, folder3, folder4, folder5])
 
 def set_instance_plan_paths(instance_number: int):
     """
@@ -126,7 +122,7 @@ def experiment_1(repair_methode_id):
     else:
         Config.checkSignature = False
     score_list = []
-    otherResults = []
+    otherResults = {"planning_time": [], "repair_time": [], "diagnose_time": [], "plan_length": []}
     learned_model_id = -1
 
     if repair_methode_id == -2:
@@ -169,17 +165,21 @@ def experiment_1(repair_methode_id):
                     print(f"novelty_id={novelty_id}, seed={Config.seed}, problem_id={index}, succeeded: False")
 
                     continue
-        start_execute_time = time.perf_counter()
         if repair_methode_id in [NO_REPAIR, ORACLE]:
             succeeded = env.simulate_run_without_repair()
+            runtimeRepair = 0
         else:
             succeeded = env.simulate_run()
-        end_execute_time = time.perf_counter()
+
+
+
 
         runtimePlan = end_plan_time - start_plan_time
-        runtimeExecute = end_execute_time - start_execute_time
 
-        otherResults.append([runtimePlan, runtimeExecute, agent.get_plan_length()])
+        otherResults["planning_time"].append(runtimePlan)
+        otherResults["repair_time"].append(Config.totalRepairTime)
+        otherResults["diagnose_time"].append(Config.totalDiagnoseTime)
+        otherResults["plan_length"].append(agent.get_plan_length())
         score_list.append(env.score)
         if not succeeded:
             print(f"novelty_id={novelty_id}, seed={Config.seed}, problem_id={index}, succeeded: {succeeded}")
@@ -190,7 +190,7 @@ def experiment_1(repair_methode_id):
             learned_model_id = index - start + 1
             print("The novelty has been learnt!")
 
-    return learned_model_id, score_list, list(zip(*otherResults))
+    return learned_model_id, score_list, otherResults
 
 
 
@@ -219,13 +219,13 @@ def main(novelty_id_arg=None, domain_name_arg=None):
 
         ("oracle", ORACLE),
         ("base domain - no repair", NO_REPAIR),
-        #("rel. variables repair", REPAIR_RELEVANT_VARIABLES),
-        #("all variables repair", REPAIR_ALL_VARIABLES),
+        ("rel. variables repair", REPAIR_RELEVANT_VARIABLES),
+        ("all variables repair", REPAIR_ALL_VARIABLES),
         ("all monomials repair", REPAIR_ALL_MONOMIALS),
         ("adaptive repair base", REPAIR_ADAPTIVE),
         ("adaptive repair + support for signature change", REPAIR_ADAPTIVE_UPDATED),
 
-        #("adaptive repair + support for signature change with milp", REPAIR_ADAPTIVE_UPDATED_new),
+        ("adaptive repair + support for signature change with milp", REPAIR_ADAPTIVE_UPDATED_new),
 
     ]
     results = {name: experiment_1(mode) for name, mode in modes}
@@ -239,13 +239,14 @@ def main(novelty_id_arg=None, domain_name_arg=None):
     }
 
     os.makedirs("results_csv", exist_ok=True)
-    file_path = os.path.join(Config.get_results_csv_dir(), f"{domain_name}_novelty_{novelty_id}_seed_{Config.seed}_data.csv")
+    file_path = os.path.join(Config.get_results_csv_dir(), domain_name, f"{domain_name}_novelty_{novelty_id}_seed_{Config.seed}_data.csv")
 
     with open(file_path, mode="w", newline="") as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(["Label", "Score", "Learned Model ID", "planing time", "execute & repair time", "Plan Length"])
+        writer.writerow(["Label", "Score", "Learned Model ID", "planing time", "repair time", "diagnose time", "Plan Length"])
         for label, (model_id, score, extraResults) in results.items():
-            writer.writerow([label, score, model_id, extraResults[0], extraResults[1], extraResults[2]])
+            writer.writerow([label, score, model_id, extraResults["planning_time"], extraResults["repair_time"],
+                             extraResults["diagnose_time"], extraResults["plan_length"]])
     print(f"A CSV representing the results is saved in {file_path}")
     plot_from_dict(legendToList, f"{domain_name}_novelty_{novelty_id}_seed_{Config.seed}", f"{domain_name}_novelty_{novelty_id}_seed_{Config.seed}", novelty_intro_idx=0)
 
@@ -257,26 +258,19 @@ def run_novelties(domain_name, start=1, end=10):
 
 def main_entry():
     clean()
-    if len(sys.argv) < 3:
-        for novelty_number in range(1, 9): #7
-            for seed_number in range(1, 2): #6
+    if len(sys.argv) < 2:
+        for novelty_number in range(1, 7): #7
+            for seed_number in range(1, 6): #6
                 Config.set_seed(seed_number)
                 run_novelties("minecraft", start=novelty_number, end=novelty_number+1)
         return
 
     domain_name = sys.argv[1]
-    command = sys.argv[2]
-    if command == "all":
-        run_novelties(domain_name)
-
-    elif command == "from" and len(sys.argv) == 5:
-        start_novelty = int(sys.argv[4])
-        run_novelties(domain_name, start=start_novelty)
-
-    else:
-        novelty_id = int(command)
-        main(novelty_id, domain_name)
-
+    for novelty_number in range(1, 7):  # 7
+        for seed_number in range(1, 6):  # 6
+            Config.set_seed(seed_number)
+            run_novelties(domain_name, start=novelty_number, end=novelty_number + 1)
+    return
 
 if __name__ == "__main__":
     main_entry()

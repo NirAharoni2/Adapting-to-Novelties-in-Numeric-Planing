@@ -1,6 +1,9 @@
+import time
+
 from PDDL2Gym.repair import repair
 from solution.DiagnoseAndRepair.Monitor import Monitor
 from solution.DiagnoseAndRepair.Repair import Repair
+from solution.Utilities.config import Config
 
 
 class DiagnoseAndRepair:
@@ -41,14 +44,17 @@ class DiagnoseAndRepair:
         # Normalize the action string into a list format
         action = action.strip("()").split()
 
-        # Initialize the monitor with the current action
+        startDiagnoseTime = time.perf_counter()
         self.monitor.initialize(action)
-
-        # Check for any differences between expected and actual states
         data = self.monitor.check_inequality(LastObservation, newObservation)
+        endDiagnoseTime = time.perf_counter()
+        Config.totalDiagnoseTime = endDiagnoseTime - startDiagnoseTime
 
         if data["inequality"]:
+            startRepairTime = time.perf_counter()
             self.repair.mainRepair(self.repair_id, LastObservation, action, newObservation, data["different_keys"])
+            endRepairTime = time.perf_counter()
+            Config.totalRepairTime = endRepairTime - startRepairTime
         # Update plan failure flag if a discrepancy was fatal to the plan
         if data["planFailed"]:
             self.planFailed = True

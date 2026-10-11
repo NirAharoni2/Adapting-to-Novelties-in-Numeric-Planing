@@ -4,7 +4,7 @@ from numpy.ma.extras import average
 from ortools.linear_solver import pywraplp
 import time
 import copy
-from utils.features import generate_nested_combinations
+from myUtils.features import generate_nested_combinations
 
 def transformOldParamsToMonomials(row, k):
     return generate_nested_combinations(row['oldParams'], k)

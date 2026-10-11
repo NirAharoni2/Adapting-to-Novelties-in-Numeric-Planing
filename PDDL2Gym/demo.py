@@ -3,7 +3,7 @@ from pddl2gym import PDDL2GYM
 from stable_baselines3 import PPO
 from agents import FixedScriptAgent
 from planning import MetricFF, NYX  # NYX
-from utils import Logger
+from myUtils import Logger
 SEED = 63
 
 

@@ -9,7 +9,7 @@ import numpy as np
 from PDDL2Gym import repair
 from solution.Utilities.config import Config
 from solution.Utilities.parsedModel import Parse_Model
-from utils.features import *
+from myUtils.features import *
 from models.linear import *
 from models.linear_adaptive import *
 from models.milp_optimizer import *

@@ -266,7 +266,12 @@ def main_entry():
         return
 
     domain_name = sys.argv[1]
-    for novelty_number in range(1, 7):  # 7
+    if "SignatureChangeExperiments" in domain_name:
+        novelty_number = 7
+    else:
+        novelty_number = 10
+
+    for novelty_number in range(1, novelty_number):  # 7 / 10
         for seed_number in range(1, 6):  # 6
             Config.set_seed(seed_number)
             run_novelties(domain_name, start=novelty_number, end=novelty_number + 1)

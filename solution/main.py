@@ -238,9 +238,9 @@ def main(novelty_id_arg=None, domain_name_arg=None):
         for name, (model, score, _) in results.items()
     }
 
-    os.makedirs("results_csv", exist_ok=True)
-    file_path = os.path.join(Config.get_results_csv_dir(), domain_name, f"{domain_name}_novelty_{novelty_id}_seed_{Config.seed}_data.csv")
 
+    file_path = os.path.join(Config.get_results_csv_dir(), domain_name, f"{domain_name}_novelty_{novelty_id}_seed_{Config.seed}_data.csv")
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, mode="w", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["Label", "Score", "Learned Model ID", "planing time", "repair time", "diagnose time", "Plan Length"])

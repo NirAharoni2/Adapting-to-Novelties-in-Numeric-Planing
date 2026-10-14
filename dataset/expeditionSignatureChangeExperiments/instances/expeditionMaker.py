@@ -168,8 +168,8 @@ def generate_multiple_problems(
         num_of_dummy_3 = random.randint(1, 5)
         num_of_sleds = random.randint(1, 1)
         num_of_waypoints = random.randint(5, 5)
-        min_sled_capacity = num_of_waypoints + 5
-        max_sled_capacity = 2 * num_of_waypoints + 5
+        min_sled_capacity = 5
+        max_sled_capacity = 100
 
         instance_name = f"instance_{i + 1}"
         print(f"Generating {instance_name} with {num_of_factor} factors and {num_of_sleds} sleds...")
@@ -199,8 +199,8 @@ def main(seed_id):
         total_num_problems=50,
 
         # Factor Config (e.g., Axes)
-        min_factor_value=0.5,
-        max_factor_value=1,
+        min_factor_value=0.1,
+        max_factor_value=10,
 
         # Dummy 1 Config (e.g., Pickaxes)
         min_dummy_1_value=0.5,

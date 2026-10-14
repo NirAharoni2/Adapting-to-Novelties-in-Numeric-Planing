@@ -102,12 +102,12 @@ def reset():
             file_path = os.path.join(plans_folder, filename)
             if os.path.isfile(file_path):
                 os.remove(file_path)
-                print(f"Deleted plan file: {file_path}")
+                #print(f"Deleted plan file: {file_path}")
     else:
         print(f"Plans folder not found: {plans_folder}")
 
 
-def experiment_1(repair_methode_id):
+def experiment_1(name, repair_methode_id):
     """
     Runs a sequence of problem instances with a specified repair strategy.
 
@@ -117,6 +117,8 @@ def experiment_1(repair_methode_id):
         int: The index at which a repaired model was successfully learned, or -1 if none.
         array: score list
     """
+    print(f"running={name}")
+
     if repair_methode_id == REPAIR_ADAPTIVE_UPDATED or repair_methode_id == REPAIR_ADAPTIVE_UPDATED_new:
         Config.checkSignature = True
     else:
@@ -228,7 +230,7 @@ def main(novelty_id_arg=None, domain_name_arg=None):
         ("adaptive repair + support for signature change with milp", REPAIR_ADAPTIVE_UPDATED_new),
 
     ]
-    results = {name: experiment_1(mode) for name, mode in modes}
+    results = {name: experiment_1(name, mode) for name, mode in modes}
 
     legendToList = {
         name: (
@@ -259,10 +261,10 @@ def run_novelties(domain_name, start=1, end=10):
 def main_entry():
     clean()
     if len(sys.argv) < 2:
-        for novelty_number in range(1, 7): #7
-            for seed_number in range(1, 6): #6
+        for novelty_number in range(4, 7): #7
+            for seed_number in range(1, 2): #6
                 Config.set_seed(seed_number)
-                run_novelties("minecraft", start=novelty_number, end=novelty_number+1)
+                run_novelties("expedition", start=novelty_number, end=novelty_number+1)
         return
 
     domain_name = sys.argv[1]

@@ -24,7 +24,7 @@
      :effect (and
             (increase (x ?b) 1.5)
             (increase (y ?b) 1.5)
-            (assign (d ?t) (+ (* 0.1 (* (drift_factor ) (drift_factor ))) (* 1.0 (d ?t)))))
+            (assign (d ?t) (* 1.25 (d ?t))))
     )
     (:action go_north_west
      :parameters (?b - boat ?t - person)
@@ -32,21 +32,21 @@
      :effect (and
             (decrease (x ?b) 1.5)
             (increase (y ?b) 1.5)
-            (assign (d ?t) (+ (* 0.1 (* (drift_factor ) (drift_factor ))) (* 1.0 (d ?t)))))
+            (assign (d ?t) (* 1.1 (d ?t))))
     )
     (:action go_est
      :parameters (?b - boat ?t - person)
      :precondition (and)
      :effect (and
             (increase (x ?b) 3)
-            (assign (d ?t) (+ (* 0.1 (* (drift_factor ) (drift_factor ))) (* 1.0 (d ?t)))))
+            (assign (d ?t) (* 0.9 (d ?t))))
     )
     (:action go_west
      :parameters (?b - boat ?t - person)
      :precondition (and)
      :effect (and
             (decrease (x ?b) 3)
-            (assign (d ?t) (+ (* 0.1 (* (drift_factor ) (drift_factor ))) (* 1.0 (d ?t)))))
+            (assign (d ?t) (* 1.1 (d ?t))))
     )
     (:action go_south_east
      :parameters (?b - boat ?t - person)
@@ -54,7 +54,7 @@
      :effect (and
             (increase (x ?b) 2)
             (decrease (y ?b) 2)
-            (assign (d ?t) (+ (* 0.1 (* (drift_factor ) (drift_factor ))) (* 1.0 (d ?t)))))
+            (assign (d ?t) (* 0.9 (d ?t))))
     )
     (:action go_south_west
      :parameters (?b - boat ?t - person)
@@ -62,14 +62,14 @@
      :effect (and
             (decrease (x ?b) 2)
             (decrease (y ?b) 2)
-            (assign (d ?t) (+ (* 0.1 (* (drift_factor ) (drift_factor ))) (* 1.0 (d ?t)))))
+            (assign (d ?t) (* 1.1 (d ?t))))
     )
     (:action go_south
      :parameters (?b - boat ?t - person)
      :precondition (and)
      :effect (and
             (decrease (y ?b) 2)
-            (assign (d ?t) (+ (* 0.1 (* (drift_factor ) (drift_factor ))) (* 1.0 (d ?t)))))
+            (assign (d ?t) (* 0.9 (d ?t))))
     )
     (:action save_person
      :parameters (?b - boat ?t - person)

@@ -124,8 +124,8 @@ def generate_multiple_problems(output_folder: Path, total_num_problems: int,
         problem_id = i + 1
         num_of_sleds = random.randint(min_num_of_sleds, max_num_of_sleds)
         num_of_waypoints = random.randint(min_num_of_waypoints, max_num_of_waypoints)
-        min_sled_capacity = num_of_waypoints + 5
-        max_sled_capacity = 2 * num_of_waypoints + 5
+        min_sled_capacity = 5
+        max_sled_capacity = 100
         num_of_factor = (
             random.randint(min_num_of_factor, max_num_of_factor)
             if min_factor_problem_id is not None and problem_id >= min_factor_problem_id

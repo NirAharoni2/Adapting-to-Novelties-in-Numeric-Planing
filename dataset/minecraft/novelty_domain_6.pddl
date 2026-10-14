@@ -22,7 +22,6 @@
             (>= (trees_in_map ) 1))
      :effect (and
             (assign (count_log_in_inventory ) (+ (* 0.5 (count_log_in_inventory )) (+ (* 0.01 (trees_in_map )) 0.2)))
-            (assign (trees_in_map ) (- (trees_in_map ) (+ (* 0.01 (trees_in_map )) 0.1))))
     )
     (:action craft_plank
      :parameters ()

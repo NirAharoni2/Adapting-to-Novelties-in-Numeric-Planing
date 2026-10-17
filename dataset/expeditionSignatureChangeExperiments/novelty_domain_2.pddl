@@ -27,7 +27,7 @@
      :effect (and
             (not (at ?s ?w1))
             (at ?s ?w2)
-            (assign (sled_supplies ?s) (+ (* -3.0 (* (factor_value ?f) (factor_value ?f))) (+ (* 1.0 (sled_supplies ?s)) -0.5)))
+            (assign (sled_supplies ?s) (+ (* 1.0 (sled_supplies ?s)) (+ (* -1.2 (factor_value ?f)) -2.0)))
             (assign (factor_value ?f) (+ (* 1.0 (factor_value ?f)) 0.01)))
     )
     (:action move_backwards

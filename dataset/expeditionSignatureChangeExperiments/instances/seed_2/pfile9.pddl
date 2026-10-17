@@ -12,13 +12,13 @@
   (:init
         (at s0 w0_0)
 
-        (= (sled_capacity s0) 43.82900968359706)
+        (= (sled_capacity s0) 140.87264177220743)
 
         (= (sled_supplies s0) 1.0622487099724487)
 
-        (= (factor_value f0) 1.2006321755767624)
-		(= (factor_value f1) 7.2653197614061185)
-		(= (factor_value f2) 2.4845685929724666)
+        (= (factor_value f0) 2.000574705069784)
+		(= (factor_value f1) 7.5139270558237445)
+		(= (factor_value f2) 3.1677896299749695)
 
         (= (dummy_1_value d1_0) 0.5498865433774955)
 		(= (dummy_1_value d1_1) 0.5908800391502127)

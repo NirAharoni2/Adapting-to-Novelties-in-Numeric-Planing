@@ -178,7 +178,7 @@ class PDDL2GYM(gym.Env):
         elif thisActionNotApplicable:
             reward = -1
         elif not_applicable_action:
-            reward = -1
+            reward = -2
         else:
             reward = 0
 

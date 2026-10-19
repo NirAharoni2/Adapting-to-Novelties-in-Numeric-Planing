@@ -223,11 +223,11 @@ def main(novelty_id_arg=None, domain_name_arg=None):
         ("base domain - no repair", NO_REPAIR),
         ("rel. variables repair", REPAIR_RELEVANT_VARIABLES),
         ("all variables repair", REPAIR_ALL_VARIABLES),
-        #("all monomials repair", REPAIR_ALL_MONOMIALS),
+        ("all monomials repair", REPAIR_ALL_MONOMIALS),
         ("adaptive repair base", REPAIR_ADAPTIVE),
-        #("adaptive repair + support for signature change", REPAIR_ADAPTIVE_UPDATED),
+        ("adaptive repair + support for signature change", REPAIR_ADAPTIVE_UPDATED),
 
-        #("adaptive repair + support for signature change with milp", REPAIR_ADAPTIVE_UPDATED_new),
+        ("adaptive repair + support for signature change with milp", REPAIR_ADAPTIVE_UPDATED_new),
 
     ]
     results = {name: experiment_1(name, mode) for name, mode in modes}

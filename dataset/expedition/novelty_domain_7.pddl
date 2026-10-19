@@ -24,7 +24,7 @@
      :effect (and
             (not (at ?s ?w1))
             (at ?s ?w2)
-            (assign (sled_supplies ?s) (+ (* -2.0 (* (factor ) (factor ))) (+ (* 1.0 (sled_supplies ?s)) -1.0))))
+            (assign (sled_supplies ?s) (+ (* -0.1 (* (factor ) (factor ))) (+ (* 1.0 (sled_supplies ?s)) -1.0))))
     )
     (:action move_backwards
      :parameters (?s - sled ?w1 - waypoint ?w2 - waypoint)

@@ -9,7 +9,7 @@
 
         (at s0 w0_0)
 
-        (= (sled_capacity s0) 46.11287145098007)
+        (= (sled_capacity s0) 89.38957824148541)
 
         (= (sled_supplies s0) 3.81140041228971)
 

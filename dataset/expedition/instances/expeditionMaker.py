@@ -35,7 +35,7 @@ def generate_instance(instance_name: str, num_of_sleds: int, num_of_waypoints: i
         "waypoint_list": " ".join([f"w0_{i}" for i in range(num_of_waypoints)]),
         "factor": "\n\t\t".join(
             [
-                f"(= (factor) {round(random.uniform(0.5, 1), 5)})"
+                f"(= (factor) {round(random.uniform(0.5, min(sled_capacity_list)/10), 5)})"
                 for i in range(num_of_factor)
             ]
         ),
@@ -125,7 +125,7 @@ def generate_multiple_problems(output_folder: Path, total_num_problems: int,
         num_of_sleds = random.randint(min_num_of_sleds, max_num_of_sleds)
         num_of_waypoints = random.randint(min_num_of_waypoints, max_num_of_waypoints)
         min_sled_capacity = 5
-        max_sled_capacity = 100
+        max_sled_capacity = 200
         num_of_factor = (
             random.randint(min_num_of_factor, max_num_of_factor)
             if min_factor_problem_id is not None and problem_id >= min_factor_problem_id
@@ -156,8 +156,8 @@ def main(seed_id):
         min_num_of_waypoints=5,
         max_num_of_waypoints=5,
         min_factor_problem_id=51,
-        min_num_of_factor=2,
-        max_num_of_factor=5,
+        min_num_of_factor=1,
+        max_num_of_factor=10,
     )
 
 

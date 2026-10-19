@@ -9,15 +9,19 @@
 
         (at s0 w0_0)
 
-        (= (sled_capacity s0) 48.334087329621276)
+        (= (sled_capacity s0) 183.04283899703518)
 
-        (= (sled_supplies s0) 1.3011652368219917)
+        (= (sled_supplies s0) 0.2821938894888748)
 
-        (= (factor) 0.55825)
-		(= (factor) 0.67725)
-		(= (factor) 0.7076)
-		(= (factor) 0.50908)
-		(= (factor) 0.58604)
+        (= (factor) 14.54245)
+		(= (factor) 11.60198)
+		(= (factor) 15.83034)
+		(= (factor) 2.33134)
+		(= (factor) 13.99166)
+		(= (factor) 13.48435)
+		(= (factor) 6.67592)
+		(= (factor) 16.25964)
+		(= (factor) 13.11969)
 
         (= (waypoint_supplies w0_0) 1000)
 		(= (waypoint_supplies w0_1) 0.0)

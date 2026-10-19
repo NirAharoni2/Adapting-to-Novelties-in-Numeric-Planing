@@ -221,10 +221,10 @@ def main(novelty_id_arg=None, domain_name_arg=None):
 
         ("oracle", ORACLE),
         ("base domain - no repair", NO_REPAIR),
-        #("rel. variables repair", REPAIR_RELEVANT_VARIABLES),
-        #("all variables repair", REPAIR_ALL_VARIABLES),
+        ("rel. variables repair", REPAIR_RELEVANT_VARIABLES),
+        ("all variables repair", REPAIR_ALL_VARIABLES),
         #("all monomials repair", REPAIR_ALL_MONOMIALS),
-        #("adaptive repair base", REPAIR_ADAPTIVE),
+        ("adaptive repair base", REPAIR_ADAPTIVE),
         #("adaptive repair + support for signature change", REPAIR_ADAPTIVE_UPDATED),
 
         #("adaptive repair + support for signature change with milp", REPAIR_ADAPTIVE_UPDATED_new),
@@ -261,10 +261,10 @@ def run_novelties(domain_name, start=1, end=10):
 def main_entry():
     clean()
     if len(sys.argv) < 2:
-        for novelty_number in range(2, 7): #7
+        for novelty_number in range(9, 10): #7
             for seed_number in range(1, 2): #6
                 Config.set_seed(seed_number)
-                run_novelties("expeditionSignatureChangeExperiments", start=novelty_number, end=novelty_number+1)
+                run_novelties("sailing", start=novelty_number, end=novelty_number+1)
         return
 
     domain_name = sys.argv[1]

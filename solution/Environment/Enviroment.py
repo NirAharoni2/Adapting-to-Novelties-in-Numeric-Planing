@@ -82,7 +82,7 @@ class Environment:
                 action = self.agent.act()
                 with suppress_stdout():
                     new_observation, reward, terminated, truncated, _ = self.env.planning_step(action)
-
+                print(new_observation)
                 if reward != -1:
                     if not Config.next:
                         self.agent.receive_transition(observation, action, new_observation)

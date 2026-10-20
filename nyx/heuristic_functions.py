@@ -1,3 +1,5 @@
+import math
+
 import nyx.syntax.constants as constants
 
 def heuristic_function(state):
@@ -98,6 +100,8 @@ def heuristic_function(state):
                     people.append(var[1])
 
         def distance_to_save_region(x, y, d):
+            print(x)
+            print(y)
             xy = x + y
             yx = y - x
 
@@ -106,7 +110,12 @@ def heuristic_function(state):
 
             # Approximate step cost by dividing distance by max boat move per action
             max_step = 3  # max per axis (e.g. go_est changes x by 3)
+
+            if math.isinf(dx) or math.isinf(dy):
+                return math.inf
+
             return int((dx + dy + max_step - 1) // max_step)
+
 
         total_cost = 0
 

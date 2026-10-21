@@ -279,7 +279,7 @@ def main_entry():
     else:
         novelty_number = 10
 
-    for novelty_number in range(4, novelty_number):  # 7 / 10
+    for novelty_number in range(1, novelty_number):  # 7 / 10
         for seed_number in range(1, 6):  # 6
             Config.set_seed(seed_number)
             run_novelties(domain_name, start=novelty_number, end=novelty_number + 1)

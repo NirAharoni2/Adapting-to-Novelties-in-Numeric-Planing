@@ -118,6 +118,8 @@ def experiment_1(name, repair_methode_id):
         array: score list
     """
     print(f"running={name}")
+    #reset times
+
 
     if repair_methode_id == REPAIR_ADAPTIVE_UPDATED or repair_methode_id == REPAIR_ADAPTIVE_UPDATED_new:
         Config.checkSignature = True
@@ -139,8 +141,12 @@ def experiment_1(name, repair_methode_id):
     env.score = 0
     score_list.append(env.score)
 
-    #print(f"Repair method: {repair_names[repair_methode_id]}")
+    print(f"Repair method: {repair_names[repair_methode_id]}")
     for index in range(start, end):
+        #reset
+        Config.totalDiagnoseTime = 0
+        Config.totalRepairTime = 0
+
         set_instance_plan_paths(index)
         if index == inject_novelty_at:
             #print(f"Injecting novelty at problem_id={index}")
@@ -261,8 +267,8 @@ def run_novelties(domain_name, start=1, end=10):
 def main_entry():
     clean()
     if len(sys.argv) < 2:
-        for novelty_number in range(4, 10): #7
-            for seed_number in range(1, 2): #6
+        for novelty_number in range(5, 10): #7
+            for seed_number in range(1, 6): #6
                 Config.set_seed(seed_number)
                 run_novelties("sailingSignatureChangeExperiments", start=novelty_number, end=novelty_number+1)
         return
@@ -273,7 +279,7 @@ def main_entry():
     else:
         novelty_number = 10
 
-    for novelty_number in range(1, novelty_number):  # 7 / 10
+    for novelty_number in range(4, novelty_number):  # 7 / 10
         for seed_number in range(1, 6):  # 6
             Config.set_seed(seed_number)
             run_novelties(domain_name, start=novelty_number, end=novelty_number + 1)

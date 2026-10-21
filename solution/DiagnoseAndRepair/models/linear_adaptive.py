@@ -32,14 +32,14 @@ def multi_output_linear_regression_for_adaptive(actionName, list_data, repair, d
                 filtered_state = {k: v for k, v in rounded.items() if v != 0 and v != 0.0}
                 best_score = score
                 best_result = filtered_state
-        print(actionName)
-        print(best_score)
+        # print(actionName)
+        # print(best_score)
         # num of vars in monomial = 1 + self.numOfPredicates * (1+ self.numOfPredicates)
-        print(len(list_data[2]))
-        print(len(list_data[2][0][1].keys()) + 1)
+        # print(len(list_data[2]))
+        # print(len(list_data[2][0][1].keys()) + 1)
         if not repair.blockNewData and Config.checkSignature and best_score < 0.9999 and len(list_data[2]) > (
                 len(list_data[2][0][1].keys()) + 1):
-            print('here')
+            # print('here')
             repair.tick = 0
             #repair.addParameter(actionName)
             repair.needNewParameter = True

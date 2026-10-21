@@ -203,8 +203,8 @@ class Repair:
                     {'y': dataRow[0], 'oldParams': x1, 'newParam': newParam, 'action': dataRow[2]})
             milp_results, error = multi_output_monomials_regression_for_adaptive_with_milp(data, self)
             results_and_error.append({"milp_results": milp_results, "error": error, "param": param})
-            print(milp_results)
-            print(error)
+            # print(milp_results)
+            # print(error)
             self.removeParameterSpecific(action.name, param)  # this addes new and removes old
 
         best = min(results_and_error, key=lambda x: x["error"])
@@ -247,7 +247,7 @@ class Repair:
                         newParam = self.getKeysOfCertinType(dataRow[1], dataRow[2])
                         # monomilas with x1^2 and newparams * x1
                         data.append({'y': dataRow[0], 'oldParams': x1, 'newParam': newParam,'action': dataRow[2]})
-                    print(data)
+                    # print(data)
                     results, _ = multi_output_linear_regression_for_adaptive_with_milp(data, self)
                     if results:
                         self.parsed_model.update_model(action.name, results)
@@ -384,7 +384,7 @@ class Repair:
             if possibleAddition not in alreadyIn and possibleAddition not in triedTypes:
                 newParameter = [f'?{possibleAddition[0]}', possibleAddition]
                 newParameter = self.parsed_model.addParameterToAction(actionName, newParameter)
-                print(Config.getOriginalDomain())
+                # print(Config.getOriginalDomain())
                 self.parsed_model.resetEffects(Config.getOriginalDomain())
                 Config.setContinue(True)
                 self.currentTry[actionName] = newParameter
@@ -446,7 +446,7 @@ class Repair:
     def addParameterSpecific(self, actionName, param):
             newParameter = [f'?{param[0]}', param]
             newParameter = self.parsed_model.addParameterToAction(actionName, newParameter)
-            print(Config.getOriginalDomain())
+            # print(Config.getOriginalDomain())
             self.currentTry[actionName] = newParameter
             print(f"added {newParameter} to {actionName}")
 

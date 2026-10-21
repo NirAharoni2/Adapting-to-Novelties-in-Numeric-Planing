@@ -73,19 +73,19 @@ def multi_output_monomials_regression_for_adaptive_with_milp(data_rows, repair )
 
         # Extract keys for a (oldParams) and b (newParam)
         a_keys = list(data_rows[0]['oldParams'].keys())
-        print(a_keys)
+        # print(a_keys)
         all_potentials_b_keys = set()
         for row in data_rows:
             all_potentials_b_keys.update(row['newParam'].keys())
         b_potentials_keys = sorted(list(all_potentials_b_keys))
-        print(b_potentials_keys)
+        # print(b_potentials_keys)
 
         n_a = len(a_keys)
 
         number_of_potentials_b = len(b_potentials_keys)
         keys_in_single_b = list(next(iter(data_rows[0]['newParam'].values())).keys())
         number_of_keys_in_single_b = len(keys_in_single_b)
-        print(keys_in_single_b)
+        # print(keys_in_single_b)
 
         # 2. Variables
         # x_a are coefficients for the original state fluents
@@ -108,10 +108,10 @@ def multi_output_monomials_regression_for_adaptive_with_milp(data_rows, repair )
             # Linearize the z[j] * x_b[j] term using Big-M
             b_contribution = solver.NumVar(-1000.0, 1000.0, f'b_contrib_{i}')
             M = 1000
-            print(b_potentials_keys)
+            # print(b_potentials_keys)
             for j in range(number_of_potentials_b):
                 b_potential_key = b_potentials_keys[j]
-                print(f'key {b_potential_key}')
+                # print(f'key {b_potential_key}')
                 # Check if this row actually contains this specific parameter
                 if b_potential_key in row['newParam']:
                     b_inner_items = row['newParam'][b_potential_key]
@@ -119,8 +119,8 @@ def multi_output_monomials_regression_for_adaptive_with_milp(data_rows, repair )
                     # print(keys_in_single_b)
                     # print(b_inner_items)
                     # print('-------')
-                    print(keys_in_single_b)
-                    print(b_inner_items)
+                    # print(keys_in_single_b)
+                    # print(b_inner_items)
                     b_sum = sum(b_inner_items[keys_in_single_b[k]] * x_b[k] for k in range(number_of_keys_in_single_b))
                     solver.Add(b_contribution <= b_sum + M * (1 - z[j]))
                     solver.Add(b_contribution >= b_sum - M * (1 - z[j]))
@@ -201,7 +201,7 @@ def multi_output_monomials_regression_for_adaptive_with_milp(data_rows, repair )
             print(f"Result: No solution found for {target}")
     error = sum( results[target]["total_error"] for target in results.keys() ) / len(results.keys())
     results = clean_and_merge(results, LIMIT)
-    print(results)
+    # print(results)
 
     print(f"time: {runtimePlan}")
 
@@ -210,7 +210,7 @@ def multi_output_monomials_regression_for_adaptive_with_milp(data_rows, repair )
 
 
 def multi_output_linear_regression_for_adaptive_with_milp(data_rows, repair ):
-    print(data_rows)
+    # print(data_rows)
     LIMIT = 100
     TIME_LIMIT_MS = 10000
     y_targets = list(data_rows[0]['y'].keys())
@@ -313,7 +313,7 @@ def multi_output_linear_regression_for_adaptive_with_milp(data_rows, repair ):
             print(f"Result: No solution found for {target}")
     error = sum( results[target]["total_error"] for target in results.keys() ) / len(results.keys())
     results = clean_and_merge(results, LIMIT)
-    print(results)
+    # print(results)
 
     print(f"time: {runtimePlan}")
 

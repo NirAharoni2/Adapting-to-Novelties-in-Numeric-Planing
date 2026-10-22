@@ -10,7 +10,7 @@ import pandas as pd
 
 # Path configuration
 ROOT_DIR = Path(__file__).resolve().parents[2]
-RESULTS_DIR = ROOT_DIR / "results_csv"
+RESULTS_DIR = ROOT_DIR / "results_csv_save"
 OUTPUT_DIR = Path(__file__).resolve().parent
 
 TIME_COLUMNS = {
@@ -19,7 +19,8 @@ TIME_COLUMNS = {
     "diagnose time": "Diagnose Time",
 }
 COLORS = ["skyblue", "salmon", "lightgreen"]
-NOVELTY_GROUPS = [(1, 3), (4, 6), (7, 9)]
+NO_REPAIR_LABELS = ["Oracle", "NoRepair"]
+NOVELTY_GROUPS =[(1, 3), (4, 6), (7, 9)]
 FILE_PATTERN = re.compile(r"^(?P<domain>.+)_novelty_(?P<novelty>\d+)_seed_(?P<seed>\d+)_data\.csv$")
 
 
@@ -44,6 +45,9 @@ def load_domain(domain_dir):
         df = pd.read_csv(domain_dir / fname)
         for col in TIME_COLUMNS:
             df[col] = df[col].apply(parse_and_sum)
+        # These methods never repair, so their repair/diagnose times are zero by definition
+        no_repair_rows = df["Label"].isin(NO_REPAIR_LABELS)
+        df.loc[no_repair_rows, ["repair time", "diagnose time"]] = 0
         df["novelty"] = int(match.group("novelty"))
         df["seed"] = int(match.group("seed"))
         frames.append(df[["Label", "novelty", "seed", *TIME_COLUMNS]])
@@ -95,7 +99,7 @@ def plot_domain(domain_dir, group):
             plot_bars(
                 group_df,
                 f"{domain} - novelties {start}-{end} (avg over {n_runs} runs)",
-                OUTPUT_DIR / domain / f"{domain}_novelties_{start}-{end}_time.png",
+                OUTPUT_DIR / "grouped" / domain / f"{domain}_novelties_{start}-{end}_time.png",
             )
     else:
         for novelty, novelty_df in df.groupby("novelty"):
@@ -103,16 +107,16 @@ def plot_domain(domain_dir, group):
             plot_bars(
                 novelty_df,
                 f"{domain} - novelty {novelty} (avg over {n_seeds} seeds)",
-                OUTPUT_DIR / domain / f"{domain}_novelty_{novelty}_time.png",
+                OUTPUT_DIR / "per_novelty" / domain / f"{domain}_novelty_{novelty}_time.png",
             )
 
 
 def main():
-    shouldGroup = False
-
-    for domain_dir in sorted(RESULTS_DIR.iterdir()):
-        if domain_dir.is_dir():
-            plot_domain(domain_dir, shouldGroup)
+    # Per-novelty plots go to per_novelty/<domain>, grouped (1-3, 4-6, 7-9) plots go to grouped/<domain>
+    for should_group in (False, True):
+        for domain_dir in sorted(RESULTS_DIR.iterdir()):
+            if domain_dir.is_dir():
+                plot_domain(domain_dir, should_group)
 
 
 if __name__ == "__main__":

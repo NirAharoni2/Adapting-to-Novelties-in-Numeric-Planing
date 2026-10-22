@@ -1,23 +1,23 @@
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
-# Define labels and styles
-repairName = {
-    "base domain - no repair": "Base domain with no repair",
-    "all monomials repair": "All Monomials Repair",
-    "adaptive repair base": "Adaptive Selection Repair",
-    "adaptive repair + support for signature change": "Adaptive Selection with Signature Repair",
-    #"adaptive repair + support for signature change with milp": "Adaptive Selection with Signature Repair with milp",
-}
-
-dash_styles = [
-    (5, 2),      # No Repair
-    (1, 3),      # Rel. Variables
-    (2, 6),      # All Variables
-    (4, 4, 1, 4),# All Monomials
-    (3, 2, 1, 2) # Adaptive
+# All strategies in the order they are plotted in moving_graphs_plotter.py (Oracle is not plotted),
+# so each one gets the same style as in the graphs
+strategy_order = [
+    "NoRepair",
+    "Changed Variables",
+    "Linear",
+    "k-Degree",
+    "Ensemble - No-SC",
+    "Ensemble - BF-SC",
+    "Ensemble - MILP-SC",
 ]
 
+# Same styles as moving_graphs_plotter.py
+dash_styles = [
+    (1, (5, 2)), (2, (2, 6)), (0, (1, 3)), (3, (4, 4, 1, 4)),
+    (1, (3, 2, 1, 2)), (2, (5, 1, 2, 1)), (0, (1, 1)), (3, (2, 4))
+]
 markers = ['s', '^', 'D', '*', 'x', 'P', 'v', '<', '>']
 colors = ['g', 'r', 'c', 'y', 'm', 'k', '#ff7f0e', '#2ca02c', '#9467bd']
 
@@ -27,12 +27,12 @@ ax.axis('off')
 
 # Create custom legend handles
 handles = []
-for i, (key, label) in enumerate(repairName.items()):
+for i, label in enumerate(strategy_order):
     handle = Line2D(
         [0], [0],
-        color=colors[i],
-        linestyle=(0, dash_styles[i]),
-        marker=markers[i],
+        color=colors[i % len(colors)],
+        linestyle=dash_styles[i % len(dash_styles)],
+        marker=markers[i % len(markers)],
         linewidth=2.5,
         markersize=10,
         label=label

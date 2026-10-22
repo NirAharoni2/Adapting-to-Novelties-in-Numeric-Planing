@@ -48,7 +48,7 @@ class PDDL2GYM(gym.Env):
         # action space
         self.grounded_action_calls = []
         grounded_action_calls = list(self.agent.get_environment_actions(None))
-        grounded_action_calls.sort(key=lambda x: x.name)
+        grounded_action_calls.sort(key=lambda a: a.name + " " + " ".join(str(p) for p in a.parameters))
         for action_descriptor in grounded_action_calls:
             self.grounded_action_calls.append(
                 Operator(

@@ -196,6 +196,7 @@ def print_solution_info(goal_st, plnr, sg_time, ttime):
 
 
 def runner(dom_file, prob_file, args_list: []):
+
     start_time = time.time()
     domain = dom_file
     problem = prob_file

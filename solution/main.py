@@ -225,15 +225,15 @@ def main(novelty_id_arg=None, domain_name_arg=None):
     print(f"Running: domain={domain_name}, novelty_id={novelty_id}, seed={Config.seed}")
     modes = [
 
-        ("oracle", ORACLE),
-        ("base domain - no repair", NO_REPAIR),
-        ("rel. variables repair", REPAIR_RELEVANT_VARIABLES),
-        ("all variables repair", REPAIR_ALL_VARIABLES),
-        ("all monomials repair", REPAIR_ALL_MONOMIALS),
-        ("adaptive repair base", REPAIR_ADAPTIVE),
-        ("adaptive repair + support for signature change", REPAIR_ADAPTIVE_UPDATED),
+        ("Oracle", ORACLE),
+        ("NoRepair", NO_REPAIR),
+        ("Changed Variables", REPAIR_RELEVANT_VARIABLES),
+        ("Linear", REPAIR_ALL_VARIABLES),
+        ("k-Degree", REPAIR_ALL_MONOMIALS),
+        ("Ensemble - No-SC", REPAIR_ADAPTIVE),
+        ("Ensemble - BF-SC", REPAIR_ADAPTIVE_UPDATED),
 
-        ("adaptive repair + support for signature change with milp", REPAIR_ADAPTIVE_UPDATED_new),
+        ("Ensemble - MILP-SC", REPAIR_ADAPTIVE_UPDATED_new),
 
     ]
     results = {name: experiment_1(name, mode) for name, mode in modes}
@@ -247,7 +247,7 @@ def main(novelty_id_arg=None, domain_name_arg=None):
     }
 
 
-    file_path = os.path.join(Config.get_results_csv_dir(), domain_name, f"{domain_name}_novelty_{novelty_id}_seed_{Config.seed}_data.csv")
+    file_path = os.path.join(Config.get_results_csv_dir(), domain_name, str(novelty_id), f"{domain_name}_novelty_{novelty_id}_seed_{Config.seed}_data.csv")
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, mode="w", newline="") as csvfile:
         writer = csv.writer(csvfile)
@@ -267,10 +267,10 @@ def run_novelties(domain_name, start=1, end=10):
 def main_entry():
     clean()
     if len(sys.argv) < 2:
-        for novelty_number in range(5, 10): #7
-            for seed_number in range(1, 6): #6
+        for novelty_number in range(3, 4): #7
+            for seed_number in range(5, 6): #6
                 Config.set_seed(seed_number)
-                run_novelties("sailingSignatureChangeExperiments", start=novelty_number, end=novelty_number+1)
+                run_novelties("expeditionSignatureChangeExperiments", start=novelty_number, end=novelty_number+1)
         return
 
     domain_name = sys.argv[1]

@@ -3,7 +3,7 @@ import sys
 import shutil
 import os
 from pathlib import Path
-
+import random
 from solution.Utilities.parsedModel import Parse_Model
 
 from solution.Environment.Enviroment import Environment
@@ -118,7 +118,7 @@ def experiment_1(name, repair_methode_id):
         array: score list
     """
     print(f"running={name}")
-    #reset times
+    random.seed(Config.seed)
 
 
     if repair_methode_id == REPAIR_ADAPTIVE_UPDATED or repair_methode_id == REPAIR_ADAPTIVE_UPDATED_new:
@@ -225,12 +225,12 @@ def main(novelty_id_arg=None, domain_name_arg=None):
     print(f"Running: domain={domain_name}, novelty_id={novelty_id}, seed={Config.seed}")
     modes = [
 
-        ("Oracle", ORACLE),
-        ("NoRepair", NO_REPAIR),
-        ("Changed Variables", REPAIR_RELEVANT_VARIABLES),
-        ("Linear", REPAIR_ALL_VARIABLES),
-        ("k-Degree", REPAIR_ALL_MONOMIALS),
-        ("Ensemble - No-SC", REPAIR_ADAPTIVE),
+        #("Oracle", ORACLE),
+        #("NoRepair", NO_REPAIR),
+        #("Changed Variables", REPAIR_RELEVANT_VARIABLES),
+        #("Linear", REPAIR_ALL_VARIABLES),
+        #("k-Degree", REPAIR_ALL_MONOMIALS),
+        #("Ensemble - No-SC", REPAIR_ADAPTIVE),
         ("Ensemble - BF-SC", REPAIR_ADAPTIVE_UPDATED),
 
         ("Ensemble - MILP-SC", REPAIR_ADAPTIVE_UPDATED_new),

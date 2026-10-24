@@ -221,15 +221,13 @@ class PDDL2GYM(gym.Env):
                 isSubset = grounded_action_call.grounded_call_objects[:len(action_descriptor.parameters)] == action_descriptor.parameters
                 same_length = len(action_descriptor.parameters) == len(grounded_action_call.grounded_call_objects)
                 if not same_length and isSubset:
-                    #possibleParams.append(grounded_action_call.grounded_call_objects)
-                    action_descriptor.parameters = grounded_action_call.grounded_call_objects
+                    possibleParams.append(grounded_action_call.grounded_call_objects)
 
-                    break
-
-        #if len(possibleParams) != 0:
-            #action_descriptor.parameters = random.choice(possibleParams)
-            #action_descriptor.parameters = possibleParams[0]
+        # pick a random completion among all the grounded calls that match
+        if len(possibleParams) != 0:
+            action_descriptor.parameters = random.choice(possibleParams)
         #end nir
+
         operator = Operator(
             action=self.odomain.actions[action_descriptor.name],
             domain=self.odomain,

@@ -111,10 +111,10 @@ def heuristic_function(state):
             # Approximate step cost by dividing distance by max boat move per action
             max_step = 3  # max per axis (e.g. go_est changes x by 3)
 
-            if math.isinf(dx) or math.isinf(dy):
+            s = dx + dy
+            if math.isinf(s):
                 return math.inf
-
-            return int((dx + dy + max_step - 1) // max_step)
+            return int((s + max_step - 1) // max_step)
 
 
         total_cost = 0

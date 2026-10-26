@@ -37,11 +37,12 @@ def parse_and_sum(val):
 def load_domain(domain_dir):
     """Load all runs of a domain into one dataframe: one row per (novelty, seed, label)."""
     frames = []
-    for fname in sorted(os.listdir(domain_dir)):
-        match = FILE_PATTERN.match(fname)
+    # CSVs are saved under <domain>/<novelty_id>/, so search the domain folder recursively
+    for csv_path in sorted(domain_dir.rglob("*.csv")):
+        match = FILE_PATTERN.match(csv_path.name)
         if not match:
             continue
-        df = pd.read_csv(domain_dir / fname)
+        df = pd.read_csv(csv_path)
         for col in TIME_COLUMNS:
             df[col] = df[col].apply(parse_and_sum)
         df["novelty"] = int(match.group("novelty"))

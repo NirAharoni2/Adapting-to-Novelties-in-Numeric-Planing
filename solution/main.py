@@ -223,7 +223,6 @@ def main(novelty_id_arg=None, domain_name_arg=None):
     # Run evaluations
     print(f"Running: domain={domain_name}, novelty_id={novelty_id}, seed={Config.seed}")
     modes = [
-
         ("Oracle", ORACLE),
         ("NoRepair", NO_REPAIR),
         ("Changed Variables", REPAIR_RELEVANT_VARIABLES),
@@ -231,9 +230,7 @@ def main(novelty_id_arg=None, domain_name_arg=None):
         ("k-Degree", REPAIR_ALL_MONOMIALS),
         ("Ensemble - No-SC", REPAIR_ADAPTIVE),
         ("Ensemble - BF-SC", REPAIR_ADAPTIVE_UPDATED),
-
         ("Ensemble - MILP-SC", REPAIR_ADAPTIVE_UPDATED_new),
-
     ]
     results = {name: experiment_1(name, mode) for name, mode in modes}
 
@@ -266,10 +263,10 @@ def run_novelties(domain_name, start=1, end=10):
 def main_entry():
     clean()
     if len(sys.argv) < 2:
-        for novelty_number in range(9, 10): #7
-            for seed_number in range(1, 2): #6
+        for novelty_number in range(1, 2): #7
+            for seed_number in range(1, 5): #6
                 Config.set_seed(seed_number)
-                run_novelties("drone", start=novelty_number, end=novelty_number+1)
+                run_novelties("expedition", start=novelty_number, end=novelty_number+1)
         return
 
     domain_name = sys.argv[1]

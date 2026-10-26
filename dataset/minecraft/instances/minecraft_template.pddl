@@ -6,7 +6,7 @@
 	(:init
 		${trees_in_map}
 
-		${mine_factor}
+		${chop_factor}
 
 		${count_log_in_inventory}
 		${count_planks_in_inventory}

@@ -178,7 +178,7 @@ def plot_from_dict(data_dict, plot_title, filename, novelty_intro_idx=None):
 # ------------------------------
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-# Directory containing a folder per domain, each holding <domain>_novelty_<N>_seed_<M>_data.csv files
+# Directory containing a folder per domain, each holding <novelty_id>/<domain>_novelty_<N>_seed_<M>_data.csv files
 base_dir = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..', 'results_csv_save'))
 
 # Mapping difficulty levels to novelty ids
@@ -200,10 +200,12 @@ for domain in sorted(os.listdir(base_dir)):
 
     domain_difficulty_map = signature_change_difficulty_map if "SignatureChange" in domain else difficulty_map
     for difficulty, novelty_ids in domain_difficulty_map.items():
-        # All seeds of every novelty in this difficulty
+        # All seeds of every novelty in this difficulty; CSVs are saved under <domain>/<novelty_id>/,
+        # so search the domain folder recursively
         file_paths = sorted(
-            os.path.join(domain_dir, f)
-            for f in os.listdir(domain_dir)
+            os.path.join(root, f)
+            for root, _, files in os.walk(domain_dir)
+            for f in files
             for i in novelty_ids
             if f.startswith(f"{domain}_novelty_{i}_seed_") and f.endswith("_data.csv")
         )

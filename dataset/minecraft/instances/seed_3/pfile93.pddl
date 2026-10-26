@@ -6,7 +6,7 @@
 	(:init
 		(= (trees_in_map) 56)
 
-		(= (mine_factor) 3.29)
+		(= (chop_factor) 3.29)
 
 		(= (count_log_in_inventory) 0)
 		(= (count_planks_in_inventory) 0)

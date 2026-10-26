@@ -10,13 +10,13 @@ from solution.Utilities.config import Config
 TEMPLATE_FILE_PATH = Path("minecraft_template.pddl")
 
 
-def generate_instance(instance_name: str, trees_in_map: int, mine_factor=None) -> str:
+def generate_instance(instance_name: str, trees_in_map: int, chop_factor=None) -> str:
     """Generate a single planning problem instance.
 
     :param instance_name: the name of the problem instance.
     :param trees_in_map: the number of trees available on the map.
-    :param mine_factor: the mine_factor value for the problem; None means the
-        problem does not include a mine_factor at all (matches create_polycraft_problem),
+    :param chop_factor: the chop_factor value for the problem; None means the
+        problem does not include a chop_factor at all (matches create_polycraft_problem),
         otherwise the problem includes it (matches create_polycraft_problem2).
     :return: the string representing the planning problem.
     """
@@ -25,7 +25,7 @@ def generate_instance(instance_name: str, trees_in_map: int, mine_factor=None) -
         "instance_name": instance_name,
         "domain_name": "PolyCraft",
         "trees_in_map": f"(= (trees_in_map) {trees_in_map})",
-        "mine_factor": f"(= (mine_factor) {mine_factor})" if mine_factor is not None else "",
+        "chop_factor": f"(= (chop_factor) {chop_factor})" if chop_factor is not None else "",
         "count_log_in_inventory": f"(= (count_log_in_inventory) {0})",
         "count_planks_in_inventory": f"(= (count_planks_in_inventory) {0})",
         "count_stick_in_inventory": f"(= (count_stick_in_inventory) {0})",
@@ -62,32 +62,32 @@ def parse_arguments() -> argparse.Namespace:
 
 def generate_multiple_problems(output_folder: Path, total_num_problems: int,
                                min_trees_in_map: int, max_trees_in_map: int,
-                               min_mine_factor, max_mine_factor,
-                               mine_factor_start_problem_id: int = None) -> NoReturn:
+                               min_chop_factor, max_chop_factor,
+                               chop_factor_start_problem_id: int = None) -> NoReturn:
     """Generate multiple problems based on the input arguments.
 
     :param output_folder: the path to the output folder where the problems will be saved.
     :param total_num_problems: the number of problem instances to generate.
     :param min_trees_in_map: the minimal number of trees possible in the problems.
     :param max_trees_in_map: the maximal number of trees possible in the problems.
-    :param min_mine_factor: the minimal mine_factor value for problems that get one.
-    :param max_mine_factor: the maximal mine_factor value for problems that get one.
-    :param mine_factor_start_problem_id: the first pfile id (1-indexed) that should include a
-        mine_factor (create_polycraft_problem2 style); None means no problem gets a mine_factor
+    :param min_chop_factor: the minimal chop_factor value for problems that get one.
+    :param max_chop_factor: the maximal chop_factor value for problems that get one.
+    :param chop_factor_start_problem_id: the first pfile id (1-indexed) that should include a
+        chop_factor (create_polycraft_problem2 style); None means no problem gets a chop_factor
         (create_polycraft_problem style).
     """
     for i in range(total_num_problems):
         problem_id = i + 1
         trees_in_map = random.randint(min_trees_in_map, max_trees_in_map)
-        mine_factor = (
-            round(random.uniform(min_mine_factor, max_mine_factor), 2)
-            if mine_factor_start_problem_id is not None and problem_id >= mine_factor_start_problem_id
+        chop_factor = (
+            round(random.uniform(min_chop_factor, max_chop_factor), 2)
+            if chop_factor_start_problem_id is not None and problem_id >= chop_factor_start_problem_id
             else None
         )
-        print(f"Generating problem {problem_id} with {trees_in_map} trees and mine_factor={mine_factor}")
+        print(f"Generating problem {problem_id} with {trees_in_map} trees and chop_factor={chop_factor}")
         with open(output_folder / f"pfile{problem_id}.pddl", "wt") as problem_file:
             problem_file.write(
-                generate_instance(f"instance_{problem_id}", trees_in_map, mine_factor)
+                generate_instance(f"instance_{problem_id}", trees_in_map, chop_factor)
             )
 
 
@@ -99,12 +99,12 @@ def write_to_file_in_main(seed_id, problem_id):
     directory = Path(Config.get_database_dir() / "minecraft" / "instances" / f"seed_{seed_id}")
     directory.mkdir(parents=True, exist_ok=True)
     trees_in_map = random.randint(10, 20)
-    mine_factor = round(random.uniform(0, 5), 2) if problem_id > 50 else None
+    chop_factor = round(random.uniform(0, 5), 2) if problem_id > 50 else None
 
     file_path = directory / f"pfile{problem_id}.pddl"
     print(file_path)
     with open(file_path, "wt") as f:
-        f.write(generate_instance(f"instance_{problem_id}", trees_in_map, mine_factor))
+        f.write(generate_instance(f"instance_{problem_id}", trees_in_map, chop_factor))
 
 
 def main(seed_id):
@@ -117,9 +117,9 @@ def main(seed_id):
         total_num_problems=100,
         min_trees_in_map=50,
         max_trees_in_map=100,
-        min_mine_factor=0.5,
-        max_mine_factor=5,
-        mine_factor_start_problem_id=51,
+        min_chop_factor=0.5,
+        max_chop_factor=5,
+        chop_factor_start_problem_id=51,
     )
 
 

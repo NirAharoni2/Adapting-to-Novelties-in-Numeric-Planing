@@ -15,15 +15,15 @@
         (count_sack_polyisoprene_pellets_in_inventory)
         (count_tree_tap_in_inventory)
         (count_pogo_stick)
-        (mine_factor)
+        (chop_factor)
     )
     (:action get_log
      :parameters ()
      :precondition (and
             (>= (trees_in_map ) 1))
      :effect (and
-            (assign (count_log_in_inventory ) (+ (* 0.001 (* (trees_in_map ) (mine_factor ))) (* 1.0 (count_log_in_inventory ))))
-            (assign (trees_in_map ) (+ (* 0.001 (* (trees_in_map ) (mine_factor ))) (* 1.0 (trees_in_map )))))
+            (assign (count_log_in_inventory ) (+ (* 0.001 (* (trees_in_map ) (chop_factor ))) (* 1.0 (count_log_in_inventory ))))
+            (assign (trees_in_map ) (+ (* 0.001 (* (trees_in_map ) (chop_factor ))) (* 1.0 (trees_in_map )))))
     )
     (:action craft_plank
      :parameters ()

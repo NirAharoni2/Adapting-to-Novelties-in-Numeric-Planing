@@ -59,7 +59,8 @@
             (>= (y ) (+ (min_y ) 0)))
      :effect (and
             (decrease (y ) 1)
-            (decrease (battery-level ) 1))
+            (decrease (battery-level ) 1)
+            (assign (z ) (+ (* 1.0 (z )) -1.0)))
     )
     (:action increase_z
      :parameters ()
@@ -98,6 +99,6 @@
             (= (y ) 0)
             (= (z ) 0))
      :effect (and
-            (assign (battery-level ) (battery-level-full )))
+            (increase (battery-level ) 1))
     )
 )

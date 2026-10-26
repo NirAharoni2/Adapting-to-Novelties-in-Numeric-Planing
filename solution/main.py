@@ -45,13 +45,12 @@ def clean():
     folder2 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\expedition"
     folder3 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\drone"
     folder4 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\sailing"
-    folder5 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\counters"
     folder9 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\minecraftSignatureChangeExperiments"
     folder10 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\expeditionSignatureChangeExperiments"
     folder11 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\sailingSignatureChangeExperiments"
     folder12 = r"C:\Users\Nir\PycharmProjects\Adapting-to-Novelties-in-Numeric-Planing\dataset\droneSignatureChangeExperiments"
 
-    remove_domain_2026_files([folder0, folder10, folder11, folder12, folder9, folder2, folder3, folder4, folder5])
+    remove_domain_2026_files([folder0, folder10, folder11, folder12, folder9, folder2, folder3, folder4])
 
 def set_instance_plan_paths(instance_number: int):
     """
@@ -267,10 +266,10 @@ def run_novelties(domain_name, start=1, end=10):
 def main_entry():
     clean()
     if len(sys.argv) < 2:
-        for novelty_number in range(4, 5): #7
-            for seed_number in range(1, 6): #6
+        for novelty_number in range(9, 10): #7
+            for seed_number in range(1, 2): #6
                 Config.set_seed(seed_number)
-                run_novelties("sailingSignatureChangeExperiments", start=novelty_number, end=novelty_number+1)
+                run_novelties("drone", start=novelty_number, end=novelty_number+1)
         return
 
     domain_name = sys.argv[1]

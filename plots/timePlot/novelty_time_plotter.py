@@ -19,7 +19,6 @@ TIME_COLUMNS = {
     "diagnose time": "Diagnose Time",
 }
 COLORS = ["skyblue", "salmon", "lightgreen"]
-NO_REPAIR_LABELS = ["Oracle", "NoRepair"]
 NOVELTY_GROUPS =[(1, 3), (4, 6), (7, 9)]
 FILE_PATTERN = re.compile(r"^(?P<domain>.+)_novelty_(?P<novelty>\d+)_seed_(?P<seed>\d+)_data\.csv$")
 
@@ -45,9 +44,6 @@ def load_domain(domain_dir):
         df = pd.read_csv(domain_dir / fname)
         for col in TIME_COLUMNS:
             df[col] = df[col].apply(parse_and_sum)
-        # These methods never repair, so their repair/diagnose times are zero by definition
-        no_repair_rows = df["Label"].isin(NO_REPAIR_LABELS)
-        df.loc[no_repair_rows, ["repair time", "diagnose time"]] = 0
         df["novelty"] = int(match.group("novelty"))
         df["seed"] = int(match.group("seed"))
         frames.append(df[["Label", "novelty", "seed", *TIME_COLUMNS]])

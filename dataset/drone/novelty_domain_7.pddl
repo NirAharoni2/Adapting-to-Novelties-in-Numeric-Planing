@@ -35,7 +35,7 @@
                           (<= (x) (- (max_x) 1) )
                       )
         :effect (and (increase (x) 1)
-                (assign (battery-level ) (+ (* 1 (battery-level )) (+ (* -0.1 (* (battery_factor) (battery_factor))) -0.5)))
+                (assign (battery-level ) (+ (* 1 (battery-level )) (+ (* -0.2 (* (battery_factor) (battery_factor))) -1.0)))
                 )
     )
 
@@ -58,7 +58,7 @@
                             (<= (y) (- (max_y) 1) )
                       )
         :effect (and (increase (y) 1)
-                (assign (battery-level ) (+ (* 1 (battery-level )) (+ (* -0.1 (* (battery_factor) (battery_factor))) -0.5)))
+                (assign (battery-level ) (+ (* 1 (battery-level )) (+ (* -0.2 (* (battery_factor) (battery_factor))) -1.0)))
                 )
     )
     (:action decrease_y
@@ -80,7 +80,7 @@
                             (<= (z) (- (max_z) 1) )
                       )
         :effect (and (increase (z) 1)
-                (assign (battery-level ) (+ (* 1 (battery-level )) (+ (* -0.1 (* (battery_factor) (battery_factor))) -0.5)))
+                (assign (battery-level ) (+ (* 1 (battery-level )) (+ (* -0.2 (* (battery_factor) (battery_factor))) -1.0)))
                 )
     )
     (:action decrease_z
@@ -114,7 +114,7 @@
                         (= (z) 0)
                        )
         :effect (and
-                       (assign (battery-level) (battery-level-full)))
+            (increase (battery-level ) 1))
     )
 
 )

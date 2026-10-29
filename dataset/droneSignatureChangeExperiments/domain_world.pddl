@@ -2,7 +2,7 @@
     (:requirements :typing :fluents)
 
     (:types
-        location battery_factor dummy_1 dummy_2 dummy_3 - object
+        location dummy_1 dummy_2 dummy_3 battery_factor - object
     )
 
 

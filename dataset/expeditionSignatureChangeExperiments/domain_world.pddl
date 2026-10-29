@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define (domain expedition)
    (:requirements :typing :fluents)
-     (:types sled waypoint factor dummy_1 dummy_2 dummy_3 - object)
+     (:types sled waypoint dummy_1 dummy_2 dummy_3 factor - object)
 
      (:predicates
           (at ?s - sled ?w - waypoint)

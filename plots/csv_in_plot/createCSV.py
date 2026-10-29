@@ -1,6 +1,5 @@
 import ast
 import csv
-import os
 import re
 import sys
 from pathlib import Path
@@ -29,15 +28,16 @@ def main():
     for domain_dir in sorted(RESULTS_DIR.iterdir()):
         if not domain_dir.is_dir():
             continue
-        for fname in sorted(os.listdir(domain_dir)):
-            match = FILE_PATTERN.match(fname)
+        # CSVs are saved under <domain>/<novelty_id>/, so search the domain folder recursively
+        for csv_path in sorted(domain_dir.rglob("*.csv")):
+            match = FILE_PATTERN.match(csv_path.name)
             if not match:
                 continue
             domain_name = match.group("domain")
             novelty_id = int(match.group("novelty"))
             seed = int(match.group("seed"))
             plot_from_dict(
-                legend_from_csv(domain_dir / fname),
+                legend_from_csv(csv_path),
                 domain_name,
                 novelty_id,
                 seed,

@@ -35,8 +35,8 @@ def multi_output_linear_regression_for_adaptive(actionName, list_data, repair, d
         # print(actionName)
         # print(best_score)
         # num of vars in monomial = 1 + self.numOfPredicates * (1+ self.numOfPredicates)
-        # print(len(list_data[2]))
-        # print(len(list_data[2][0][1].keys()) + 1)
+        #print(len(list_data[2]))
+        #print(len(list_data[2][0][1].keys()) + 1)
         if not repair.blockNewData and Config.checkSignature and best_score < 0.9999 and len(list_data[2]) > (
                 len(list_data[2][0][1].keys()) + 1):
             # print('here')

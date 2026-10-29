@@ -2,7 +2,7 @@
     (:requirements :typing :fluents)
 
     (:types
-        boat person dummy_1 dummy_2 dummy_3 engine - object
+        boat person engine dummy_1 dummy_2 dummy_3 - object
     )
 
     (:predicates

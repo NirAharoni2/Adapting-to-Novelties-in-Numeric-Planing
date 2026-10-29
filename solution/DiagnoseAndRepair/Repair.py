@@ -380,7 +380,7 @@ class Repair:
         alreadyIn = self.parsed_model.get_types_in_action(actionName)
         possibleAdditions = self.parsed_model.possibleNewParameters().get('object')
         #reverse possibleAdditions[::-1]
-        for possibleAddition in possibleAdditions[::-1]:
+        for possibleAddition in possibleAdditions:
             if possibleAddition not in alreadyIn and possibleAddition not in triedTypes:
                 newParameter = [f'?{possibleAddition[0]}', possibleAddition]
                 newParameter = self.parsed_model.addParameterToAction(actionName, newParameter)

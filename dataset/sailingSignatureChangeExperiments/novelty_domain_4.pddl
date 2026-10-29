@@ -1,6 +1,6 @@
 (define (domain sailing)
    (:requirements :typing :fluents)
-    (:types boat person dummy_1 dummy_2 dummy_3 engine - object)
+    (:types boat person engine dummy_1 dummy_2 dummy_3 - object)
     (:predicates
         (saved ?t - person)
     )

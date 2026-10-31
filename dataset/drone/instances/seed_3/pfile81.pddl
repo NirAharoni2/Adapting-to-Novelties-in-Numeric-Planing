@@ -31,7 +31,7 @@
 		(= (yl x0y0z4) 0)
 		(= (zl x0y0z4) 4)
 
-        (= (battery-level) 5)
+        (= (battery-level) 10)
         (= (battery-level-full) 45)
 
         (= (battery_factor) 2.36244)

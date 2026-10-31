@@ -40,7 +40,7 @@
 		(= (yl x0y4z0) 4)
 		(= (zl x0y4z0) 0)
 
-        (= (battery-level) 2)
+        (= (battery-level) 7)
         (= (battery-level-full) 45)
 
         (= (factor_value bf0) 1.1967)

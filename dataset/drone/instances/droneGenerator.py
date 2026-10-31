@@ -98,7 +98,7 @@ def generate_multiple_problems(output_folder: Path, total_num_problems: int,
         # Battery constraints based on the size of the grid
         grid_size = max_x + max_y + max_z
         battery_full = random.randint(30, 50)
-        battery_level = random.randint(0, 5)
+        battery_level = random.randint(5, 10)
         battery_factor = (
             round(random.uniform(min_battery_factor, max_battery_factor), 5)
             if min_battery_factor_problem_id is not None and problem_id >= min_battery_factor_problem_id

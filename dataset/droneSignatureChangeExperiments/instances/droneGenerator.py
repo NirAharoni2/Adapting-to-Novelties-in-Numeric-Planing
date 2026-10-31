@@ -149,7 +149,7 @@ def generate_multiple_problems(
         # capacities make recharge loops dominate the search and the planner never reaches the goal.
         grid_size = max_x + max_y + max_z
         battery_full = random.randint(30, 50)
-        battery_level = random.randint(0, 5)
+        battery_level = random.randint(5, 10)
 
         # Randomly sample counts for all components based on their respective maximums
         num_of_battery_factor = random.randint(1, 1)

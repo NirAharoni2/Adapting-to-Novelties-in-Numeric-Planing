@@ -52,7 +52,7 @@
 		(= (yl x3y0z1) 0)
 		(= (zl x3y0z1) 1)
 
-        (= (battery-level) 1)
+        (= (battery-level) 6)
         (= (battery-level-full) 37)
 
         (= (factor_value bf0) 1.28146)

@@ -1,7 +1,7 @@
 (define (domain PolyCraft)
     (:requirements :strips :typing :negative-preconditions :fluents)
 
-    (:types pickaxe shovel hoe axe- object
+    (:types pickaxe shovel hoe axe - object
     )
 
     (:predicates

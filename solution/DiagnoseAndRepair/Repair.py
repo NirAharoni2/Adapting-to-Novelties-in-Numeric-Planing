@@ -100,7 +100,6 @@ class Repair:
         results = multi_output_linear_regression(self.data[action.name])
         self.parsed_model.update_model(action.name, results)
 
-
     def repair_action_all_vars(self, LastObservationFluents, action, newObservationFluents, differentKeysLifted):
         """
         Learns models using all valid action-related variables.

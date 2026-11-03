@@ -1,8 +1,8 @@
-(define (domain drone)
+(define (domain domain_name)
     (:requirements :typing :fluents)
 
     (:types
-        location dummy_1 dummy_2 dummy_3 battery_factor - object
+        location - object
     )
 
     (:predicates
@@ -23,19 +23,15 @@
         (max_y)
         (min_z)
         (max_z)
-        (factor_value ?bf - battery_factor)
-        (dummy_1_value ?d1 - dummy_1)
-        (dummy_2_value ?d2 - dummy_2)
-        (dummy_3_value ?d3 - dummy_3)
     )
     (:action increase_x
-     :parameters (?b - battery_factor)
+     :parameters ()
      :precondition (and
             (>= (battery-level ) 1)
             (<= (x ) (- (max_x ) 1)))
      :effect (and
             (increase (x ) 1)
-            (assign (battery-level ) (+ (* 1.0 (battery-level )) (+ (* -0.6 (* (factor_value ?b) (factor_value ?b))) -0.6))))
+            (assign (battery-level ) (+ (* -0.05 (* (battery-level-full ) (battery_factor ))) (+ (* -0.1 (* (battery_factor ) (battery_factor ))) (+ (* 0.21053 (* (max_x ) (battery-level ))) (+ (* 0.21053 (* (max_y ) (battery-level ))) (+ (* 0.21053 (* (max_z ) (battery-level ))) (+ (* 0.15789 (battery-level )) -0.5))))))))
     )
     (:action decrease_x
      :parameters ()
@@ -47,13 +43,13 @@
             (decrease (battery-level ) 1))
     )
     (:action increase_y
-     :parameters (?b - battery_factor)
+     :parameters ()
      :precondition (and
             (>= (battery-level ) 1)
             (<= (y ) (- (max_y ) 1)))
      :effect (and
             (increase (y ) 1)
-            (assign (battery-level ) (+ (* 1.0 (battery-level )) (+ (* -0.5 (* (factor_value ?b) (factor_value ?b))) -0.5))))
+            (assign (battery-level ) (+ (* -0.05 (* (battery-level-full ) (battery_factor ))) (+ (* -0.1 (* (battery_factor ) (battery_factor ))) (+ (* 0.21053 (* (max_x ) (battery-level ))) (+ (* 0.21053 (* (max_y ) (battery-level ))) (+ (* 0.21053 (* (max_z ) (battery-level ))) (+ (* 0.15789 (battery-level )) -0.5))))))))
     )
     (:action decrease_y
      :parameters ()
@@ -65,13 +61,13 @@
             (decrease (battery-level ) 1))
     )
     (:action increase_z
-     :parameters (?b - battery_factor)
+     :parameters ()
      :precondition (and
             (>= (battery-level ) 1)
             (<= (z ) (- (max_z ) 1)))
      :effect (and
             (increase (z ) 1)
-            (assign (battery-level ) (+ (* 1.0 (battery-level )) (+ (* -0.5 (* (factor_value ?b) (factor_value ?b))) -0.5))))
+            (assign (battery-level ) (+ (* -0.05 (* (battery-level-full ) (battery_factor ))) (+ (* -0.1 (* (battery_factor ) (battery_factor ))) (+ (* 0.21053 (* (max_x ) (battery-level ))) (+ (* 0.21053 (* (max_y ) (battery-level ))) (+ (* 0.21053 (* (max_z ) (battery-level ))) (+ (* 0.15789 (battery-level )) -0.5))))))))
     )
     (:action decrease_z
      :parameters ()

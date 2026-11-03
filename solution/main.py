@@ -262,11 +262,11 @@ def run_novelties(domain_name, start=1, end=10):
 
 def main_entry():
     clean()
-    if len(sys.argv) < 2:
-        for novelty_number in range(6, 7): #7
+    if len(sys.argv) < 20:
+        for novelty_number in range(9, 10): #7
             for seed_number in range(1, 2): #6
                 Config.set_seed(seed_number)
-                run_novelties("droneSignatureChangeExperiments", start=novelty_number, end=novelty_number+1)
+                run_novelties("drone", start=novelty_number, end=novelty_number+1)
         return
 
     domain_name = sys.argv[1]

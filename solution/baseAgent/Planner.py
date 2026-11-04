@@ -60,7 +60,7 @@ class Planner:
 
         with (suppress_stdout()):
             if Config.domain_name.startswith("drone"):
-                nyx.runner(domain_path, problem_path, ["-timeout:60", "search:gbfs", "custom_heuristic:3"])
+                nyx.runner(domain_path, problem_path, ["-timeout:90", "search:gbfs", "custom_heuristic:3"])
             elif Config.domain_name.startswith("expedition"):
                 nyx.runner(domain_path, problem_path, ["-timeout:60", "search:gbfs", "custom_heuristic:1"])
             elif Config.domain_name.startswith("sailing"):

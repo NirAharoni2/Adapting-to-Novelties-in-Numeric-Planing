@@ -126,7 +126,14 @@ def plot_from_dict(data_dict, plot_title, filename, novelty_intro_idx=None):
     markers = ['s', '^', 'D', '*', 'x', 'P', 'v', '<', '>']
     colors = ['g', 'r', 'c', 'y', 'm', 'k', '#ff7f0e', '#2ca02c', '#9467bd']
 
-    for i, (label, (values, ci)) in enumerate(data_dict.items()):
+    # Each strategy keeps the same style in every plot, so no two strategies share a color across plots
+    strategy_style_order = [
+        "NoRepair", "Changed Variables", "Linear", "k-Degree",
+        "Ensemble - No-SC", "Ensemble - BF-SC", "Ensemble - MILP-SC"
+    ]
+
+    for j, (label, (values, ci)) in enumerate(data_dict.items()):
+        i = strategy_style_order.index(label) if label in strategy_style_order else len(strategy_style_order) + j
         name = repairName.get(label, label)
         x_vals = list(range(1, len(values) + 1))
         linestyle = dash_styles[i % len(dash_styles)]
@@ -192,6 +199,10 @@ signature_change_difficulty_map = {
     "lv1": [1, 2, 3],
     "lv2": [4, 5, 6],
 }
+# Strategies drawn in the easy/medium/hard plots ("Changed Variables" is the Rel. Variables repair)
+plotted_strategies = ["NoRepair", "Changed Variables", "Linear", "k-Degree", "Ensemble - No-SC"]
+# Strategies drawn in the lv plots of the signature change experiments
+signature_change_plotted_strategies = ["NoRepair", "Ensemble - No-SC", "Ensemble - BF-SC", "Ensemble - MILP-SC"]
 
 for domain in sorted(os.listdir(base_dir)):
     domain_dir = os.path.join(base_dir, domain)
@@ -217,6 +228,8 @@ for domain in sorted(os.listdir(base_dir)):
 
         # Compute average scores and plot
         averages = average_scores_from_csvs(file_paths)
+        strategies = signature_change_plotted_strategies if "SignatureChange" in domain else plotted_strategies
+        averages = {label: averages[label] for label in strategies if label in averages}
         plot_title = f"{domain.capitalize()}: {difficulty.capitalize()} Set"
         plot_filename = f"{domain}_{difficulty}"
 

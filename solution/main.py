@@ -2,6 +2,7 @@ import csv
 import sys
 import shutil
 import os
+import subprocess
 from pathlib import Path
 import random
 from solution.Utilities.parsedModel import Parse_Model
@@ -197,7 +198,35 @@ def experiment_1(name, repair_methode_id):
             learned_model_id = index - start + 1
             print("The novelty has been learnt!")
 
+    run_random_walk_metrics(name, new_domain_path=Config.get_domain())
     return learned_model_id, score_list, otherResults
+
+
+def run_random_walk_metrics(name, new_domain_path):
+    """
+    Random-walk metrics (evaluation/random_walk_metrics.py) of the domain created in this run against the
+    current novelty domain (dataset/<domain>/novelty_domain_<novelty_id>.pddl), which generates the random walks.
+    Runs in a subprocess so the SAM imports it needs do not affect this process.
+    """
+    PROJECT_ROOT = Path(__file__).resolve().parents[1]
+    real_domain_path = PROJECT_ROOT / "dataset" / domain_name / f"novelty_domain_{novelty_id}.pddl"
+    problems_dir = PROJECT_ROOT / "dataset" / domain_name / "instances" / f"seed_{Config.seed}"
+    safe_name = "".join(c if c.isalnum() else "_" for c in name)
+    output_path = (PROJECT_ROOT / "results_random_walk" / domain_name / str(novelty_id) / str(Config.seed) /
+                   f"{domain_name}_novelty_{novelty_id}_seed_{Config.seed}_{safe_name}.csv")
+    command = [
+        sys.executable, str(PROJECT_ROOT / "evaluation" / "random_walk_metrics.py"),
+        "--real-domain", str(real_domain_path),
+        "--new-domain", str(new_domain_path),
+        "--problems", str(problems_dir),
+        "--problem-range", str(start), str(end),  # same problems as this experiment
+        "--strategy", name,
+        "--output", str(output_path),
+    ]
+    print(f"Random-walk metrics for {name}: {Path(new_domain_path).name} vs {Path(real_domain_path).name}")
+    result = subprocess.run(command, cwd=PROJECT_ROOT)
+    if result.returncode != 0:
+        print(f"WARNING: random-walk metrics failed for {name} (exit code {result.returncode}).")
 
 
 
@@ -263,10 +292,10 @@ def run_novelties(domain_name, start=1, end=10):
 def main_entry():
     clean()
     if len(sys.argv) < 2:
-        for novelty_number in range(9, 10): #7
-            for seed_number in range(1, 2): #6
+        for novelty_number in range(7, 9): #7
+            for seed_number in range(1, 6): #6
                 Config.set_seed(seed_number)
-                run_novelties("drone", start=novelty_number, end=novelty_number+1)
+                run_novelties("minecraft", start=novelty_number, end=novelty_number+1)
         return
 
     domain_name = sys.argv[1]
